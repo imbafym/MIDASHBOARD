@@ -1,0 +1,6 @@
+{
+  "appId": "com.imbafym.mipos",
+  "appName": "Mipos Online Report System",
+  "bundledWebRuntime": false,
+  "webDir": "dist"
+}

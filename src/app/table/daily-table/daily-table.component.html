@@ -1,0 +1,34 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-danger">
+            <h4 class="card-title ">Daily Sales </h4>
+            <p class="card-category"> Here is a subtitle for this table</p>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead  class="">
+                <th></th>
+                <th>Sales</th>
+                </thead>
+                <tbody *ngFor="let data of dailyData">
+                <tr>
+                  <td>
+                    {{data.name}}
+                  </td>
+                  <td class="text-primary">
+                    {{data.number}}
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

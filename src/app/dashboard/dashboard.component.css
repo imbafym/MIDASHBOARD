@@ -1,0 +1,123 @@
+
+/*.sales-table {*/
+    /*rules: none;*/
+    /*row: none;*/
+    /*border: 0;*/
+    /*cellpadding: 0;*/
+    /*cellspacing: 0;*/
+/*}*/
+
+.paymethod {
+    text-align: left;
+/*    font-weight:bold; */
+}
+
+.price {
+    text-align: right;
+/*    font-weight:bold; */
+}
+.paymethod_bold {
+    text-align: left;
+    font-weight:bold;
+}
+
+.price_bold {
+    text-align: right;
+    font-weight:bold;
+    font-size: 14px;
+}
+
+.na {
+    text-align: right;
+    color: rgb(199, 199, 199);
+}
+
+.no-top-border{
+    border-top: 0px solid;
+}
+
+.red{
+    font-weight:bold;
+    color: red;
+}
+
+.bold{
+    font-weight:bold;
+}
+
+.green{
+    color: green;
+}
+
+
+/*--------------轮播图------------*/
+
+  .swiper-banner {
+      height: 14vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 1.4vh;
+      margin-bottom: 1.8vh;
+  }
+.swiper-slide {
+//text-align: center;
+//font-size: 18px;
+//background: #f60c33;
+
+    /* Center slide text vertically */
+//display: -webkit-box;
+//display: -ms-flexbox;
+//display: -webkit-flex;
+//display: flex;
+//-webkit-box-pack: center;
+//-ms-flex-pack: center;
+//-webkit-justify-content: center;
+//justify-content: center;
+//-webkit-box-align: center;
+//-ms-flex-align: center;
+//-webkit-align-items: center;
+//align-items: center;
+}
+
+.swiper-img{
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.swiper-item-img{
+    padding-left: 4.17vw;
+    padding-right: 4.17vw;
+}
+
+.swiper-div{
+    width: 100%;
+    height: 100%;
+    padding-left: 4.17vw;
+    padding-right: 4.17vw;
+    border-radius: 15px;
+    background-color: #f60c33;
+}
+
+.swiper-message{
+    width: 100%;
+    height: 22px;
+    overflow: hidden;
+}
+
+.swiper-item{
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.swiper-item-text{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-left: 4.17vw;
+    font-size: 2.18vh;
+    color: #666666;
+}

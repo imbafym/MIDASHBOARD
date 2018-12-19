@@ -1,0 +1,45 @@
+import {NgModule} from '@angular/core';
+import {CommonModule,} from '@angular/common';
+import {BrowserModule} from '@angular/platform-browser';
+import {Routes, RouterModule} from '@angular/router';
+
+import {AdminLayoutComponent} from './layouts/admin-layout/admin-layout.component';
+import {ActiveRouterService} from './services/activeRouter.service';
+import {LoginComponent} from './login/login/login.component';
+
+const routes: Routes = [
+    //   {
+    //   path: '',
+    //   redirectTo: 'dashboard',
+    //   pathMatch: 'full',
+    //
+    // },
+    {
+        path: 'login',
+        component: LoginComponent,
+        pathMatch: 'full',
+    },
+    {
+        path: '',
+        component: AdminLayoutComponent,
+        children: [
+            {
+                path: '',
+                loadChildren: './layouts/admin-layout/admin-layout.module#AdminLayoutModule'
+            }],
+        canActivate: [ActiveRouterService]
+    }
+];
+
+
+@NgModule({
+    imports: [
+        CommonModule,
+        BrowserModule,
+        RouterModule.forRoot(routes)
+    ],
+    exports: [],
+    providers: [ActiveRouterService]
+})
+export class AppRoutingModule {
+}

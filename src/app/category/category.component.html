@@ -1,0 +1,146 @@
+<div class="main-content" >
+    <div class="container-fluid">
+        <div class="row" >
+            <div class="col-lg-12 col-md-12 col-sm-3">
+                <div class="card card-stats">
+                    <div class="card-header card-header-success card-header-icon">
+                        <div class="card-icon">
+                            <i class="material-icons">library_books</i>
+                        </div>
+                        <h3 class="card-title">Category Sales</h3>
+                    </div>
+                    <div class="card-body">
+                        <form [formGroup]="form" (ngSubmit)="onSubmit(form,$event)">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <mat-radio-group formControlName="radioOptions">
+                                        <div class="col-lg-3 col-md-3 col-sm-3">
+                                            <mat-radio-button value="2">
+
+                                                <mat-form-field>
+                                                    <input matInput [matDatepicker]="pickerFrom"
+                                                           [attr.disabled]="form['radioOption'] == '2'"
+                                                           placeholder="Date From"
+                                                           formControlName="dateFrom">
+                                                    <mat-datepicker-toggle matSuffix
+                                                                           [attr.disabled]="form['radioOption'] == '2'"
+                                                                           [for]="pickerFrom"></mat-datepicker-toggle>
+                                                    <mat-datepicker #pickerFrom></mat-datepicker>
+                                                </mat-form-field>
+
+
+                                                <mat-form-field>
+                                                    <input matInput [matDatepicker]="pickerTo"
+                                                           [attr.disabled]="form['radioOption'] == '2'"
+                                                           placeholder="Date To"
+                                                           formControlName="dateTo">
+                                                    <mat-datepicker-toggle matSuffix
+                                                                           [attr.disabled]="form['radioOption'] == '2'"
+                                                                           [for]="pickerTo"></mat-datepicker-toggle>
+                                                    <mat-datepicker #pickerTo></mat-datepicker>
+                                                </mat-form-field>
+
+                                            </mat-radio-button>
+                                        </div>
+                                        <div class="col-lg-3 col-md-3 col-sm-3">
+                                            <mat-radio-button value="1">
+
+                                                <mat-form-field>
+                                                    <mat-select formControlName="timeOption"
+                                                                [attr.disabled]="form['radioOption'] == '1'">
+                                                        <mat-option *ngFor="let t of time" value={{t}}>{{t}}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+
+                                            </mat-radio-button>
+                                        </div>
+                                    </mat-radio-group>
+                                </div>
+
+
+                                <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <mat-form-field>
+                                        <mat-select [(value)]="selected">
+                                            <mat-option value="All Categories">All Categories</mat-option>
+                                            <mat-option *ngFor="let cat of categoryName" value={{cat.NAME}}>
+                                                {{cat.NAME}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <button mat-raised-button type="submit" [disabled]="!form.valid">Search</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <mat-spinner mode="indeterminate" *ngIf="showProgress"></mat-spinner>
+                            </div>
+                        </form>
+
+                        <mat-table class="table table-striped" [dataSource]="dataSource" *ngIf="hasData; else NO_RESULT">
+                        
+                            <!-- Name Column -->
+                            <ng-container matColumnDef="catName">
+                                <mat-header-cell *matHeaderCellDef> Category</mat-header-cell>
+                                <mat-cell *matCellDef="let element"> {{element.categoryName}}</mat-cell>
+                            </ng-container>
+
+                            <!-- Weight Column -->
+                            <ng-container matColumnDef="qtys">
+                                <mat-header-cell *matHeaderCellDef> Quantity</mat-header-cell>
+                                <mat-cell *matCellDef="let element"> {{element.categoryQuantities}}</mat-cell>
+                            </ng-container>
+
+
+                            <ng-container matColumnDef="sum">
+                                <mat-header-cell *matHeaderCellDef> Sum</mat-header-cell>
+                                <mat-cell *matCellDef="let element">
+                                    {{element.categoryTotals}}
+                                </mat-cell>
+                            </ng-container>
+
+                            <mat-header-row class="text-warning"
+                                            *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                            <!--<mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>-->
+                        </mat-table>
+                        
+                        <ng-template #NO_RESULT><h3>No Result</h3></ng-template>
+                        <!--<ng-template #NO_RESULT>-->
+                            <!--<mat-table>-->
+                                <!--&lt;!&ndash; Name Column &ndash;&gt;-->
+                                <!--<ng-container matColumnDef="catName">-->
+                                    <!--<mat-header-cell *matHeaderCellDef> Category</mat-header-cell>-->
+                                    <!--<mat-cell></mat-cell>-->
+                                    <!--<mat-footer-cell *matFooterCellDef>  </mat-footer-cell>-->
+                                <!--</ng-container>-->
+
+                                <!--&lt;!&ndash; Weight Column &ndash;&gt;-->
+                                <!--<ng-container matColumnDef="qtys">-->
+                                    <!--<mat-header-cell *matHeaderCellDef> Quantity</mat-header-cell>-->
+                                    <!--<mat-cell >NO RESULT</mat-cell>-->
+                                    <!--<mat-footer-cell *matFooterCellDef> NO RESULT</mat-footer-cell>-->
+                                <!--</ng-container>-->
+                                <!--<ng-container matColumnDef="sum">-->
+                                    <!--<mat-header-cell *matHeaderCellDef>Sum </mat-header-cell>-->
+                                    <!--<mat-cell >-->
+                                    <!--</mat-cell>-->
+                                    <!--<mat-footer-cell *matFooterCellDef>  </mat-footer-cell>-->
+                                <!--</ng-container>-->
+                                <!--<mat-header-row class="text-warning"-->
+                                                <!--*matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>-->
+                                <!--<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>-->
+                                <!--<mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>-->
+                            <!--</mat-table>-->
+                        <!--</ng-template>-->
+                        <mat-paginator *ngIf="hasData" [pageSizeOptions]="[10, 20,30]" showFirstLastButtons></mat-paginator>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

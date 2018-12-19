@@ -1,0 +1,187 @@
+<div class="main-content" >
+    <div class="container-fluid">
+        <!-- <div class="row" style="text-align: center"> -->
+        <div class="card-product col-md-5">
+            <form class="navbar-form" >
+                    <mat-form-field>
+                        <!--<input type="text" (keyup)="onKey($event)" class="form-control" placeholder="Search By Barcode...">-->
+                        <input matInput type="text" style="width: 100%; font-size: 20px; text-align: center;" (keyup)="onKey($event)" class="form-control"
+                               placeholder="Search with Barcode">
+                        <mat-icon matSuffix fix (click)="searchStockByBarcode()">search</mat-icon>
+                        <!--<button style="display: inline-block" (click)="searchStockByBarcode()" mat-raised-button-->
+                                <!--type="button" class="btn btn-white btn-round btn-just-icon">-->
+                            <!--<i class="material-icons">search</i>-->
+                            <!--<div class="ripple-container"></div>-->
+                        <!--</button>-->
+                    </mat-form-field>
+                </form>
+        </div>
+        
+        <div class="row" *ngIf="showStock; else ">
+            <div class="col-md-5">
+                <div class="card card-product" data-count="16">
+                    <div class="card-header ">
+                        <h3 class="card-title" style="font-weight: bold">{{currentStock?currentStock.NAME:'N/A'}}</h3>
+                        <h4 class="card-description">Category: {{currentStock?currentStock.CAT_NAME:'N/A'}}</h4>
+                    </div>
+                    <div class="card-body">
+                        <!--<div class="card-actions text-center">-->
+                        <!--<button class="btn btn-danger btn-link fix-broken-card mat-raised-button"-->
+                        <!--mat-raised-button="" type="button"><span class="mat-button-wrapper"><i-->
+                        <!--class="material-icons">build</i> Fix Header! </span>-->
+                        <!--<div class="mat-button-ripple mat-ripple" matripple=""></div>-->
+                        <!--<div class="mat-button-focus-overlay"></div>-->
+                        <!--</button>-->
+                        <!--<button class="btn btn-default btn-link mat-raised-button" mat-raised-button=""-->
+                        <!--mattooltip="View" type="button" aria-describedby="cdk-describedby-message-2"-->
+                        <!--cdk-describedby-host=""-->
+                        <!--style="touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);">-->
+                        <!--&lt;!&ndash;<span class="mat-button-wrapper"><i style="color: red" class="material-icons">check</i></span>&ndash;&gt;-->
+                        <!--<div class="mat-button-ripple mat-ripple" matripple=""></div>-->
+                        <!--<div class="mat-button-focus-overlay"></div>-->
+                        <!--</button>-->
+
+                        <!--<button class="btn btn-danger btn-link mat-raised-button" mat-raised-button=""-->
+                        <!--mattooltip="Remove" type="button" aria-describedby="cdk-describedby-message-4"-->
+                        <!--cdk-describedby-host=""-->
+                        <!--style="touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);">-->
+                        <!--&lt;!&ndash;<span class="mat-button-wrapper"><i class="material-icons">close</i></span>&ndash;&gt;-->
+                        <!--<div class="mat-button-ripple mat-ripple" matripple=""></div>-->
+                        <!--<div class="mat-button-focus-overlay"></div>-->
+                        <!--</button>-->
+                        <!--</div>-->
+                        <form [formGroup]="form">
+
+                            <div class="row">
+                                <div class="col-md-8 col-sm-6">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Buy Price</mat-label>
+                                        <span matPrefix>$&nbsp;</span>
+                                        <input matInput style="width: 100%; font-size: 20px; text-align: left;" placeholder="Buy Price" formControlName="buyPrice"
+                                               type="number">
+                                        <button matSuffix *ngIf="!isBuyPriceModified;else confirm_buy" mat-raised-button
+                                                (click)="modifyPrice('buy')">
+                                            <mat-icon class="material-icons">edit</mat-icon>
+                                        </button>
+                                        <ng-template #confirm_buy>
+                                            <button matSuffix mat-raised-button (click)="updatePrice('buy')">
+                                                <mat-icon  style="color: red" class="material-icons">check
+                                                </mat-icon>
+                                            </button>
+                                        </ng-template>
+                                    </mat-form-field>
+                                </div>
+                                <!--<div class="col-md-3 col-sm-3">-->
+                                    <!--<button *ngIf="!isBuyPriceModified;else confirm_buy" mat-raised-button-->
+                                            <!--(click)="modifyPrice('buy')">-->
+                                        <!--<mat-icon matSuffix class="material-icons">edit</mat-icon>-->
+                                    <!--</button>-->
+
+
+                                    <!--<ng-template #confirm_buy>-->
+                                        <!--<button mat-raised-button (click)="updatePrice('buy')">-->
+                                            <!--<mat-icon matSuffix style="color: red" class="material-icons">check-->
+                                            <!--</mat-icon>-->
+                                        <!--</button>-->
+                                    <!--</ng-template>-->
+
+                                    <!--<div class="clearfix"></div>-->
+                                <!--</div>-->
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <!--<div class="col-md-3 col-sm-3">-->
+                                <div class="col-md-8 col-sm-6 ">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Sell Price</mat-label>
+                                        <input matInput style="width: 100%; font-size: 20px; text-align: left;" placeholder="Sell Price" formControlName="sellPrice"
+                                               type="number">
+                                        <span matPrefix>$&nbsp;</span>
+                                        <button matSuffix *ngIf="!isSellPriceModified;else confirm_sell" mat-raised-button
+                                                (click)="modifyPrice('sell')">
+                                            <mat-icon>edit</mat-icon>
+                                        </button>
+                                        <ng-template #confirm_sell>
+                                            <button matSuffix mat-raised-button (click)="updatePrice('sell')">
+                                                <mat-icon  style="color: red" class="material-icons">check
+                                                </mat-icon>
+                                            </button>
+                                        </ng-template>
+                                    </mat-form-field>
+                                </div>
+                                <!--<div class="col-md-3 col-sm-3">-->
+                                    <!--<button *ngIf="!isSellPriceModified;else confirm_sell" mat-raised-button-->
+                                            <!--(click)="modifyPrice('sell')">-->
+                                        <!--<mat-icon matSuffix>edit</mat-icon>-->
+                                    <!--</button>-->
+                                    <!--<ng-template #confirm_sell>-->
+                                        <!--<button mat-raised-button (click)="updatePrice('sell')">-->
+                                            <!--<mat-icon matSuffix style="color: red" class="material-icons">check-->
+                                            <!--</mat-icon>-->
+                                        <!--</button>-->
+                                    <!--</ng-template>-->
+                                    <!--&lt;!&ndash;<div class="clearfix"></div>&ndash;&gt;-->
+                                <!--</div>-->
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <mat-form-field>
+                                        <mat-select [(value)]="selected">
+                                            <mat-option value="-1">OUT_EXPIRED</mat-option>
+                                            <mat-option value="-2">OUT_REFUND</mat-option>
+                                            <mat-option value="-3">OUT_BREAK</mat-option>
+                                            <mat-option value="-4">OUT_MOVEMENT</mat-option>
+                                            <mat-option value="+1">IN_PURCHASE</mat-option>
+                                            <mat-option value="+2">IN_REFUND</mat-option>
+                                            <mat-option value="+4">IN_MOVEMENT</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-8 col-sm-6">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Quantity</mat-label>
+                                        <input matInput style="width: 100%; font-size: 20px; text-align: left;" placeholder="Please Type In Quantity" formControlName="quantity"
+                                               type="number">
+                                        <span matPrefix>&nbsp;&nbsp;</span>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="price"><h4>In Stock: {{currentStock?currentStock.STOCK:'N/A'}}</h4></div>
+                            <button
+                                    mat-raised-button (click)="updateStockStatus($event)"
+                                    class="btn btn-danger pull-left">Update
+                            </button>
+                        </form>
+                    </div>
+                    <!--
+                    <div class="card-footer">
+                        <div class="img-container"><img class="img" style="width: 100%;height:auto" src="../../assets/img/image_available.svg.png">
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+
+        </div>
+        <!--
+        <ng-template #noResult>
+
+            <div class="col-md-5">
+                <div class="card card-product" data-count="16">
+
+                    <div class="card-body">
+                        <div class="row"><h1>No Results</h1></div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-header-image">
+                            <img class="img" style="width: 100%;height:auto" src="../../assets/img/image_available.svg.png"></div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+        -->
+    </div>
+</div>

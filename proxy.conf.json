@@ -1,0 +1,23 @@
+{
+//  "/api/*": {
+//    "target": "http://localhost:3000",
+//    "secure": false,
+//    "logLevel": "debug",
+//    "changeOrigin": true
+//  },
+//  "/api/*": {
+//    "target": "http://14.201.136.245:3000",
+//    "secure": false,
+//    "logLevel": "debug",
+//    "changeOrigin": true
+//  },
+    "\/api": {
+    "target": "http://14.201.136.245:3000",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true,
+      "pathRewrite": {
+        "^\/api": "/"
+      }
+  }
+}

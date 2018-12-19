@@ -1,0 +1,26 @@
+language: node_js
+node_js:
+- "8.9"
+
+branches:
+  only:
+  - firebase
+
+before_script:
+- npm install -g firebase-tools
+- npm install -g @angular/cli
+
+script:
+- ng build --prod
+
+after_success:
+- firebase deploy --token $FIREBASE_TOKEN
+
+cache:
+  directories:
+  - $HOME/.npm
+
+notifications:
+  email:
+    on_failure: change
+    on_success: change

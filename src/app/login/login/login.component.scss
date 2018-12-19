@@ -1,0 +1,27 @@
+mat-card{
+  width:20em;
+  margin:5px;
+  flex: 0 0 20em;
+}
+
+
+.login{
+  //margin-left: 33.33%;
+  margin-top: 15%;
+}
+
+
+form{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height:100%;
+  width:100%;
+}
+
+
+.text-right{
+  margin:10px;
+  text-align: end;
+}

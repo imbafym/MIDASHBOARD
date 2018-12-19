@@ -1,0 +1,25 @@
+<!--(ngSubmit)="onSubmit(form,$event)"-->
+<form [formGroup]="form" >
+    <mat-card class="login">
+        <mat-card-header>
+            <mat-card-title>MiDASHBOARD</mat-card-title>
+            <mat-card-subtitle>Reporting and Inventory manager</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-form-field class="full-width">
+                <input matInput type="text" placeholder="Username" formControlName="username"/>
+            </mat-form-field>
+            <mat-form-field class="full-width">
+                <input matInput type="password" placeholder="Password" formControlName="password"/>
+            </mat-form-field>
+            <button mat-raised-button (click)="onSubmit($event)" [disabled]="!form.valid">Login</button>
+        </mat-card-content>
+        <!--<mat-card-actions class="text-right">-->
+            <!--<p>No Account? <a routerLink="/register">Register</a></p>-->
+            <!--<p>No Account? <a href="">Forget Password</a></p>-->
+        <!--</mat-card-actions>-->
+    </mat-card>
+
+
+</form>
+
