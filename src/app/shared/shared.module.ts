@@ -6,7 +6,7 @@ import {
     MatCardModule, MatCheckboxModule, MatDatepickerModule, MatGridListModule,
     MatIconModule,
     MatInputModule,
-    MatListModule, MatMenuModule, MatNativeDateModule, MatPaginatorModule, MatProgressSpinnerModule, MatRadioModule, MatSelectModule,
+    MatListModule, MatMenuModule, MatNativeDateModule, MatPaginatorModule, MatProgressSpinnerModule, MatRadioModule, MatSelectModule,MatSortModule,
     MatSlideToggleModule, MatSnackBarModule, MatTableModule,
     MatToolbarModule, MatTooltipModule
 } from '@angular/material';
@@ -41,6 +41,7 @@ import {SweetAlert2Module} from '@toverux/ngx-sweetalert2';
       TableModule,
       MatProgressSpinnerModule,
       MatPaginatorModule,
+      MatSortModule,
       MatTableModule,
       SwiperModule,
       MatSnackBarModule,
@@ -74,6 +75,7 @@ import {SweetAlert2Module} from '@toverux/ngx-sweetalert2';
         TableModule,
         MatProgressSpinnerModule,
         MatPaginatorModule,
+        MatSortModule,
         MatTableModule,
         SwiperModule,
         SweetAlert2Module,

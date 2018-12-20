@@ -14,11 +14,7 @@ const routes: Routes = [
     //   pathMatch: 'full',
     //
     // },
-    {
-        path: 'login',
-        component: LoginComponent,
-        pathMatch: 'full',
-    },
+    
     {
         path: '',
         component: AdminLayoutComponent,
@@ -28,6 +24,11 @@ const routes: Routes = [
                 loadChildren: './layouts/admin-layout/admin-layout.module#AdminLayoutModule'
             }],
         canActivate: [ActiveRouterService]
+    },
+    {
+        path: 'login',
+        component: LoginComponent,
+        pathMatch: 'full',
     }
 ];
 

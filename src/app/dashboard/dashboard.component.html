@@ -7,18 +7,20 @@
                         <!--    <div class="card-icon">
                                     <i class="material-icons">payment</i>
                             </div> -->
-                        <h3 class="bold"><div class="red">Today</div></h3>
+                        <h3 class="bold"><div class="red">Today </div></h3>
                         <h1 class="red" *ngIf="totalToday == 'N/A';else showTotal">{{0 |currency}}</h1>
                         <ng-template #showTotal><h1 class="red">{{totalToday | currency}}</h1></ng-template>
-                        <h4 class="green"> Total Sales Yesterday</h4>
+                       
+                      
+                        <h4 class="green" *ngIf="totalToday != 'N/A'"> Total Sales Yesterday</h4>
 
-                        <h4 class="green" *ngIf="totalToday == 'N/A';else showTotalYesterday">{{0 | currency}} </h4>
+                        <!-- <h4 class="green" *ngIf="totalToday != 'N/A'">{{0 | currency}} </h4> -->
 
-                        <ng-template #showTotalYesterday><h4 class="green">{{totalYesterday | currency}}</h4></ng-template>
+                        <h4 class="green" *ngIf="totalToday != 'N/A'">{{totalYesterday | currency}}</h4>
                     </div>
                     <div class="card-body">
                             <!--<button mat-raised-button (click)="showTable = !showTable">Show More</button>-->
-                            <button mat-raised-button (click)="refresh()">Refresh</button>
+                            
                     </div>
                 </div>
             </div>

@@ -1,9 +1,9 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {Router} from '@angular/router';
-import {DateAdapter, MatPaginator, MatTableDataSource} from '@angular/material';
-import {Category, ProductService} from '../services/product.service';
-import {forkJoin} from 'rxjs/observable/forkJoin';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { DateAdapter, MatPaginator, MatTableDataSource,MatSort } from '@angular/material';
+import { Category, ProductService } from '../services/product.service';
+
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 
 
@@ -23,13 +23,13 @@ export class ProductComponent implements OnInit {
     // totalTotal: number;
     showTotal = false;
     showProgress = false;
-    dataSource:any;
+    dataSource: any;
 
 
     time = ['Today', 'Yesterday', 'This Month', 'Last Month'];
-//    displayedColumns: string[] = ['productName', 'qtys', 'prices', 'sum', 'catName'];
+    //    displayedColumns: string[] = ['productName', 'qtys', 'prices', 'sum', 'catName'];
     displayedColumns: string[] = ['productName', 'qtys', 'prices', 'sum'];
-
+    forkService : any
 
 
 
@@ -40,37 +40,41 @@ export class ProductComponent implements OnInit {
 
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
-
+    @ViewChild(MatSort) sort: MatSort;
     ngOnInit() {
         this.selected = 'All Categories';
         this.categoryName = [];
         this.form = this.fb.group({
-                dateFrom: [null],
-                dateTo: [null],
-                radioOptions: ['1', Validators.required],
-                timeOption: ['Today']
-            },
+            dateFrom: [null],
+            dateTo: [null],
+            radioOptions: ['1', Validators.required],
+            timeOption: ['Today']
+        },
 
         );
 
         var rawCategories = this.productService.getCategory();
         rawCategories.subscribe(results => {
-                this.categoryName = results
-            }
+            this.categoryName = results
+        }
         )
+        console.log('ng init product')
 
         this.initShowToday()
     }
 
+    ngOnDestroy(){
+        this.forkService.unsubscribe();
+        console.log('forkSerice unsubscribed')
+    }
 
-
-    initShowToday(){
+    initShowToday() {
         var rawProduct = this.productService.getProductToday()
         var rawCategory = this.productService.getCategoryToday()
-        forkJoin([rawProduct, rawCategory]).subscribe(results => {
+      this.forkService =   this.productService.getTodayForkStream().subscribe(results => {
             var productSales = results[0];
             var categoriesSales = results[1];
-
+            console.log(productSales,categoriesSales,'content')
             categoriesSales.forEach(c => {
                 var category = new Category;
                 category.categoryName = c.catName;
@@ -86,6 +90,7 @@ export class ProductComponent implements OnInit {
                 this.categories.push(category)
             })
             this.productsInTable = [];
+
             if (this.selected == 'All Categories') {
                 this.categories.forEach(c => {
                     c.categoryProdocuts.forEach(p => {
@@ -101,12 +106,14 @@ export class ProductComponent implements OnInit {
                     }
                 })
             }
-
+            this.productsInTable =  this.dealData(this.productsInTable);
+            this.sortData(this.productsInTable);
+            
             this.calculateTotal();
 
             this.dataSource = new MatTableDataSource<PeriodicElement>(this.productsInTable);
-            console.log(this.dataSource, 'DATA')
 
+            this.setTableSort();
             this.setTablePaginator();
             setInterval(e => {
                 this.showProgress = false
@@ -132,13 +139,13 @@ export class ProductComponent implements OnInit {
     }
 
 
-    onSubmit({value, valid}, e: Event) {
+    onSubmit({ value, valid }, e: Event) {
         e.preventDefault();
         this.showProgress = true;
         if (value['radioOptions'] == '2') {
-            this.searchByDates({value, valid}, e);
+            this.searchByDates({ value, valid }, e);
         } else if (value['radioOptions'] == '1') {
-            this.searchByOptions({value, valid}, e)
+            this.searchByOptions({ value, valid }, e)
         } else {
             console.log('radio option no value', value['radioOptions'])
         }
@@ -147,29 +154,28 @@ export class ProductComponent implements OnInit {
     }
 
 
-    searchByOptions({value, valid}, e: Event) {
+    searchByOptions({ value, valid }, e: Event) {
         this.categories = [];
         var option = value['timeOption']
-        // var rawProduct,rawCategory;
+        var stream;
         switch (option) {
             case 'Today':
-                var rawProduct = this.productService.getProductToday()
-                var rawCategory = this.productService.getCategoryToday()
+               stream = this.productService.getTodayForkStream();
                 break;
             case 'Yesterday':
-                var rawProduct = this.productService.getProductYesterday()
-                var rawCategory = this.productService.getCategoryYesterday()
+               stream = this.productService.getYesterdayForkStream();
+                
                 break;
             case 'This Month':
-                var rawProduct = this.productService.getProductThisMonth()
-                var rawCategory = this.productService.getCategoryThisMonth()
+                stream = this.productService.getThisMonthForkStream();
+               
                 break;
             case 'Last Month':
-                var rawProduct = this.productService.getProductLastMonth()
-                var rawCategory = this.productService.getCategoryLastMonth()
+                stream = this.productService.getLastMonthForkStream();
+               
                 break;
         }
-        forkJoin([rawProduct, rawCategory]).subscribe(results => {
+        stream.subscribe(results => {
             var productSales = results[0];
             var categoriesSales = results[1];
 
@@ -188,6 +194,7 @@ export class ProductComponent implements OnInit {
                 this.categories.push(category)
             })
             this.productsInTable = [];
+            var obj = {};
             if (this.selected == 'All Categories') {
                 this.categories.forEach(c => {
                     c.categoryProdocuts.forEach(p => {
@@ -202,13 +209,17 @@ export class ProductComponent implements OnInit {
                         })
                     }
                 })
+
             }
 
+           this.productsInTable =  this.dealData(this.productsInTable);
+           this.sortData(this.productsInTable);
+           console.log('data in sort ', this.productsInTable)
             this.calculateTotal();
-
+            
             this.dataSource = new MatTableDataSource<PeriodicElement>(this.productsInTable);
-            console.log(this.dataSource, 'DATA')
-
+            
+            this.setTableSort();
             this.setTablePaginator();
             setInterval(e => {
                 this.showProgress = false
@@ -219,84 +230,91 @@ export class ProductComponent implements OnInit {
     getTotalQuantities() {
         return this.dataSource.map(t => t.qtys).reduce((acc, value) => acc + value, 0);
     }
+    getTotalPrice() {
+        return this.dataSource.map(t => t.qtys * t.prices).reduce((acc, value) => acc + value, 0);
+    }
 
 
-
-    searchByDates({value, valid}, e: Event) {
+    searchByDates({ value, valid }, e: Event) {
         this.categories = [];
         var dateFrom = this.changeDateFormate(value['dateFrom'])
         var dateTo = this.changeDateFormate(value['dateTo'])
 
         var rawProductSales = this.productService.getCategoryProductSalesByDate(dateFrom, dateTo);
         var rawCategoriesSales = this.productService.getCategorySalesByDate(dateFrom, dateTo);
-        forkJoin([rawProductSales, rawCategoriesSales])
+        this.productService.getDateForkStream(dateFrom,dateTo)
             .subscribe(results => {
-                    var productSales = results[0];
-                    var categoriesSales = results[1];
+                var productSales = results[0];
+                var categoriesSales = results[1];
 
-                    categoriesSales.forEach(c => {
-                        var category = new Category;
-                        category.categoryName = c.catName;
-                        category.categoryQuantities = c.qtys;
-                        category.categoryPrices = c.prices;
-                        category.categoryTotals = c.totals;
-                        category.categoryProdocuts = [];
-                        productSales.forEach(p => {
-                            if (p.catName == c.catName) {
-                                category.categoryProdocuts.push(p)
-                            }
-                        })
-                        this.categories.push(category)
+                categoriesSales.forEach(c => {
+                    var category = new Category;
+                    category.categoryName = c.catName;
+                    category.categoryQuantities = c.qtys;
+                    category.categoryPrices = c.prices;
+                    category.categoryTotals = c.totals;
+                    category.categoryProdocuts = [];
+                    productSales.forEach(p => {
+                        if (p.catName == c.catName) {
+                            category.categoryProdocuts.push(p)
+                        }
                     })
-                    this.productsInTable = [];
-                    if (this.selected == 'All Categories') {
-                        this.categories.forEach(c => {
+                    this.categories.push(category)
+                })
+                this.productsInTable = [];
+                if (this.selected == 'All Categories') {
+                    this.categories.forEach(c => {
+                        c.categoryProdocuts.forEach(p => {
+                            this.productsInTable.push(p)
+                        })
+                    })
+                } else {
+                    this.categories.forEach(c => {
+                        if (c.categoryName == this.selected) {
                             c.categoryProdocuts.forEach(p => {
                                 this.productsInTable.push(p)
                             })
-                        })
-                    } else {
-                        this.categories.forEach(c => {
-                            if (c.categoryName == this.selected) {
-                                c.categoryProdocuts.forEach(p => {
-                                    this.productsInTable.push(p)
-                                })
-                            }
-                        })
-                    }
-
-                    this.calculateTotal();
-                this.dataSource = new MatTableDataSource<PeriodicElement>(this.productsInTable);
-                this.setTablePaginator();
-                    setInterval(e => {
-                        this.showProgress = false
-                    }, 1500)
+                        }
+                    })
                 }
+                this.productsInTable =  this.dealData(this.productsInTable);
+                this.sortData(this.productsInTable);
+                console.log('data in sort ', this.productsInTable)
+                this.calculateTotal();
+                this.dataSource = new MatTableDataSource<PeriodicElement>(this.productsInTable);
+                this.setTableSort();
+                this.setTablePaginator();
+                setInterval(e => {
+                    this.showProgress = false
+                }, 1500)
+            }
             )
+    }
+
+    sortData(data){
+        data.sort(function(a, b) {
+            var textA = a.productName.toUpperCase();
+            var textB = b.productName.toUpperCase();
+            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+        });
     }
 
 
     calculateTotal() {
         this.totalPrice = 0;
-        // this.totalTotal = 0;
         this.totalQty = 0;
-
         this.productsInTable.forEach(p => {
-
-            // console.log(p,'this is products in Table')
             var price = 0;
-            if(p.taxRate === "001"){
-               price  = parseFloat(parseFloat(p.prices).toFixed(2)) * 1.1;
-            }else{
-                price  = parseFloat(parseFloat(p.prices).toFixed(2))
+            if (p.taxRate === "001") {
+                price = parseFloat(parseFloat(p.prices).toFixed(2)) * 1.1;
+                p.prices = price.toFixed(2)
+            } else {
+                price = parseFloat(parseFloat(p.prices).toFixed(2))
+                p.prices = price.toFixed(2)
             }
-            p.prices = price;
-            // console.log(p.qtys*price,"this is qtys * price")
-            this.totalPrice += (price * p.qtys);
+            this.totalPrice += (p.prices * p.qtys);
             this.totalQty += p.qtys;
         })
-        // console.log(this.totalPrice, 'this is total price')
-        this.totalPrice = parseFloat(this.totalPrice.toFixed(2));
         this.showProgress = false;
         this.showTotal = true;
     }
@@ -304,6 +322,33 @@ export class ProductComponent implements OnInit {
     setTablePaginator() {
         this.dataSource.paginator = this.paginator;
     }
+
+    setTableSort() {
+        this.dataSource.sort = this.sort;
+    }
+    dealData(data: any) {
+        var listArr = [];
+        data.forEach(p => {
+            for (var i = 0; i < listArr.length; i++) {
+                if (listArr[i].productName == p.productName) {
+                    listArr[i].qtys += p.qtys
+                    listArr[i].totals += p.totals
+                    return;
+                }
+            }
+            // first time no data
+            listArr.push({
+                catName: p.catName,
+                prices: p.prices,
+                productName: p.productName,
+                qtys: p.qtys,
+                taxRate: p.taxRate,
+                totals: p.totals
+            })
+        })
+        return listArr;
+    }
+
 
 }
 
@@ -313,7 +358,7 @@ export interface PeriodicElement {
     catName: string;
     qtys: number;
     prices: number;
-    totals:number;
+    totals: number;
     total: number
 }
 

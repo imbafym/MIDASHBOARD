@@ -1,12 +1,14 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {Router} from '@angular/router';
-import {DateAdapter, MatPaginator, MatTableDataSource} from '@angular/material';
-import {Category, ProductService} from '../services/product.service';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {forkJoin} from 'rxjs/internal/observable/forkJoin';
-import {PeriodicElement} from '../product/product.component';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { DateAdapter, MatPaginator, MatTableDataSource } from '@angular/material';
+import { Category, ProductService } from '../services/product.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { forkJoin } from 'rxjs/internal/observable/forkJoin';
+import { PeriodicElement } from '../product/product.component';
 import * as moment from 'moment';
-import {Observable} from 'rxjs/Rx';
+import { Observable } from 'rxjs/Rx';
+import { delay, catchError } from 'rxjs/operators';
+import { of, throwError } from 'rxjs';
 
 @Component({
     selector: 'app-category',
@@ -23,7 +25,7 @@ export class CategoryComponent implements OnInit {
     showTotal = false;
     showProgress = false;
     dataSource: any;
-
+    values$: any;
 
     time = ['Today', 'Yesterday', 'This Month', 'LastMonth'];
     displayedColumns: string[] = ['catName', 'qtys', 'sum'];
@@ -36,23 +38,24 @@ export class CategoryComponent implements OnInit {
 
 
     ngOnInit() {
+        console.log('ng init categoryu')
         this.selected = 'All Categories';
         this.categoryName = [];
         this.form = this.fb.group({
-                dateFrom: [null],
-                dateTo: [null],
-                radioOptions: ['1', Validators.required],
-                timeOption: ['Today']
-            },
+            dateFrom: [null],
+            dateTo: [null],
+            radioOptions: ['1', Validators.required],
+            timeOption: ['Today']
+        },
         );
         console.log('ng on init in category finished')
         var rawCategories = this.productService.getCategory();
 
         rawCategories.subscribe(results => {
 
-                this.categoryName = results
+            this.categoryName = results
             console.log('category Name has been updated')
-            }
+        }
         )
         this.initShowToday()
     }
@@ -61,56 +64,57 @@ export class CategoryComponent implements OnInit {
     initShowToday() {
         this.hasData = false;
         var rawProduct = this.productService.getProductToday()
+
         var rawCategory = this.productService.getCategoryToday()
-        forkJoin([rawProduct, rawCategory]).subscribe(results => {
-            console.log(results, 'results in category report init')
 
-
-            var productSales = results[0];
-            var categoriesSales = results[1];
-
-            categoriesSales.forEach(c => {
-                var category = new Category;
-                category.categoryName = c.catName;
-                category.categoryQuantities = c.qtys;
-                category.categoryPrices = c.prices;
-                category.categoryTotals = 0;
-                category.categoryProdocuts = [];
-                productSales.forEach(p => {
-                    if (p.catName == c.catName) {
-                        category.categoryProdocuts.push(p)
-                    }
+        if (rawCategory && rawProduct) {
+            this.productService.getTodayForkStream().pipe(catchError(error => of(error))).subscribe(results => {
+                var productSales = results[0];
+                var categoriesSales = results[1];
+                categoriesSales.forEach(c => {
+                    var category = new Category;
+                    category.categoryName = c.catName;
+                    category.categoryQuantities = c.qtys;
+                    category.categoryPrices = c.prices;
+                    category.categoryTotals = 0;
+                    category.categoryProdocuts = [];
+                    productSales.forEach(p => {
+                        if (p.catName == c.catName) {
+                            category.categoryProdocuts.push(p)
+                        }
+                    })
+                    this.categories.push(category)
                 })
-                this.categories.push(category)
-            })
-            this.categoriesInTable = [];
-            if (this.selected == 'All Categories') {
-                this.categories.forEach(c => {
-
-                    this.categoriesInTable.push(c)
-                })
-            } else {
-                this.categories.forEach(c => {
-                    if (c.categoryName == this.selected) {
+                this.categoriesInTable = [];
+                if (this.selected == 'All Categories') {
+                    this.categories.forEach(c => {
 
                         this.categoriesInTable.push(c)
+                    })
+                } else {
+                    this.categories.forEach(c => {
+                        if (c.categoryName == this.selected) {
 
-                    }
-                })
-            }
+                            this.categoriesInTable.push(c)
 
-            this.calculateEachCategoryTotal();
+                        }
+                    })
+                }
+                this.calculateEachCategoryTotal();
+                this.sortData(this.categoriesInTable);
+                this.dataSource = new MatTableDataSource<PeriodicElement>(this.categoriesInTable);
+                if (this.dataSource.data.length > 0) {
+                    this.hasData = true
+                }
+                this.setTablePaginator();
+                setInterval(e => {
+                    this.showProgress = false
+                }, 3000)
+            })
+        } else {
+            console.log('initial data error')
+        }
 
-            this.dataSource = new MatTableDataSource<PeriodicElement>(this.categoriesInTable);
-            if (this.dataSource.data.length > 0) {
-                this.hasData = true
-            }
-
-            this.setTablePaginator();
-            setInterval(e => {
-                this.showProgress = false
-            }, 1500)
-        })
     }
 
     nav(link) {
@@ -131,48 +135,40 @@ export class CategoryComponent implements OnInit {
     }
 
 
-    onSubmit({value, valid}, e: Event) {
+    onSubmit({ value, valid }, e: Event) {
         e.preventDefault();
         this.showProgress = true;
         if (value['radioOptions'] == '2') {
-            this.searchByDates({value, valid}, e);
+            this.searchByDates({ value, valid }, e);
         } else if (value['radioOptions'] == '1') {
-            this.searchByOptions({value, valid}, e)
+            this.searchByOptions({ value, valid }, e)
         } else {
             console.log('radio option no value', value['radioOptions'])
         }
     }
 
-
-    searchByOptions({value, valid}, e: Event) {
+    searchByOptions({ value, valid }, e: Event) {
         this.hasData = false;
         this.categories = [];
         var option = value['timeOption']
-        var rawProduct:Observable<any>;
-            var rawCategory:Observable<any>;
+        var stream;
         switch (option) {
             case 'Today':
-                 rawProduct = this.productService.getProductToday()
-                 rawCategory = this.productService.getCategoryToday()
+                stream = this.productService.getTodayForkStream()
                 break;
             case 'Yesterday':
-                 rawProduct = this.productService.getProductYesterday()
-                 rawCategory = this.productService.getCategoryYesterday()
+                stream = this.productService.getYesterdayForkStream()
                 break;
             case 'This Month':
-                 rawProduct = this.productService.getProductThisMonth()
-                 rawCategory = this.productService.getCategoryThisMonth()
+                stream = this.productService.getThisMonthForkStream()
                 break;
             case 'LastMonth':
-                 rawProduct = this.productService.getProductLastMonth()
-                 rawCategory = this.productService.getCategoryLastMonth()
+                stream = this.productService.getLastMonthForkStream()
                 break;
         }
-        forkJoin([rawProduct, rawCategory]).subscribe(results => {
+        stream.subscribe(results => {
             var productSales = results[0];
             var categoriesSales = results[1];
-            console.log(results, 'results in category report')
-
             categoriesSales.forEach(c => {
                 var category = new Category;
                 category.categoryName = c.catName;
@@ -200,7 +196,7 @@ export class CategoryComponent implements OnInit {
                 })
             }
             this.calculateEachCategoryTotal();
-
+            this.sortData(this.categoriesInTable);
 
             this.dataSource = new MatTableDataSource<PeriodicElement>(this.categoriesInTable);
             if (this.dataSource.data.length > 0) {
@@ -211,7 +207,7 @@ export class CategoryComponent implements OnInit {
             this.setTablePaginator();
             setInterval(e => {
                 this.showProgress = false
-            }, 1500)
+            }, 3000)
         })
     }
 
@@ -220,60 +216,58 @@ export class CategoryComponent implements OnInit {
     }
 
 
-    searchByDates({value, valid}, e: Event) {
+    searchByDates({ value, valid }, e: Event) {
         this.hasData = false;
 
         this.categories = [];
         var dateFrom = this.changeDateFormate(value['dateFrom'])
         var dateTo = this.changeDateFormate(value['dateTo'])
 
-        var rawProductSales = this.productService.getCategoryProductSalesByDate(dateFrom, dateTo);
-        var rawCategoriesSales = this.productService.getCategorySalesByDate(dateFrom, dateTo);
-        forkJoin([rawProductSales, rawCategoriesSales])
+        this.values$ = this.productService.getDateForkStream(dateFrom,dateTo)
             .subscribe(results => {
-                    var productSales = results[0];
-                    var categoriesSales = results[1];
-
-                    categoriesSales.forEach(c => {
-                        var category = new Category;
-                        category.categoryName = c.catName;
-                        category.categoryQuantities = c.qtys;
-                        category.categoryPrices = c.prices;
-                        category.categoryTotals = 0;
-                        category.categoryProdocuts = [];
-                        productSales.forEach(p => {
-                            if (p.catName == c.catName) {
-                                category.categoryProdocuts.push(p);
-                            }
-                        })
-                        this.categories.push(category)
+                var productSales = results[0];
+                var categoriesSales = results[1];
+                categoriesSales.forEach(c => {
+                    var category = new Category;
+                    category.categoryName = c.catName;
+                    category.categoryQuantities = c.qtys;
+                    category.categoryPrices = c.prices;
+                    category.categoryTotals = 0;
+                    category.categoryProdocuts = [];
+                    productSales.forEach(p => {
+                        if (p.catName == c.catName) {
+                            category.categoryProdocuts.push(p);
+                        }
                     })
-                    this.categoriesInTable = [];
-                    if (this.selected == 'All Categories') {
-                        this.categories.forEach(c => {
+                    this.categories.push(category)
+                })
+                this.categoriesInTable = [];
+                if (this.selected == 'All Categories') {
+                    this.categories.forEach(c => {
+
+                        this.categoriesInTable.push(c)
+
+                    })
+                } else {
+                    this.categories.forEach(c => {
+                        if (c.categoryName == this.selected) {
 
                             this.categoriesInTable.push(c)
 
-                        })
-                    } else {
-                        this.categories.forEach(c => {
-                            if (c.categoryName == this.selected) {
-
-                                this.categoriesInTable.push(c)
-
-                            }
-                        })
-                    }
-                    this.calculateEachCategoryTotal();
-                    this.dataSource = new MatTableDataSource<PeriodicElement>(this.categoriesInTable);
-                    if (this.dataSource.data.length > 0) {
-                        this.hasData = true
-                    }
-                    this.setTablePaginator();
-                    setInterval(e => {
-                        this.showProgress = false
-                    }, 1500)
+                        }
+                    })
                 }
+                this.calculateEachCategoryTotal();
+                this.sortData(this.categoriesInTable);
+                this.dataSource = new MatTableDataSource<PeriodicElement>(this.categoriesInTable);
+                if (this.dataSource.data.length > 0) {
+                    this.hasData = true
+                }
+                this.setTablePaginator();
+                setInterval(e => {
+                    this.showProgress = false
+                }, 3000)
+            }
             )
     }
 
@@ -281,17 +275,18 @@ export class CategoryComponent implements OnInit {
     calculateEachCategoryTotal() {
         this.categoriesInTable.forEach(c => {
             c.categoryProdocuts.forEach(p => {
-                    var price = 0;
-                    if (p.taxRate === '001') {
-                        price = parseFloat(parseFloat(p.prices).toFixed(2)) * 1.1;
-                    } else {
-                        price = parseFloat(parseFloat(p.prices).toFixed(2))
-                    }
-                    p.prices = price;
-                    c.categoryTotals += (price * p.qtys);
+                var price = 0;
+                if (p.taxRate === '001') {
+                    price = parseFloat(parseFloat(p.prices).toFixed(2)) * 1.1;
+                } else {
+                    price = parseFloat(parseFloat(p.prices).toFixed(2))
                 }
+                price = parseFloat(price.toFixed(2));
+                p.price = price;
+                c.categoryTotals += (price * p.qtys);
+            }
             )
-            c.categoryTotals = parseFloat(c.categoryTotals.toFixed(2));
+            c.categoryTotals = c.categoryTotals.toFixed(2);
         })
         this.showProgress = false;
         this.showTotal = true;
@@ -301,6 +296,14 @@ export class CategoryComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
     }
 
+
+    sortData(data){
+        data.sort(function(a, b) {
+            var textA = a.categoryName.toUpperCase();
+            var textB = b.categoryName.toUpperCase();
+            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+        });
+    }
 }
 
 

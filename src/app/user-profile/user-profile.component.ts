@@ -52,12 +52,11 @@ export class UserProfileComponent implements OnInit {
 
 
     ngOnInit() {
-        this.userService.loginResult.subscribe(user => {
+        console.log('ng init categoryu')
 
+        this.userService.loginResult.subscribe(user => {
             this.user = user;
             this.user._userId = user._userId;
-            console.log(this.user,'--------result of this.user ')
-            console.log(user,'--------result of incoming user ')
         })
         this.apiUrlService.currentUrl.subscribe(url => this.url = url)
         this.form = this.fb.group({
@@ -69,25 +68,6 @@ export class UserProfileComponent implements OnInit {
         });
 
 
-        // //-------------swiper------------//
-        // this.config = {
-        //     direction: 'horizontal',
-        //     // 开启鼠标的抓手状态
-        //     grabCursor: true,
-        //     // 被选中的滑块居中，默认居左
-        //     centeredSlides: true,
-        //     loop: true,
-        //     slidesPerView: 'auto',
-        //     // loopedSlides: 8,
-        //     autoplay: true,
-        //     speed: 1000,
-        //     // 切换效果为 coverflow
-        //     // effect: 'coverflow',
-        //     // coverflow 配置
-        //     coverflowEffect: coverflowEffectConfig,
-        //     // 前进后退按钮设置
-        //     navigation: navigationConfig
-        // };
     }
 
 

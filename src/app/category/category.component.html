@@ -79,25 +79,25 @@
                             </div>
                         </form>
 
-                        <mat-table class="table table-striped" [dataSource]="dataSource" *ngIf="hasData; else NO_RESULT">
+                        <mat-table class="table table-striped" [dataSource]="dataSource" *ngIf="hasData">
                         
                             <!-- Name Column -->
-                            <ng-container matColumnDef="catName">
-                                <mat-header-cell *matHeaderCellDef> Category</mat-header-cell>
+                            <ng-container matColumnDef="catName" sticky>
+                                <mat-header-cell *matHeaderCellDef  class="price text-warning"> Category</mat-header-cell>
                                 <mat-cell *matCellDef="let element"> {{element.categoryName}}</mat-cell>
                             </ng-container>
 
                             <!-- Weight Column -->
-                            <ng-container matColumnDef="qtys">
-                                <mat-header-cell *matHeaderCellDef> Quantity</mat-header-cell>
+                            <ng-container matColumnDef="qtys" >
+                                <mat-header-cell *matHeaderCellDef class="price text-warning"> Quantity</mat-header-cell>
                                 <mat-cell *matCellDef="let element"> {{element.categoryQuantities}}</mat-cell>
                             </ng-container>
 
 
-                            <ng-container matColumnDef="sum">
-                                <mat-header-cell *matHeaderCellDef> Sum</mat-header-cell>
+                            <ng-container matColumnDef="sum"  stickyEnd>
+                                <mat-header-cell *matHeaderCellDef class="price text-warning"> Sum</mat-header-cell>
                                 <mat-cell *matCellDef="let element">
-                                    {{element.categoryTotals}}
+                                    {{element.categoryTotals | currency}}
                                 </mat-cell>
                             </ng-container>
 
@@ -107,7 +107,7 @@
                             <!--<mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>-->
                         </mat-table>
                         
-                        <ng-template #NO_RESULT><h3>No Result</h3></ng-template>
+                        <h3 *ngIf="!(hasData||showProgress)">No Result</h3>
                         <!--<ng-template #NO_RESULT>-->
                             <!--<mat-table>-->
                                 <!--&lt;!&ndash; Name Column &ndash;&gt;-->

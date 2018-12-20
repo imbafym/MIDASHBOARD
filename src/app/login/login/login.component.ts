@@ -18,6 +18,7 @@ export class LoginComponent implements OnInit {
     form: FormGroup;
     url = '';
     hasUser = false;
+    isValid = true;
     constructor(private router: Router, private userService: UserService, public apiUrlService: ApiUrlService, private fb: FormBuilder) {
     }
 
@@ -43,6 +44,7 @@ export class LoginComponent implements OnInit {
                     console.log('passed');
                 } else {
                     this.apiUrlService.setBoolean(false);
+                    this.isValid =false;
                     console.log('not passed');
 
                 }
