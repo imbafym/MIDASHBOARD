@@ -52,7 +52,7 @@ export class UserProfileComponent implements OnInit {
 
 
     ngOnInit() {
-        console.log('ng init categoryu')
+      
 
         this.userService.loginResult.subscribe(user => {
             this.user = user;
@@ -95,7 +95,7 @@ export class UserProfileComponent implements OnInit {
         this.user._url = this.form.value.url;
         this.user._role = 'user';
         this.user._port = this.form.getRawValue().port;
-        console.log(this.user)
+      
         this.save(this.user._userId,this.user);
 
 

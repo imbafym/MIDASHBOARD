@@ -237,7 +237,7 @@ export class DashboardComponent implements OnInit {
 
 
                 this.cleanEmptySalesData(this.totalSales);
-                // console.log(db);
+            
 
 
             });
@@ -326,9 +326,9 @@ export class DashboardComponent implements OnInit {
         if(total==0.00){
             this.totalLastMonth = 'N/A';
         }else{
-            console.log(this.totalLastMonth,'lastmonth')
+        
             this.totalLastMonth = total.toFixed(2)
-            console.log(this.totalLastMonth,'lastmonth after')
+           
 
         }
     }

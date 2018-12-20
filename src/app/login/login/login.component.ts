@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
     }
 
     onSubmit(e: Event) {
-        console.log(this.form.value.username,this.form.value.password,'login input')
+        // console.log(this.form.value.username,this.form.value.password,'login input')
         this.userService.authenticateUser(this.form.value.username, this.form.value.password);
         this.userService.loginResult.subscribe(result => {
                 this.hasUser =  !!result
@@ -41,11 +41,11 @@ export class LoginComponent implements OnInit {
                     this.apiUrlService.setBoolean(true);
                     this.apiUrlService.setUrl(result._url,result._port)
                     this.router.navigateByUrl('dashboard')
-                    console.log('passed');
+                  
                 } else {
                     this.apiUrlService.setBoolean(false);
                     this.isValid =false;
-                    console.log('not passed');
+                   
 
                 }
             }

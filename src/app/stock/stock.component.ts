@@ -53,11 +53,11 @@ export class StockComponent implements OnInit {
 
 
     updatePrice(type) {
-        console.log(this.form)
+        
         if (type == 'buy') {
             var result = this.stockService.updateBuyPriceByID(this.form.controls['ID'].value, this.form.controls['buyPrice'].value)
             result.subscribe(res=>{
-                console.log(res, 'this is result')
+               
                 if(res['affectedRows'] == 1) {
                     this.currentStock.PRICEBUY = this.form.controls['buyPrice'].value
                     this.isBuyPriceModified = !this.isBuyPriceModified
@@ -78,13 +78,13 @@ export class StockComponent implements OnInit {
             }else{
                 resultPrice = this.form.controls['sellPrice'].value
             }
-            console.log(resultPrice, 'this is 税前价格')
+           
             var result = this.stockService.updateSellPriceByID(this.form.controls['ID'].value, resultPrice)
             result.subscribe(res=>{
                 if(res['affectedRows'] == 1){
                    
                     
-                    console.log((resultPrice*1.1).toFixed(2), '更新完成 这是税后价格')
+           
 
                     this.currentStock.PRICESELL = this.form.controls['sellPrice'].value
                     this.isSellPriceModified = !this.isSellPriceModified
@@ -102,7 +102,7 @@ export class StockComponent implements OnInit {
     }
 
     modifyPrice(type) {
-        console.log(this.form)
+     
         if (type == 'buy') {
             this.isBuyPriceModified = !this.isBuyPriceModified
             if (this.isBuyPriceModified) {
@@ -111,7 +111,7 @@ export class StockComponent implements OnInit {
                 this.form.controls['buyPrice'].disable()
             }
 
-            console.log(this.form.get('buyPrice'))
+      
         }
         if (type == 'sell') {
             this.isSellPriceModified = !this.isSellPriceModified
@@ -121,7 +121,7 @@ export class StockComponent implements OnInit {
             } else {
                 this.form.controls['sellPrice'].disable()
             }
-            console.log(this.form.get('sellPrice'))
+        
 
         }
     }

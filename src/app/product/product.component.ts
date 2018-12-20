@@ -58,14 +58,14 @@ export class ProductComponent implements OnInit {
             this.categoryName = results
         }
         )
-        console.log('ng init product')
+        
 
         this.initShowToday()
     }
 
     ngOnDestroy(){
         this.forkService.unsubscribe();
-        console.log('forkSerice unsubscribed')
+       
     }
 
     initShowToday() {
@@ -74,7 +74,7 @@ export class ProductComponent implements OnInit {
       this.forkService =   this.productService.getTodayForkStream().subscribe(results => {
             var productSales = results[0];
             var categoriesSales = results[1];
-            console.log(productSales,categoriesSales,'content')
+         
             categoriesSales.forEach(c => {
                 var category = new Category;
                 category.categoryName = c.catName;
@@ -214,7 +214,7 @@ export class ProductComponent implements OnInit {
 
            this.productsInTable =  this.dealData(this.productsInTable);
            this.sortData(this.productsInTable);
-           console.log('data in sort ', this.productsInTable)
+          
             this.calculateTotal();
             
             this.dataSource = new MatTableDataSource<PeriodicElement>(this.productsInTable);
@@ -279,7 +279,7 @@ export class ProductComponent implements OnInit {
                 }
                 this.productsInTable =  this.dealData(this.productsInTable);
                 this.sortData(this.productsInTable);
-                console.log('data in sort ', this.productsInTable)
+               
                 this.calculateTotal();
                 this.dataSource = new MatTableDataSource<PeriodicElement>(this.productsInTable);
                 this.setTableSort();

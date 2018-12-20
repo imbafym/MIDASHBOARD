@@ -38,7 +38,7 @@ export class CategoryComponent implements OnInit {
 
 
     ngOnInit() {
-        console.log('ng init categoryu')
+       
         this.selected = 'All Categories';
         this.categoryName = [];
         this.form = this.fb.group({
@@ -48,13 +48,13 @@ export class CategoryComponent implements OnInit {
             timeOption: ['Today']
         },
         );
-        console.log('ng on init in category finished')
+       
         var rawCategories = this.productService.getCategory();
 
         rawCategories.subscribe(results => {
 
             this.categoryName = results
-            console.log('category Name has been updated')
+           
         }
         )
         this.initShowToday()
@@ -202,7 +202,7 @@ export class CategoryComponent implements OnInit {
             if (this.dataSource.data.length > 0) {
                 this.hasData = true
             }
-            console.log(this.dataSource, 'DATA')
+        
 
             this.setTablePaginator();
             setInterval(e => {
