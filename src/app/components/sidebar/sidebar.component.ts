@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from 'app/services/user.service';
 
 declare const $: any;
 declare interface RouteInfo {
@@ -13,7 +14,8 @@ export const ROUTES: RouteInfo[] = [
     { path: '/category', title: 'Category Report',  icon:'library_books', class: '' },
     { path: '/stock', title: 'Stock Movement',  icon:'archive', class: '' },
     { path: '/user-profile', title: 'User Profile',  icon:'person', class: '' },
-    { path: '/login', title: 'Logout',  icon:'exit_to_app', class: '' },
+    { path: '/user-management', title: 'User Management',  icon:'person', class: '' },
+    // { path: '/login', title: 'Logout',  icon:'exit_to_app', class: '' },
 
     // { path: '/table-list', title: 'Table List',  icon:'content_paste', class: '' },
     // { path: '/icons', title: 'Icons',  icon:'bubble_chart', class: '' },
@@ -30,11 +32,23 @@ export const ROUTES: RouteInfo[] = [
 export class SidebarComponent implements OnInit {
   menuItems: any[];
 
-  constructor() { }
+  constructor(private _userService: UserService) { }
 
   ngOnInit() {
-    this.menuItems = ROUTES.filter(menuItem => menuItem);
+    this.menuItems = (this._userService.currentUser._role === "admin") ?
+    ROUTES.filter(menuItem => menuItem.path==='/user-management') : ROUTES.filter(menuItem => menuItem.path!=='/user-management');
+    console.log(this.menuItems)
+    console.log(this._userService.currentUser._role)
+
   }
+
+  listenLogout(){
+    
+      window.location.reload();
+    
+  }
+
+
   isMobileMenu() {
       if ($(window).width() > 991) {
           return false;

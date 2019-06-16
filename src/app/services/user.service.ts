@@ -1,50 +1,64 @@
-import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import {HttpClient} from '@angular/common/http';
-import {UserModel} from '../model/user/userModel';
-import {AngularFireDatabase, AngularFireList} from '@angular/fire/database';
-import {BehaviorSubject, Subject} from 'rxjs/Rx';
-import {map} from 'rxjs/operators';
-import {switchMap} from 'rxjs-compat/operator/switchMap';
-import {ApiUrlService} from './api-url.service';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { HttpClient } from '@angular/common/http';
+import { UserModel } from '../model/user/userModel';
+import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+import { BehaviorSubject, Subject } from 'rxjs/Rx';
+import { map } from 'rxjs/operators';
+import { switchMap } from 'rxjs-compat/operator/switchMap';
+import { ApiUrlService } from './api-url.service';
+import { User } from 'firebase';
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
-
+    currentUser: UserModel;
+    mode: Mode = Mode.add;
     private dbPath = '/users';
     usersRef: AngularFireList<UserModel> = null;
 
-    users: Observable<any[]>;
+    users: Observable<UserModel[]>;
+    userList: UserModel[] = [];
     private resultSource = new BehaviorSubject<any>('');
     loginResult = this.resultSource.asObservable();
 
-    constructor(private http: HttpClient, db: AngularFireDatabase, private apiUrlService : ApiUrlService) {
+    constructor(private http: HttpClient, db: AngularFireDatabase, private apiUrlService: ApiUrlService) {
         this.usersRef = db.list(this.dbPath);
-        // Use snapshotChanges().map() to store the key
-        this.users = this.usersRef.snapshotChanges().pipe(
-            map(changes =>
-                changes.map(c => ({key: c.payload.key, ...c.payload.val()}))
-            )
-        );
 
+       this.initialData();
+       this.users.subscribe(queriedItems => {
+        console.log(queriedItems);
+        this.userList = queriedItems;
+    });
+    }
+
+    initialData(): void{
+        this.users = this.fetchAllUser();
         //query all
-        this.users.subscribe(queriedItems => {
-            console.log(queriedItems);
-        });
+        
     }
 
 
+    fetchAllUser(): Observable<any> {
+        // Use snapshotChanges().map() to store the key
+       return  this.usersRef.snapshotChanges().pipe(
+            map(changes =>
+                changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
+            )
+        );
+    }
+
     authenticateUser(username, password) {
         //query all
-
         this.users.subscribe(queriedItems => {
             queriedItems.map(item => {
 
                 if (item._username == username) {
                     if (item._password == password) {
-                        this.resultSource.next(item);
+                        if(item._active){
+                            this.resultSource.next(item);
+                        }
                     }
                 }
 
@@ -82,4 +96,8 @@ export class UserService {
 
 }
 
-
+export enum Mode{
+    add,
+    edit,
+    delete
+} 

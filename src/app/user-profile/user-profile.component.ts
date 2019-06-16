@@ -9,7 +9,7 @@ import {
 } from 'ngx-swiper-wrapper';
 import {ApiUrlService} from '../services/api-url.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {UserService} from '../services/user.service';
+import {UserService, Mode} from '../services/user.service';
 import {UserModel} from '../model/user/userModel';
 
 
@@ -53,23 +53,42 @@ export class UserProfileComponent implements OnInit {
 
     ngOnInit() {
       
-
-        this.userService.loginResult.subscribe(user => {
-            this.user = user;
-            this.user._userId = user._userId;
-        })
-        this.apiUrlService.currentUrl.subscribe(url => this.url = url)
-        this.form = this.fb.group({
-            username: [{value:this.user._username, disabled: true}],
-            password: [{value:this.user._password, disabled: true}],
-            email:[{value:this.user._email, disabled: true}],
-            url: [this.user._url, Validators.required],
-            port: [{value:this.user._port, disabled: true}]
-        });
+        if(this.userService.currentUser._role==="user"){
+            this.userService.loginResult.subscribe(user => {
+                this.user = user;
+                this.user._userId = user._userId;
+            })
+            this.apiUrlService.currentUrl.subscribe(url => this.url = url)
+            this.form = this.fb.group({
+                username: [{value:this.user._username, disabled: true}],
+                password: [{value:this.user._password, disabled: true}],
+                email:[{value:this.user._email, disabled: true}],
+                url: [this.user._url, Validators.required],
+                port: [{value:this.user._port, disabled: true}]
+            });
+        }else{
+            this.setAdminMode();
+        }
+        
 
 
     }
 
+    setAdminMode() : void{
+        if(this.userService.mode === Mode.add){
+            this.user = new UserModel();
+            this.form = this.fb.group({
+                username: [this.user._username, Validators.required],
+                password: [this.user._password, Validators.required],
+                email:[this.user._email,Validators.required],
+                url: [this.user._url, Validators.required],
+                port: [this.user._port, Validators.required],
+                status: [0, Validators.required],
+                role: [this.user._role, Validators.required]
+
+            });
+        }
+    }
 
     continue(): void {
         this.submitted = false;
@@ -104,7 +123,38 @@ export class UserProfileComponent implements OnInit {
     }
 
 
+    isAdd():boolean{
+        return  this.isAdmin() && (this.userService.mode === Mode.add);
+    }
+    isEdit():boolean{
+        return  this.isAdmin() && (this.userService.mode === Mode.edit);
+    }
 
+    addNewUser(): void{
+        this.user._username = this.form.value.username;
+        this.user._password = this.form.value.password;
+        this.user._email = this.form.value.email;
+        this.user._role = this.form.value.role;
+        this.user._url = this.form.value.url;
+        this.user._port = this.form.value.port;
+        this.user._active = this.form.value.status === 0?true:false;
+        console.log(this.form.value.status);
+        console.log(this.user._active);
+
+        if(this.form.valid){
+            this.userService.createUser(this.user);
+        }
+    }
+
+    updateCurrentUser(): void{
+
+    }
+
+    isAdmin(): boolean{
+        return (this.userService.currentUser._role === 'admin');
+    }
+
+    
 
 }
 

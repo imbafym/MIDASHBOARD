@@ -25,6 +25,7 @@ import {ProductComponent} from '../../product/product.component';
 import {ProductModule} from '../../product/product.module';
 import {CategoryModule} from '../../category/category.module';
 import {StockModule} from '../../stock/stock.module';
+import { AdminPageComponent } from 'app/admin-page/admin-page.component';
 
 @NgModule({
     imports: [
@@ -50,7 +51,7 @@ import {StockModule} from '../../stock/stock.module';
         TableListComponent,
         MapsComponent,
         NotificationsComponent,
-
+        AdminPageComponent
     ]
 })
 

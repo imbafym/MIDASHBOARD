@@ -1,0 +1,55 @@
+<div class="main-content" style="margin-top: 5">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-3">
+        <div class="card card-stats">
+          <div class="card-header card-header-success card-header-icon">
+            <div class="card-icon">
+              <i class="material-icons">group</i>
+            </div>
+            <h3 class="card-title">Users</h3>
+            <p class="card-category">{{users.length}}</p>
+          </div>
+          <div class="card-body">
+            <div class="card-body table-responsive">
+              <table class="table ">
+                <thead class="text-warning ">
+                  <th width="20%" class="left">Email</th>
+                  <th width="15%" class="left">username </th>
+                  <th width="15%" class="left">password </th>
+                  <th width="15%" class="left">url</th>
+                  <th width="5%" class="left">port</th>
+                  <th width="15%" class="left">role</th>
+                  <th width="15%" class="left">status</th>
+                </thead>
+                <tbody class="no-top-border">
+                  <tr [ngClass]="{'selected': selectedIndex === i}" (click)="rowSelected(u,i);" *ngFor="let u of users;let i = index">
+                    <td class="left">{{u._email}}</td>
+                    <td class="left">{{u._username}}</td>
+                    <td class="left">{{u._password}}</td>
+                    <td class="left">{{u._url}}</td>
+                    <td class="left">{{u._port}}</td>
+                    <td class="left">{{u._role}}</td>
+                    <td class="left"> 
+                      <mat-checkbox   [disabled]="u._role==='admin'"
+                       [checked]="u._active" 
+                       (change)="onChangeStatus(u._active,u)">
+                      <div *ngIf="u._active">Actived</div>
+                      <div *ngIf="!u._active">Disabled</div> 
+                      </mat-checkbox>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+
+              <button mat-raised-button (click)="add()" [ngStyle]="{'color':'green'}">Add</button>
+              <button mat-raised-button (click)="delete()" [ngStyle]="{'color':'red'}">Delete</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

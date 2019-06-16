@@ -13,6 +13,7 @@ import {CategoryFormComponent} from '../../form/category-form/category-form.comp
 import {ProductComponent} from '../../product/product.component';
 import {CategoryComponent} from '../../category/category.component';
 import {StockComponent} from '../../stock/stock.component';
+import { AdminPageComponent } from 'app/admin-page/admin-page.component';
 
 
 
@@ -29,6 +30,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'category',   component: CategoryComponent },
     { path: 'stock',   component: StockComponent },
     { path: 'table-list',     component: TableListComponent },
+    { path: 'user-management',     component: AdminPageComponent },
     // { path: 'typography',     component: TypographyComponent },
     // { path: 'icons',          component: IconsComponent },
     { path: 'maps',           component: MapsComponent },

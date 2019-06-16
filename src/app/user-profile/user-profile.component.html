@@ -1,22 +1,24 @@
-
-
-
-<div class="main-content" >
+<div class="main-content">
     <div class="container-fluid">
-        <div class="row" [hidden]="submitted" >
+        <div class="row" [hidden]="submitted">
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header card-header-danger">
                         <h4 class="card-title">User Profile</h4>
-                        <p class="card-category">Edit</p>
+                        <div *ngIf="!isAdd()">
+                            <p class="card-category">Edit</p>
+                        </div>
+                        <div *ngIf="isAdd()">
+                            <p class="card-category">Add</p>
+                        </div>
                     </div>
                     <div class="card-body">
                         <form [formGroup]="form">
                             <div class="row">
                                 <!--<div class="col-md-5">-->
-                                    <!--<mat-form-field class="example-full-width">-->
-                                        <!--<input matInput placeholder="Company (disabled)" disabled>-->
-                                    <!--</mat-form-field>-->
+                                <!--<mat-form-field class="example-full-width">-->
+                                <!--<input matInput placeholder="Company (disabled)" disabled>-->
+                                <!--</mat-form-field>-->
                                 <!--</div>-->
 
                                 <div class="col-md-3">
@@ -26,21 +28,23 @@
                                 </div>
                                 <div class="col-md-4">
                                     <mat-form-field class="example-full-width">
-                                        <input matInput placeholder="Email Address" formControlName="email" type="email">
+                                        <input matInput placeholder="Email Address" formControlName="email"
+                                            type="email">
                                     </mat-form-field>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <mat-form-field class="text example-full-width">
-                                        <input  matInput placeholder="Password" formControlName="password" type="password">
+                                        <input matInput placeholder="Password" formControlName="password"
+                                            type="password">
                                     </mat-form-field>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <mat-form-field class="example-full-width">
-                                        <input matInput placeholder="URL"  formControlName="url" type="text">
+                                        <input matInput placeholder="URL" formControlName="url" type="text">
                                     </mat-form-field>
                                 </div>
                                 <div class="col-md-3">
@@ -49,9 +53,35 @@
                                     </mat-form-field>
                                 </div>
                             </div>
+                            <div class="row" *ngIf="isAdmin()">
+                                <div class="col-md-6">
+                                    <mat-radio-group formControlName="status">
+                                        <mat-radio-button class="example-margin" checked value='0'>Actived</mat-radio-button>
+                                        <mat-radio-button class="example-margin" value='1'>Disabled</mat-radio-button>
+                                    </mat-radio-group>
+                                </div>
+                                <div class="col-md-2">
+                                    <label>Role </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <mat-select formControlName="role">
+                                        <mat-option value="admin">Admin</mat-option>
+                                        <mat-option value="user">User</mat-option>
+                                    </mat-select>
+                                </div>
+                            </div>
 
-                            <button [swal]="['Update URL Success!', 'success']"
-                                    mat-raised-button (click)="update($event)" class="btn btn-danger pull-right">Update
+                            <button *ngIf="!isAdmin()" mat-raised-button
+                                (click)="update($event)" class="btn btn-danger pull-right">Update
+                            </button>
+
+                            <button *ngIf="isAdmin()&&isAdd()" 
+                                mat-raised-button (click)="addNewUser($event)" class="btn btn-danger pull-right">Add
+                            </button>
+
+                            <button *ngIf="isAdmin()&&isEdit()" 
+                                mat-raised-button (click)="updateCurrentUser($event)"
+                                class="btn btn-danger pull-right">Update
                             </button>
 
                             <div class="clearfix"></div>
@@ -63,8 +93,7 @@
         </div>
     </div>
     <!--<div [hidden]="!submitted">-->
-        <!--<h4>You submitted successfully!</h4>-->
-        <!--<button class="btn btn-success" (click)="continue()">Continue</button>-->
+    <!--<h4>You submitted successfully!</h4>-->
+    <!--<button class="btn btn-success" (click)="continue()">Continue</button>-->
     <!--</div>-->
 </div>
-

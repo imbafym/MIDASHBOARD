@@ -16,7 +16,7 @@
                         <!-- <h4 class="green" *ngIf="totalToday != 'N/A'">{{0 | currency}} </h4> -->
 
                         <h4 class="green" *ngIf="totalToday != 'N/A'">{{totalYesterday | currency}}</h4>
-                        <button mat-raised-button (click)="referesh()">Refresh</button>
+                        <button mat-raised-button (click)="refresh()">Refresh</button>
                     </div>
                     <div class="card-body">
                             <!--<button mat-raised-button (click)="showTable = !showTable">Show More</button>-->

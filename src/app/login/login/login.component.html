@@ -15,7 +15,9 @@
             <button mat-raised-button (click)="onSubmit($event)" [disabled]="!form.valid">Login</button>
         </mat-card-content>
         <mat-card-actions class="text-left" *ngIf="!isValid">
-            <p style="color:red" >Password Or Username is not correct </p>
+            <p style="color:red" >Password Or Username is incorrect </p>
+            <p style="color:red" >Or Check your account status </p>
+
         </mat-card-actions>
     </mat-card>
 

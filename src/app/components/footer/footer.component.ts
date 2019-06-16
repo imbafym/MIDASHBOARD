@@ -15,13 +15,17 @@ export class FooterComponent implements OnInit {
   constructor(public databaseService: DatabaseInfoService,public apiUrlService: ApiUrlService) { }
 
   ngOnInit() {
+    
       var databaseInfo = this.databaseService.getDatabase();
-      databaseInfo.subscribe(result=>{
+      if(databaseInfo){
+        databaseInfo.subscribe(result=>{
           console.log(result)
           this.dbName = result.database
           this.host = result.host
       })
       this.apiUrlService.currentUrl.subscribe(url => this.url = url);
+      }
+    
   }
 
 }

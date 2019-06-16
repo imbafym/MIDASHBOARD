@@ -19,6 +19,7 @@ export class AdminLayoutComponent implements OnInit {
   constructor( public location: Location, private router: Router, private activeRoute : ActivatedRoute) {}
 
   ngOnInit() {
+      console.log("admin layout module")
       this.activeRoute.queryParams.subscribe(params => {
           this.currentUsername = params['username'];
       });
