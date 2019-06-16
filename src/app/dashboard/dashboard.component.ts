@@ -2,9 +2,10 @@ import {Component, OnInit} from '@angular/core';
 import * as Chartist from 'chartist';
 import {Router} from '@angular/router';
 import {Sales, SalesService} from '../services/sales.service';
-import {Observable} from 'rxjs/Observable';
+
 import {forkJoin} from 'rxjs/observable/forkJoin';
 import {DatabaseInfoService} from '../services/database-info.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
     selector: 'app-dashboard',
@@ -28,7 +29,11 @@ export class DashboardComponent implements OnInit {
     showTable = false;
     price = 1379;
 
-    constructor(public router: Router, public salesService: SalesService,public databaseService: DatabaseInfoService) {
+    constructor(
+        public router: Router, 
+        public salesService: SalesService,
+        public databaseService: DatabaseInfoService,
+        private spinner: NgxSpinnerService) {
     }
 
     startAnimationForLineChart(chart) {
@@ -234,19 +239,13 @@ export class DashboardComponent implements OnInit {
                 this.calculateTotalYesterday();
                 this.calculateTotalThisMonth();
                 this.calculateTotalLastMonth();
-
-
                 this.cleanEmptySalesData(this.totalSales);
-            
-
-
             });
+    }
 
 
-
-
-
-
+    referesh(): void{
+        this.calculateTotalToday();
     }
 
 
@@ -438,7 +437,7 @@ export class DashboardComponent implements OnInit {
 
 
 
-    //---------------------------轮播图---------------------------
+
 
 
 

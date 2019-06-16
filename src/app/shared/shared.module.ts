@@ -15,6 +15,7 @@ import {TableModule} from '../table/table.module';
 import * as moment from 'moment';
 import {SwiperModule} from 'ngx-swiper-wrapper';
 import {SweetAlert2Module} from '@toverux/ngx-sweetalert2';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 
 @NgModule({
@@ -45,6 +46,7 @@ import {SweetAlert2Module} from '@toverux/ngx-sweetalert2';
       MatTableModule,
       SwiperModule,
       MatSnackBarModule,
+      NgxSpinnerModule,      
       SweetAlert2Module.forRoot({
           buttonsStyling: false,
           customClass: 'modal-content',
@@ -79,6 +81,7 @@ import {SweetAlert2Module} from '@toverux/ngx-sweetalert2';
         MatTableModule,
         SwiperModule,
         SweetAlert2Module,
+        NgxSpinnerModule,      
         MatSnackBarModule
     ],
 

@@ -22,9 +22,9 @@ import {AdminLayoutComponent} from './layouts/admin-layout/admin-layout.componen
 import {UserService} from './services/user.service';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {CategoryService} from './services/category.service';
-import {AdminLayoutModule} from './layouts/admin-layout/admin-layout.module';
+
 import {SharedModule} from './shared/shared.module';
-import {TableModule} from './table/table.module';
+
 import {SalesService} from './services/sales.service';
 import {DateAdapter, MAT_DATE_LOCALE, MatDatepickerModule, MatNativeDateModule} from '@angular/material';
 import {DateFormat} from './utils/date-format';
@@ -33,20 +33,20 @@ import {SWIPER_CONFIG} from 'ngx-swiper-wrapper';
 import {SwiperConfigInterface} from 'ngx-swiper-wrapper';
 import {SwiperModule} from 'ngx-swiper-wrapper';
 import {DatabaseInfoService} from './services/database-info.service';
-import {ProductComponent} from './product/product.component';
+
 import {ApiUrlService} from './services/api-url.service';
-import {LoginComponent} from './login/login/login.component';
+
 import {LoginModule} from './login/login.module';
 
 
 import {AngularFireModule} from 'angularfire2';
 import {AngularFireDatabaseModule} from 'angularfire2/database';
 import {environment} from '../environments/environment';
-import {SweetAlert2Module} from '@toverux/ngx-sweetalert2';
+
 import {ErrorHandler} from './services/httpInterceptor/error_handler';
 import {RequestInterceptor} from './services/httpInterceptor/http_interceptor';
-import { CategoryComponent } from './category/category.component';
 
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     direction: 'horizontal',
@@ -66,9 +66,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
         SwiperModule,
         SharedModule,
         LoginModule,
-        AngularFireModule.initializeApp(environment.firebase),
+        AngularFireModule.initializeApp(environment.firebase1),
         AngularFireDatabaseModule,
-
+        NgxSpinnerModule
 // AgmCoreModule.forRoot({
 //     apiKey: 'YOUR_GOOGLE_MAPS_API_KEY'
 // })

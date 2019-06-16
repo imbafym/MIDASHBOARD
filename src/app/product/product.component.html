@@ -77,7 +77,7 @@
                         </div>
                         </form>
 
-                        <mat-table class="table table-striped"  [dataSource]="dataSource" matSort >
+                        <mat-table *ngIf="hasData" class="table table-striped"  [dataSource]="dataSource" matSort >
 
                             <ng-container  matColumnDef="productName" sticky>
                                 <mat-header-cell *matHeaderCellDef class="price text-warning"> Product</mat-header-cell>
@@ -114,8 +114,8 @@
                             <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
                         </mat-table>
 
-                        <mat-paginator [pageSizeOptions]="[50,100,500,1000]" showFirstLastButtons></mat-paginator>
-                        
+                        <mat-paginator *ngIf="hasData" [pageSizeOptions]="[50,100,500,1000]" showFirstLastButtons></mat-paginator>
+                        <h3 *ngIf="!(hasData||showProgress)">No Result</h3>
                     </div>
 
                 </div>

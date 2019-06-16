@@ -5,6 +5,7 @@ import { ApiUrlService } from './api-url.service';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { of, throwError, forkJoin, } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { Tax } from 'app/model/tax/tax';
 @Injectable()
 export class ProductService {
 
@@ -166,6 +167,11 @@ export class ProductService {
 
         return this.http.get(this.url + `/api/categories/queryCategoryLastMonth`, this.httpOptions).share();
     }
+
+    getTaxes(): Observable<any>{
+        return this.http.get(this.url + `/api/categories/queryTaxes`, this.httpOptions).share();
+    }
+
 
 }
 

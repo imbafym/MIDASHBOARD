@@ -9,7 +9,7 @@ import * as moment from 'moment';
 import { Observable } from 'rxjs/Rx';
 import { delay, catchError } from 'rxjs/operators';
 import { of, throwError } from 'rxjs';
-
+import { NgxSpinnerService } from 'ngx-spinner';
 @Component({
     selector: 'app-category',
     templateUrl: './category.component.html',
@@ -24,7 +24,7 @@ export class CategoryComponent implements OnInit {
     hasData = false;
     showTotal = false;
     showProgress = false;
-    dataSource: any;
+    dataSource:MatTableDataSource<PeriodicElement>;
     values$: any;
 
     time = ['Today', 'Yesterday', 'This Month', 'LastMonth'];
@@ -32,7 +32,9 @@ export class CategoryComponent implements OnInit {
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
 
-    constructor(private router: Router, private dateAdapter: DateAdapter<Date>, public productService: ProductService, private fb: FormBuilder) {
+    constructor(private router: Router, private dateAdapter: DateAdapter<Date>, 
+        public productService: ProductService, private fb: FormBuilder,
+        private spinner: NgxSpinnerService) {
         dateAdapter.setLocale('nl');
     }
 
@@ -52,16 +54,15 @@ export class CategoryComponent implements OnInit {
         var rawCategories = this.productService.getCategory();
 
         rawCategories.subscribe(results => {
-
             this.categoryName = results
-           
-        }
+         }
         )
         this.initShowToday()
     }
 
 
     initShowToday() {
+        this.spinner.show();
         this.hasData = false;
         var rawProduct = this.productService.getProductToday()
 
@@ -88,7 +89,6 @@ export class CategoryComponent implements OnInit {
                 this.categoriesInTable = [];
                 if (this.selected == 'All Categories') {
                     this.categories.forEach(c => {
-
                         this.categoriesInTable.push(c)
                     })
                 } else {
@@ -109,7 +109,7 @@ export class CategoryComponent implements OnInit {
                 this.setTablePaginator();
                 setInterval(e => {
                     this.showProgress = false
-                }, 3000)
+                }, 1500)
             })
         } else {
             console.log('initial data error')
@@ -211,10 +211,14 @@ export class CategoryComponent implements OnInit {
         })
     }
 
-    getTotalQuantities() {
-        return this.dataSource.map(t => t.qtys).reduce((acc, value) => acc + value, 0);
-    }
+    // getTotalQuantities() {
+    //     return this.dataSource.map(t => t.qtys).reduce((acc, value) => acc + value, 0);
+    // }
 
+
+    getTotal(): number{
+        return this.categoriesInTable.map(t => t.categoryTotals).reduce((acc,value)=> (acc*100 + value*100)/100, 0);
+    }
 
     searchByDates({ value, valid }, e: Event) {
         this.hasData = false;
