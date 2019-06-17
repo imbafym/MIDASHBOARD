@@ -11,6 +11,7 @@ import {ApiUrlService} from '../services/api-url.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UserService, Mode} from '../services/user.service';
 import {UserModel} from '../model/user/userModel';
+import { Router } from '@angular/router';
 
 
 // 3D 切换效果参数设置
@@ -41,7 +42,7 @@ export class UserProfileComponent implements OnInit {
     form: FormGroup;
     submitted = false;
     user: UserModel = new UserModel();
-    constructor(private userService: UserService,public apiUrlService: ApiUrlService, private fb: FormBuilder) {
+    constructor(private router: Router,private userService: UserService,public apiUrlService: ApiUrlService, private fb: FormBuilder) {
 
     }
 
@@ -70,8 +71,6 @@ export class UserProfileComponent implements OnInit {
             this.setAdminMode();
         }
         
-
-
     }
 
     setAdminMode() : void{
@@ -83,12 +82,25 @@ export class UserProfileComponent implements OnInit {
                 email:[this.user._email,Validators.required],
                 url: [this.user._url, Validators.required],
                 port: [this.user._port, Validators.required],
-                status: [0, Validators.required],
+                status: ['active', Validators.required],
                 role: [this.user._role, Validators.required]
-
             });
+        }else if(this.userService.mode === Mode.edit){
+            this.user = this.userService.selectedUser
+            this.form = this.fb.group({
+                username: [this.user._username, Validators.required],
+                password: [this.user._password, Validators.required],
+                email:[{value:this.user._email, disabled: true}],
+                url: [this.user._url, Validators.required],
+                port: [this.user._port, Validators.required],
+                status: [this.user._active?'active':'disabled', Validators.required],
+                role: [this.user._role, Validators.required]
+            });
+            console.log(this.form.value)
         }
+            
     }
+    
 
     continue(): void {
         this.submitted = false;
@@ -130,14 +142,14 @@ export class UserProfileComponent implements OnInit {
         return  this.isAdmin() && (this.userService.mode === Mode.edit);
     }
 
-    addNewUser(): void{
+    addNewUser(e): void{
         this.user._username = this.form.value.username;
         this.user._password = this.form.value.password;
         this.user._email = this.form.value.email;
         this.user._role = this.form.value.role;
         this.user._url = this.form.value.url;
         this.user._port = this.form.value.port;
-        this.user._active = this.form.value.status === 0?true:false;
+        this.user._active = this.form.value.status === 'active'?true:false;
         console.log(this.form.value.status);
         console.log(this.user._active);
 
@@ -146,8 +158,24 @@ export class UserProfileComponent implements OnInit {
         }
     }
 
-    updateCurrentUser(): void{
+    updateCurrentUser(e): void{
+        e.preventDefault();
 
+        let u = new UserModel();
+        u = this.userService.selectedUser
+
+        u._username = this.form.value.username;
+        u._password = this.form.value.password;
+        u._email = this.form.getRawValue().email;
+        u._role = this.form.value.role;
+        u._url = this.form.value.url;
+        u._port = this.form.value.port;
+        u._active = this.form.value.status === 'active'?true:false;
+        console.log(u)
+        console.log(this.form.value)
+        this.userService.updateUser(u.key,u);
+
+        // this.router.navigateByUrl("/user-management");
     }
 
     isAdmin(): boolean{

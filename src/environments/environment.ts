@@ -5,6 +5,7 @@
 
 export const environment = {
   production: false,
+    // Guy's firebase DB
     firebase: {
         apiKey: 'AIzaSyBS6gHkzduvwl10H9-JF67Hk3g7QqoAIag',
         authDomain: 'midash-57f32.firebaseapp.com',
@@ -13,6 +14,7 @@ export const environment = {
         storageBucket: 'midash-57f32.appspot.com',
         messagingSenderId: '794657753308'
     },
+    // frank's firebase DB
     firebase1: {
         apiKey: 'AIzaSyBNs0jC1Jj3QMBF5CZmBWX2fOPK4dzztnw',
         authDomain: 'mipos-online-report-system.firebaseapp.com',

@@ -67,7 +67,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
         SwiperModule,
         SharedModule,
         LoginModule,
-        AngularFireModule.initializeApp(environment.firebase1),
+        AngularFireModule.initializeApp(environment.firebase),
         AngularFireDatabaseModule,
         NgxSpinnerModule
 // AgmCoreModule.forRoot({

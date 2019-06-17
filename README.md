@@ -9,6 +9,9 @@ Then
 
 #user has the normal dashboard
 
+change the configuration in app.module.ts
+`AngularFireModule.initializeApp(environment.firebase)`
+Also check the firebase config in the enviroments
 
 firebase DB structure
 `

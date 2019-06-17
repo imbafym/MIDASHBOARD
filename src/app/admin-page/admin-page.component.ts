@@ -35,6 +35,7 @@ export class AdminPageComponent implements OnInit,AfterViewChecked{
   rowSelected(user: UserModel,i : number): void{
     this.selectedIndex = i;
     this.selectedUser = user;
+    this._userService.selectedUser = user;
     console.log(this.selectedUser.key);
   }
 
@@ -48,11 +49,18 @@ export class AdminPageComponent implements OnInit,AfterViewChecked{
   }
 
   add(): void{
-    console.log(' i am add')
     this._userService.mode = Mode.add;
     this.router.navigateByUrl('/user-profile');
   }
 
+  edit(): void{
+    if(!this._userService.selectedUser) {
+      alert('please select one user!');
+      return;
+    }
+    this._userService.mode = Mode.edit;
+    this.router.navigateByUrl('/user-profile');
+  }
   
 
   delete():void{

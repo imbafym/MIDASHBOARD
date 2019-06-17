@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import * as Chartist from 'chartist';
-import {Router} from '@angular/router';
-import {Sales, SalesService} from '../services/sales.service';
+import { Router } from '@angular/router';
+import { Sales, SalesService } from '../services/sales.service';
 
-import {forkJoin} from 'rxjs/observable/forkJoin';
-import {DatabaseInfoService} from '../services/database-info.service';
+import { forkJoin } from 'rxjs/observable/forkJoin';
+import { DatabaseInfoService } from '../services/database-info.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { UserService } from 'app/services/user.service';
 
@@ -28,10 +28,9 @@ export class DashboardComponent implements OnInit {
     totalThisMonth = '';
     totalLastMonth = '';
     showTable = false;
-    price = 1379;
 
     constructor(
-        public router: Router, 
+        public router: Router,
         public salesService: SalesService,
         public databaseService: DatabaseInfoService,
         private spinner: NgxSpinnerService,
@@ -102,45 +101,45 @@ export class DashboardComponent implements OnInit {
         this.toggleTable();
 
         /*-----------------------------Dashboard Table Data-----------------------------------------*/
+        this.populateData();
+    }
 
+
+    populateData(): void {
         var rawTodayData = this.salesService.getTodaySales();
         var rawPayMethod = this.salesService.getPayMethod();
         var rawYesterdayData = this.salesService.getYesterdaySales();
         var rawThisMonthData = this.salesService.getThisMonthSales();
         var rawLastMonthData = this.salesService.getLastMonthSales();
-        if(this._userService.currentUser._role !== "admin"){
+        if (this._userService.currentUser._role !== "admin") {
             var databaseInfo = this.databaseService.getDatabase();
         }
 
-        forkJoin([rawTodayData, rawPayMethod,rawYesterdayData,rawThisMonthData,rawLastMonthData,databaseInfo])
+        forkJoin([rawTodayData, rawPayMethod, rawYesterdayData, rawThisMonthData, rawLastMonthData, databaseInfo])
             .subscribe(results => {
-               var todaySales = results[0];
-               var allPayMethods = results[1];
-               var yesterdaySales = results[2];
-               var thisMonthSales = results[3];
-               var lastMonthSales = results[4];
-               var db = results[5];
+                var todaySales = results[0];
+                var allPayMethods = results[1];
+                var yesterdaySales = results[2];
+                var thisMonthSales = results[3];
+                var lastMonthSales = results[4];
+                var db = results[5];
 
                 if (allPayMethods.length > 0) {
                     allPayMethods.forEach(p => {
-                            var newSales = new Sales();
-                            newSales.paymethod= p['paymethod'];
-                            newSales.totalToday = 'N/A';
-                            newSales.totalYesterday = 'N/A';
-                            newSales.totalThisMonth = 'N/A';
-                            newSales.totalLastMonth = 'N/A';
-                            this.totalSales.push(newSales);
-                        }
+                        var newSales = new Sales();
+                        newSales.paymethod = p['paymethod'];
+                        newSales.totalToday = 'N/A';
+                        newSales.totalYesterday = 'N/A';
+                        newSales.totalThisMonth = 'N/A';
+                        newSales.totalLastMonth = 'N/A';
+                        this.totalSales.push(newSales);
+                    }
                     )
                 }
-
-
-
                 this.setTodaySales(todaySales);
                 this.setYesterdaySales(yesterdaySales);
                 this.setThisMonthSales(thisMonthSales);
                 this.setLastMonthSales(lastMonthSales);
-
                 this.calculateTotalToday();
                 this.calculateTotalYesterday();
                 this.calculateTotalThisMonth();
@@ -149,15 +148,30 @@ export class DashboardComponent implements OnInit {
             });
     }
 
+    initData(): void {
+        this.show = true;
+        this.todaySales = [];
+        this.yesterdaySales = [];
+        this.thisMonthSales = [];
+        this.lastMonthSales = [];
+        this.todayDate = '';
+        this.totalSales = [];
 
-    refresh(): void{
-        this.calculateTotalToday();
+        this.totalToday = '';
+        this.totalYesterday = '';
+        this.totalThisMonth = '';
+        this.totalLastMonth = '';
+        this.showTable = false;
+    }
+    refresh(): void {
+        this.initData();
+        this.populateData();
     }
 
 
-    cleanEmptySalesData(totalSales:Array<any>){
-       let result = totalSales.filter(
-           sales=> sales.totalToday != 'N/A' || sales.totalYesterday!='N/A' || sales.totalThisMonth!='N/A' || sales.totalLastMonth!='N/A'
+    cleanEmptySalesData(totalSales: Array<any>) {
+        let result = totalSales.filter(
+            sales => sales.totalToday != 'N/A' || sales.totalYesterday != 'N/A' || sales.totalThisMonth != 'N/A' || sales.totalLastMonth != 'N/A'
         )
         this.totalSales = result;
     }
@@ -168,106 +182,106 @@ export class DashboardComponent implements OnInit {
 
     }
 
-    
 
-    toggleTable(){
+
+    toggleTable() {
         if (window.screen.width === 360) { // 768px portrait
             this.showTable = false;
         }
     }
 
-    calculateTotalToday(){
+    calculateTotalToday() {
         var total = 0.00;
-        this.totalSales.forEach(sales=>{
-            if(sales.totalToday != 'N/A'){
+        this.totalSales.forEach(sales => {
+            if (sales.totalToday != 'N/A') {
                 total += parseFloat(sales.totalToday)
             }
         })
-        if(total==0.00){
+        if (total == 0.00) {
             this.totalToday = 'N/A';
-        }else{
+        } else {
             this.totalToday = total.toFixed(2);
         }
 
     }
 
-    calculateTotalYesterday(){
+    calculateTotalYesterday() {
         var total = 0.00;
-        this.totalSales.forEach(sales=>{
-            if(sales.totalYesterday != 'N/A'){
+        this.totalSales.forEach(sales => {
+            if (sales.totalYesterday != 'N/A') {
                 total += parseFloat(sales.totalYesterday)
             }
         })
-        if(total==0.00){
+        if (total == 0.00) {
             this.totalYesterday = 'N/A';
-        }else{
+        } else {
             this.totalYesterday = total.toFixed(2);
         }
 
     }
-    calculateTotalThisMonth(){
+    calculateTotalThisMonth() {
         var total = 0.00;
-        this.totalSales.forEach(sales =>{
-            if(sales.totalThisMonth != 'N/A'){
+        this.totalSales.forEach(sales => {
+            if (sales.totalThisMonth != 'N/A') {
                 total += parseFloat(sales.totalThisMonth)
             }
         })
-        if(total==0.00){
+        if (total == 0.00) {
             this.totalThisMonth = 'N/A';
-        }else{
+        } else {
             this.totalThisMonth = total.toFixed(2);
         }
 
     }
-    calculateTotalLastMonth(){
+    calculateTotalLastMonth() {
         var total = 0.00;
-        this.totalSales.forEach(sales=>{
-            if(sales.totalLastMonth != 'N/A'){
+        this.totalSales.forEach(sales => {
+            if (sales.totalLastMonth != 'N/A') {
                 total += parseFloat(sales.totalLastMonth)
             }
         })
-        if(total==0.00){
+        if (total == 0.00) {
             this.totalLastMonth = 'N/A';
-        }else{
-        
+        } else {
+
             this.totalLastMonth = total.toFixed(2)
-           
+
 
         }
     }
-    setTodaySales(todaySales){
+    setTodaySales(todaySales) {
         if (todaySales.length > 0) {
             todaySales.forEach(d => {
-                    var newSales = new Sales();
-                    newSales.paymethod = d['paymethod'];
-                    newSales.totalToday = d['total'];
-                    this.todaySales.push(newSales);
-                }
+                var newSales = new Sales();
+                newSales.paymethod = d['paymethod'];
+                newSales.totalToday = d['total'];
+                this.todaySales.push(newSales);
+            }
             )
         }
 
-        this.totalSales.forEach(i=>{
-            this.todaySales.forEach(j=>{
-                if(i['paymethod'] == j['paymethod']){
+        this.totalSales.forEach(i => {
+            this.todaySales.forEach(j => {
+                if (i['paymethod'] == j['paymethod']) {
                     i['totalToday'] = j['totalToday']
                 }
             })
         })
     }
 
-    setYesterdaySales(yesterdaySales){
+    setYesterdaySales(yesterdaySales) {
         if (yesterdaySales.length > 0) {
             yesterdaySales.forEach(d => {
-                    var newSales = new Sales();
-                    newSales.paymethod = d['paymethod'];
-                    newSales.totalYesterday = d['total'];
-                    this.yesterdaySales.push(newSales);
-                }
+                var newSales = new Sales();
+                newSales.paymethod = d['paymethod'];
+                newSales.totalYesterday = d['total'];
+                this.yesterdaySales.push(newSales);
+            }
             )
         }
-        this.totalSales.forEach(i=>{
-            this.yesterdaySales.forEach(j=>{
-                if(i['paymethod'] == j['paymethod']){
+        this.totalSales.forEach(i => {
+            this.yesterdaySales.forEach(j => {
+                if (i['paymethod'] == j['paymethod']) {
                     i['totalYesterday'] = j['totalYesterday']
                 }
             })
@@ -275,39 +289,39 @@ export class DashboardComponent implements OnInit {
 
 
     }
-    setThisMonthSales(thisMonthSales){
+    setThisMonthSales(thisMonthSales) {
         if (thisMonthSales.length > 0) {
             thisMonthSales.forEach(d => {
-                    var newSales = new Sales();
-                    newSales.paymethod = d['paymethod'];
-                    newSales.totalThisMonth = d['total'];
-                    this.thisMonthSales.push(newSales);
-                }
+                var newSales = new Sales();
+                newSales.paymethod = d['paymethod'];
+                newSales.totalThisMonth = d['total'];
+                this.thisMonthSales.push(newSales);
+            }
             )
         }
-        this.totalSales.forEach(i=>{
-            this.thisMonthSales.forEach(j=>{
-                if(i['paymethod'] == j['paymethod']){
+        this.totalSales.forEach(i => {
+            this.thisMonthSales.forEach(j => {
+                if (i['paymethod'] == j['paymethod']) {
                     i['totalThisMonth'] = j['totalThisMonth']
                 }
             })
         })
     }
-    setLastMonthSales(lastMonthSales){
+    setLastMonthSales(lastMonthSales) {
         if (lastMonthSales.length > 0) {
             lastMonthSales.forEach(d => {
-                    var newSales = new Sales();
-                    newSales.paymethod = d['paymethod'];
-                    newSales.totalLastMonth = d['total'];
-                    this.lastMonthSales.push(newSales);
-                }
+                var newSales = new Sales();
+                newSales.paymethod = d['paymethod'];
+                newSales.totalLastMonth = d['total'];
+                this.lastMonthSales.push(newSales);
+            }
             )
         }
 
 
-        this.totalSales.forEach(i=>{
-            this.lastMonthSales.forEach(j=>{
-                if(i['paymethod'] == j['paymethod']){
+        this.totalSales.forEach(i => {
+            this.lastMonthSales.forEach(j => {
+                if (i['paymethod'] == j['paymethod']) {
                     i['totalLastMonth'] = j['totalLastMonth']
                 }
             })

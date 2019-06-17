@@ -14,6 +14,7 @@ import { User } from 'firebase';
 })
 export class UserService {
     currentUser: UserModel;
+    selectedUser: UserModel;
     mode: Mode = Mode.add;
     private dbPath = '/users';
     usersRef: AngularFireList<UserModel> = null;

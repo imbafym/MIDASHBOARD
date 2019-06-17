@@ -38,16 +38,18 @@ export class LoginComponent implements OnInit {
         this.userService.authenticateUser(this.form.value.username, this.form.value.password);
         this.userService.loginResult.subscribe(result => {
                 this.hasUser =  !!result
+
                 if (this.hasUser && result._role === "user") {
                     this.userService.currentUser = result;
                     this.apiUrlService.setBoolean(true);
                     this.apiUrlService.setUrl(result._url,result._port)
                     this.router.navigateByUrl('dashboard')
                   
-                } else if (this.hasUser && result._role === "admin"){
+                } else 
+                if (this.hasUser && result._role === "admin"){
                     this.userService.currentUser = result;
                     this.apiUrlService.setBoolean(true);
-                    // this.apiUrlService.setUrl(result._url,result._port)
+                    this.apiUrlService.setUrl(result._url,result._port)
                     this.router.navigateByUrl('user-management')
                 }
                 else{

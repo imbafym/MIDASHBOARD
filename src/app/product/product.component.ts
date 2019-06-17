@@ -319,6 +319,7 @@ export class ProductComponent implements OnInit {
     calculateTotal() {
         this.totalPrice = 0;
         this.totalQty = 0;
+        if(this.productsInTable.length === 0) return;
         this.productsInTable.forEach(p => {
             var price = 0;
             var tax = this.taxes.filter(r => r.taxCategory === p.taxRate);
