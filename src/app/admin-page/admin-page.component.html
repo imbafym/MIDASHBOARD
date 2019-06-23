@@ -14,28 +14,28 @@
             <div class="card-body table-responsive">
               <table class="table ">
                 <thead class="text-warning ">
-                  <th width="20%" class="left">Email</th>
-                  <th width="15%" class="left">username </th>
-                  <th width="15%" class="left">password </th>
-                  <th width="15%" class="left">url</th>
-                  <th width="5%" class="left">port</th>
-                  <th width="15%" class="left">role</th>
-                  <th width="15%" class="left">status</th>
+                  <th width="20%" class="left th">Email</th>
+                  <th width="15%" class="left th">username</th>
+                  <th width="15%" class="left th">password</th>
+                  <th width="15%" class="left th">url</th>
+                  <th width="5%"  class="left th">port</th>
+                  <th width="15%" class="left th">role</th>
+                  <th width="15%" class="left th">status</th>
                 </thead>
                 <tbody class="no-top-border">
-                  <tr [ngClass]="{'selected': selectedIndex === i}" (click)="rowSelected(u,i);" *ngFor="let u of users;let i = index">
+                  <tr [ngClass]="{'selected': selectedIndex === i}" (click)="rowSelected(u,i);"
+                    *ngFor="let u of users;let i = index">
                     <td class="left">{{u._email}}</td>
                     <td class="left">{{u._username}}</td>
                     <td class="left">{{u._password}}</td>
                     <td class="left">{{u._url}}</td>
                     <td class="left">{{u._port}}</td>
                     <td class="left">{{u._role}}</td>
-                    <td class="left"> 
-                      <mat-checkbox   [disabled]="u._role==='admin'"
-                       [checked]="u._active" 
-                       (change)="onChangeStatus(u._active,u)">
-                      <div *ngIf="u._active">Actived</div>
-                      <div *ngIf="!u._active">Disabled</div> 
+                    <td class="left">
+                      <mat-checkbox [disabled]="u._role==='admin'" [checked]="u._active"
+                        (change)="onChangeStatus(u._active,u)">
+                        <div *ngIf="u._active">Actived</div>
+                        <div *ngIf="!u._active">Disabled</div>
                       </mat-checkbox>
                     </td>
                   </tr>
@@ -44,7 +44,7 @@
 
 
               <button mat-raised-button (click)="add()" color="primary">Add</button>
-              <button mat-raised-button (click)="edit()" color="accent">Edit</button>
+              <button mat-raised-button (click)="edit()" class="greenBtn">Edit</button>
               <button mat-raised-button (click)="delete()" color="warn">Delete</button>
             </div>
 

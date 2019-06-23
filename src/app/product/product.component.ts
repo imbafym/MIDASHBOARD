@@ -26,11 +26,11 @@ export class ProductComponent implements OnInit {
     showProgress = false;
     hasData: boolean = false;
     dataSource: any;
-
+    dataSourceNoPirce: any;
 
     time = ['Today', 'Yesterday', 'This Month', 'Last Month'];
     //    displayedColumns: string[] = ['productName', 'qtys', 'prices', 'sum', 'catName'];
-    displayedColumns: string[] = ['productName', 'qtys', 'prices', 'sum'];
+    displayedColumns: string[] = ['productName', 'qtys', 'sum'];
     forkService: any
     taxes: Tax[] = [];
 
@@ -291,6 +291,7 @@ export class ProductComponent implements OnInit {
                     })
                 }
                 this.productsInTable = this.dealData(this.productsInTable);
+                console.log(this.productsInTable)
                 this.sortData(this.productsInTable);
 
                 this.calculateTotal();
@@ -325,6 +326,7 @@ export class ProductComponent implements OnInit {
             var tax = this.taxes.filter(r => r.taxCategory === p.taxRate);
             price = parseFloat(parseFloat(p.prices).toFixed(2)) * (1+tax[0].rate);
             p.prices = price.toFixed(2);
+
             this.totalPrice += (p.prices * p.qtys);
             this.totalQty += p.qtys;
         })
@@ -332,7 +334,11 @@ export class ProductComponent implements OnInit {
         this.showTotal = true;
     }
 
+    calPriceWithTax(price : string,qty: number): number{
 
+
+         return parseFloat(parseFloat(price).toFixed(2))*qty;
+    }
 
 
     setTablePaginator() {
@@ -364,6 +370,12 @@ export class ProductComponent implements OnInit {
         })
         return listArr;
     }
+
+    getTotal(): number{
+        return this.productsInTable.map(t => t.prices*t.qtys).reduce((acc,value)=> (acc*100 + value*100)/100, 0);
+    }
+
+
 
 
 }
