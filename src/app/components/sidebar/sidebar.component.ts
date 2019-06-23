@@ -15,7 +15,7 @@ export const ROUTES: RouteInfo[] = [
     { path: '/stock', title: 'Stock Movement',  icon:'archive', class: '' },
     { path: '/user-profile', title: 'User Profile',  icon:'person', class: '' },
     { path: '/user-management', title: 'User Management',  icon:'person', class: '' },
-    // { path: '/login', title: 'Logout',  icon:'exit_to_app', class: '' },
+    { path: '/login', title: 'Logout',  icon:'exit_to_app', class: '' },
 
     // { path: '/table-list', title: 'Table List',  icon:'content_paste', class: '' },
     // { path: '/icons', title: 'Icons',  icon:'bubble_chart', class: '' },
@@ -36,17 +36,13 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit() {
     this.menuItems = (this._userService.currentUser._role === "admin") ?
-    ROUTES.filter(menuItem => menuItem.path==='/user-management') : ROUTES.filter(menuItem => menuItem.path!=='/user-management');
-    console.log(this.menuItems)
-    console.log(this._userService.currentUser._role)
+    ROUTES.filter(menuItem => menuItem.path==='/user-management'||menuItem.path==='/login' ) : ROUTES.filter(menuItem => menuItem.path!=='/user-management');
 
   }
 
-  listenLogout(){
-    
-      window.location.reload();
-    
-  }
+  // listenLogout(){
+  //     window.location.reload();
+  // }
 
 
   isMobileMenu() {
