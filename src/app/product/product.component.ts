@@ -334,6 +334,8 @@ export class ProductComponent implements OnInit {
         this.showTotal = true;
     }
 
+    
+
     calPriceWithTax(price : string,qty: number): number{
 
 
@@ -372,7 +374,7 @@ export class ProductComponent implements OnInit {
     }
 
     getTotal(): number{
-        return this.productsInTable.map(t => t.prices*t.qtys).reduce((acc,value)=> (acc*100 + value*100)/100, 0);
+        return this.productsInTable.map(t => t.prices*t.qtys).reduce((acc,value)=> (acc*1000 + value*1000)/1000, 0);
     }
 
 

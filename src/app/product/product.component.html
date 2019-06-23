@@ -105,8 +105,11 @@
 
                             <ng-container matColumnDef="sum" stickyEnd>
                                 <mat-header-cell *matHeaderCellDef class="price text-warning"> Total</mat-header-cell>
-                                <mat-cell *matCellDef="let element"> {{calPriceWithTax(element.prices,element.qtys) | currency}}</mat-cell>
-                                <mat-footer-cell *matFooterCellDef class="price"> {{totalPrice | currency}} </mat-footer-cell>
+                                <mat-cell *matCellDef="let element"> {{calPriceWithTax(element.prices,element.qtys) | currency}}</mat-cell> 
+                               <!-- <mat-footer-cell *matFooterCellDef class="price"> {{totalPrice | currency}} </mat-footer-cell> -->
+                               <!-- <mat-cell *matCellDef="let element"> {{element.totals | currency}}</mat-cell> -->
+                               <mat-footer-cell *matFooterCellDef class="price"> {{getTotal() | currency}} </mat-footer-cell> 
+                               
                             </ng-container>
 
                             <mat-header-row class="text-warning" *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
