@@ -48,6 +48,7 @@ import {RequestInterceptor} from './services/httpInterceptor/http_interceptor';
 
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { AdminPageComponent } from './admin-page/admin-page.component';
+import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     direction: 'horizontal',
@@ -87,6 +88,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
             DatabaseInfoService,
             ApiUrlService,
             ErrorHandler,
+            {provide: LocationStrategy, useClass: HashLocationStrategy},
             {provide: DateAdapter, useClass: DateFormat},
             {
                 provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG

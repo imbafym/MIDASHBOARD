@@ -26,10 +26,8 @@ export class UserService {
 
     constructor(private http: HttpClient, db: AngularFireDatabase, private apiUrlService: ApiUrlService) {
         this.usersRef = db.list(this.dbPath);
-
        this.initialData();
        this.users.subscribe(queriedItems => {
-        console.log(queriedItems);
         this.userList = queriedItems;
     });
     }
@@ -40,6 +38,11 @@ export class UserService {
         
     }
 
+    clean(){
+        this.users = new Observable<UserModel[]>();
+        this.userList = [];
+        console.log('this is clean')
+    }
 
     fetchAllUser(): Observable<any> {
         // Use snapshotChanges().map() to store the key
