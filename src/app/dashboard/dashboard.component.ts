@@ -111,18 +111,18 @@ export class DashboardComponent implements OnInit {
         var rawYesterdayData = this.salesService.getYesterdaySales();
         var rawThisMonthData = this.salesService.getThisMonthSales();
         var rawLastMonthData = this.salesService.getLastMonthSales();
-        if (this._userService.currentUser._role !== "admin") {
-            var databaseInfo = this.databaseService.getDatabase();
-        }
+        // if (this._userService.currentUser._role !== "admin") {
+        //     var databaseInfo = this.databaseService.getDatabase();
+        // }
 
-        forkJoin([rawTodayData, rawPayMethod, rawYesterdayData, rawThisMonthData, rawLastMonthData, databaseInfo])
+        forkJoin([rawTodayData, rawPayMethod, rawYesterdayData, rawThisMonthData, rawLastMonthData])
             .subscribe(results => {
                 var todaySales = results[0];
                 var allPayMethods = results[1];
                 var yesterdaySales = results[2];
                 var thisMonthSales = results[3];
                 var lastMonthSales = results[4];
-                var db = results[5];
+             
 
                 if (allPayMethods.length > 0) {
                     allPayMethods.forEach(p => {

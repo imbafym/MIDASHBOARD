@@ -94,7 +94,6 @@ export class UserService {
         console.log(error);
     }
 
-
 }
 
 export enum Mode{

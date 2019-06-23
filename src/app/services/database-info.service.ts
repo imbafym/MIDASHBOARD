@@ -24,4 +24,10 @@ export class DatabaseInfoService {
 
         return this.http.get(this.url + `/api/db/getDatabaseInfo`, this.httpOptions);
     }
+
+    getBusiness():Observable<any>{
+        this.apiUrlService.currentUrl.subscribe(url => this.url = url);
+
+        return this.http.get(this.url + `/api/users/getBusinessName`, this.httpOptions);
+    }
 }

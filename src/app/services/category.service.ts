@@ -19,13 +19,7 @@ export class CategoryService {
     //
     // }
     getRootCategoriesAndItsChildren(): Observable<Category> {
-
-
         return this.http.get(`api/categories/queryAllCategories`).pipe(map(res=>res as Category || null));
-
-
-
-
     }
 
 
