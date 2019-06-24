@@ -124,10 +124,10 @@ export class UserProfileComponent implements OnInit {
         this.user._username = this.form.getRawValue().username;
         this.user._email = this.form.getRawValue().email;
         this.user._url = this.form.value.url;
-        this.user._role = 'user';
+    
         this.user._port = this.form.getRawValue().port;
       
-        this.save(this.user._userId,this.user);
+        this.save(this.user.key,this.user);
 
 
         // this.submitted = true;
