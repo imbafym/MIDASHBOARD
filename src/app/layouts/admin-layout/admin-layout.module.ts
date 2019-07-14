@@ -29,6 +29,8 @@ import { AdminPageComponent } from 'app/admin-page/admin-page.component';
 import { DailyReportComponent } from 'app/transaction-report/daily-report/daily-report.component';
 import { MonthlyReportComponent } from 'app/transaction-report/monthly-report/monthly-report.component';
 import { HourlyReportComponent } from 'app/transaction-report/hourly-report/hourly-report.component';
+import { GridPanelComponent } from '@swimlane/ngx-charts';
+import { ReportGridComponent } from 'app/transaction-report/report-grid/report-grid.component';
 
 @NgModule({
     imports: [
@@ -57,7 +59,8 @@ import { HourlyReportComponent } from 'app/transaction-report/hourly-report/hour
         AdminPageComponent,
         DailyReportComponent,
         MonthlyReportComponent,
-        HourlyReportComponent
+        HourlyReportComponent,
+        ReportGridComponent
     ]
 })
 

@@ -53,7 +53,9 @@ export class MonthlyReportComponent implements OnInit {
   tempMonthlyTrans = new Map<string, any>();
   hasData: boolean = false;
   form: FormGroup;
-
+  month = 'month';
+  chartData = [];
+  chartColor = [];
   constructor(private productService: ProductService,private fb: FormBuilder) { }
 
   ngOnInit() {
@@ -109,13 +111,30 @@ export class MonthlyReportComponent implements OnInit {
     if (this.dataSource.data.length > 0) {
       this.hasData = true
     }
+    this.setChartData();
    }
+
+
+
+   setChartData(): void{
+    this.monthlyTrans.forEach(d=>{
+      let temp = {
+            "name": this.getMonthName(d.month),
+            "value": Number(d.total)?Number(d.total):0
+      }
+      this.chartData.push(temp);
+      this.chartColor.push('#95a5a6');
+    })
+   }
+
 
    onSubmit({ value, valid }, e: Event) {
     e.preventDefault();
     this.dataSource = null;
     this.hasData = false;
     this.monthlyTrans = [];
+    this.chartColor =[];
+    this.chartData = [];
     this.tempMonthlyTrans = new Map();
     this.searchMonthlyTranByYear({value,valid}, e);
   }

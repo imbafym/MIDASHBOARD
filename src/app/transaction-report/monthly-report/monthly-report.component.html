@@ -14,14 +14,14 @@
             <form [formGroup]="form" (ngSubmit)="onSubmit(form,$event)">
               <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-6">
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                  <mat-form-field>
-                    <input matInput [matDatepicker]="dp" placeholder="Year" formControlName="date">
-                    <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-                    <mat-datepicker touchUi #dp startView="multi-year" (yearSelected)="chosenYearHandler($event,dp)"
-                      panelClass="example-year-picker">
-                    </mat-datepicker>
-                  </mat-form-field>
+                  <div class="col-lg-6 col-md-6 col-sm-6">
+                    <mat-form-field>
+                      <input matInput [matDatepicker]="dp" placeholder="Year" formControlName="date">
+                      <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+                      <mat-datepicker touchUi #dp startView="multi-year" (yearSelected)="chosenYearHandler($event,dp)"
+                        panelClass="example-year-picker">
+                      </mat-datepicker>
+                    </mat-form-field>
                   </div>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-3">
@@ -31,43 +31,57 @@
             </form>
 
 
-            <table mat-table class="table table-striped" [dataSource]="dataSource" *ngIf="hasData">
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-sm-12">
+                <tran-report-chart *ngIf="chartData?.length>0" [chartType]="month" [chartColor]='chartColor'
+                  [chartData]='chartData'>
+                </tran-report-chart>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-sm-12">
+
+                <table mat-table class="table table-striped" [dataSource]="dataSource" *ngIf="hasData">
 
 
-              <ng-container matColumnDef="Month" sticky>
-                <mat-header-cell *matHeaderCellDef class="price text-warning"> Month</mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{getMonthName(element.month)}}</mat-cell>
-                <mat-footer-cell *matFooterCellDef class="price"><b>Total</b></mat-footer-cell>
-              </ng-container>
+                  <ng-container matColumnDef="Month" sticky>
+                    <mat-header-cell *matHeaderCellDef class="price text-warning"> Month</mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{getMonthName(element.month)}}</mat-cell>
+                    <mat-footer-cell *matFooterCellDef class="price"><b>Total</b></mat-footer-cell>
+                  </ng-container>
 
 
-              <ng-container matColumnDef="Sales">
-                <mat-header-cell *matHeaderCellDef class="price text-warning">Sales</mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.total ==='-'? '-' : (element.total| currency)}}
-                </mat-cell>
-                <mat-footer-cell *matFooterCellDef class="price"><b>{{getTotal() ? (getTotal() | currency ): '-' }}</b>
-                </mat-footer-cell>
-              </ng-container>
+                  <ng-container matColumnDef="Sales">
+                    <mat-header-cell *matHeaderCellDef class="price text-warning">Sales</mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.total ==='-'? '-' : (element.total| currency)}}
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef class="price">
+                      <b>{{getTotal() ? (getTotal() | currency ): '-' }}</b>
+                    </mat-footer-cell>
+                  </ng-container>
 
 
-              <ng-container matColumnDef="Trans">
-                <mat-header-cell *matHeaderCellDef class="price text-warning">Trans</mat-header-cell>
-                <mat-cell *matCellDef="let element">{{element.tran}}</mat-cell>
-                <mat-footer-cell *matFooterCellDef class="price"><b>{{getTotalTran()?getTotalTran():'-' }}</b>
-                </mat-footer-cell>
-              </ng-container>
+                  <ng-container matColumnDef="Trans">
+                    <mat-header-cell *matHeaderCellDef class="price text-warning">Trans</mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{element.tran}}</mat-cell>
+                    <mat-footer-cell *matFooterCellDef class="price"><b>{{getTotalTran()?getTotalTran():'-' }}</b>
+                    </mat-footer-cell>
+                  </ng-container>
 
-              <ng-container matColumnDef="Average">
-                <mat-header-cell *matHeaderCellDef class="price text-warning">Average</mat-header-cell>
-                <mat-cell *matCellDef="let element">{{element.avg ==='-'? '-':(element.avg | currency)}} </mat-cell>
-                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-              </ng-container>
+                  <ng-container matColumnDef="Average">
+                    <mat-header-cell *matHeaderCellDef class="price text-warning">Average</mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{element.avg ==='-'? '-':(element.avg | currency)}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                  </ng-container>
 
-              <mat-header-row class="text-warning" *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-              <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
-            </table>
-
+                  <mat-header-row class="text-warning" *matHeaderRowDef="displayedColumns; sticky: true">
+                  </mat-header-row>
+                  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                  <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+                </table>
+              </div>
+            </div>
 
 
           </div>

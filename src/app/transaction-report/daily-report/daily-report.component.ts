@@ -56,7 +56,9 @@ export class DailyReportComponent implements OnInit {
   tempDailyTrans = new Map<string, any>();
   hasData: boolean = false;
   form: FormGroup;
-
+  chartData = [];
+  chartColor = [];
+  day = 'day';
   constructor(private productService: ProductService, private fb: FormBuilder) { }
 
   ngOnInit() {
@@ -66,7 +68,7 @@ export class DailyReportComponent implements OnInit {
     this.fetchData();
     this.form = this.fb.group({
       date: [moment()]
-    })
+    }) 
   }
 
 
@@ -120,7 +122,27 @@ export class DailyReportComponent implements OnInit {
     if (this.dataSource.data.length > 0) {
       this.hasData = true
     }
+    this.setChartData();
   }
+
+
+   setChartData(): void{
+    this.dailyTrans.forEach(d=>{
+      let temp = {
+            "name": Number(d.day),
+            "value": Number(d.total)?Number(d.total):0
+      }
+      this.chartData.push(temp);
+      this.chartColor.push('#95a5a6');
+    })
+   }
+
+   getBarLabel(day: number): string{
+      let date = new Date();
+      let month = date.getMonth();
+      let year = date.getFullYear();
+      return day.toString() + "-" + month.toString() + '-' + year.toString();
+   }
 
 
   onSubmit({ value, valid }, e: Event) {
@@ -129,6 +151,8 @@ export class DailyReportComponent implements OnInit {
     this.hasData = false;
     this.dailyTrans = [];
     this.tempDailyTrans = new Map();
+    this.chartColor =[];
+    this.chartData = [];
     this.searchDailyTranByMonthYear({value,valid}, e);
   }
 

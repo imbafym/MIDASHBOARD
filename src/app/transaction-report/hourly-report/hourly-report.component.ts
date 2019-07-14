@@ -21,8 +21,9 @@ export class HourlyReportComponent implements OnInit {
   hasData: boolean = false;
   todayDate:string;
   form: FormGroup;
-
-
+  hour = 'hour';
+  chartData = [];
+  chartColor = [];
 
   constructor(private productService: ProductService, private fb: FormBuilder) { }
 
@@ -43,6 +44,8 @@ export class HourlyReportComponent implements OnInit {
     this.hasData = false;
     this.hourlyTrans = [];
     this.initDailyTrans();
+    this.chartColor =[];
+    this.chartData = [];
     this.searchHourlyTranByDate({ value, valid }, e);
 
   }
@@ -85,9 +88,20 @@ export class HourlyReportComponent implements OnInit {
     if (this.dataSource.data.length > 0) {
       this.hasData = true
     }
+    this.setChartData();
+
   }
 
-
+  setChartData(): void{
+    this.hourlyTrans.forEach(d=>{
+      let temp = {
+            "name": Number(d.hour),
+            "value": Number(d.total)?Number(d.total):0
+      }
+      this.chartData.push(temp);
+      this.chartColor.push('#95a5a6');
+    })
+   }
 
   searchHourlyTranByDate({ value, valid }, e: Event): void {
     var date = changeDateFormate(value['date'])
