@@ -24,6 +24,7 @@
     "@angular/forms": "^7.0.4",
     "@angular/http": "^7.0.4",
     "@angular/material": "^7.0.4",
+    "@angular/material-moment-adapter": "^8.0.2",
     "@angular/platform-browser": "^7.0.4",
     "@angular/platform-browser-dynamic": "^7.0.4",
     "@angular/platform-server": "^7.0.4",

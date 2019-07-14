@@ -122,12 +122,7 @@ export class CategoryComponent implements OnInit {
     }
 
 
-    changeDateFormate(date): string {
-        // var date = "2018-05-29T02:51:39.692104";
-        var stillUtc = moment.utc(date).toDate(); //change utc time
-        var local = moment(stillUtc).local().format('YYYY-MM-DD'); //change local timezone
-        return local;
-    }
+    
 
     changeStringNumberTo2Float(value: string) {
         var result = Number(value)
@@ -224,8 +219,8 @@ export class CategoryComponent implements OnInit {
         this.hasData = false;
 
         this.categories = [];
-        var dateFrom = this.changeDateFormate(value['dateFrom'])
-        var dateTo = this.changeDateFormate(value['dateTo'])
+        var dateFrom = changeDateFormate(value['dateFrom'])
+        var dateTo = changeDateFormate(value['dateTo'])
 
         this.values$ = this.productService.getDateForkStream(dateFrom,dateTo)
             .subscribe(results => {
@@ -320,3 +315,9 @@ export interface PeriodicElement {
     total: number
 }
 
+export function changeDateFormate(date): string {
+    // var date = "2018-05-29T02:51:39.692104";
+    var stillUtc = moment.utc(date).toDate(); //change utc time
+    var local = moment(stillUtc).local().format('YYYY-MM-DD'); //change local timezone
+    return local;
+}

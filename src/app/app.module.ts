@@ -47,7 +47,6 @@ import {ErrorHandler} from './services/httpInterceptor/error_handler';
 import {RequestInterceptor} from './services/httpInterceptor/http_interceptor';
 
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { AdminPageComponent } from './admin-page/admin-page.component';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -77,7 +76,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ],
     declarations: [
         AppComponent,
-        AdminLayoutComponent
+        AdminLayoutComponent,
     ],
     providers:
         [

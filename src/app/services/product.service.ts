@@ -6,6 +6,8 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { of, throwError, forkJoin, } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Tax } from 'app/model/tax/tax';
+import { HourlyTran } from 'app/transaction-report/hourly-report/hourly-report.component';
+import { MonthlyTran } from 'app/transaction-report/monthly-report/monthly-report.component';
 @Injectable()
 export class ProductService {
 
@@ -172,6 +174,27 @@ export class ProductService {
         return this.http.get(this.url + `/api/categories/queryTaxes`, this.httpOptions).share();
     }
 
+    getTodayHourlyTran(): Observable<any>{
+        return this.http.get(this.url + `/api/categories/queryTodayHourlyTran`, this.httpOptions).share();
+    }
+    getThisMonthDailyTran(): Observable<any>{
+        return this.http.get(this.url + `/api/categories/queryThisMonthDailyTran`, this.httpOptions).share();
+    }
+
+    getThisYearMonthlyTran(): Observable<any>{
+        return this.http.get(this.url + `/api/categories/queryThisYearMonthlyTran`, this.httpOptions).share();
+    }
+
+
+    getHourlyTranByDate(date: string): Observable<HourlyTran>{
+        return this.http.get<HourlyTran>(this.url + `/api/categories/queryHourlyTranBydate?date=${date}`, this.httpOptions).share();
+    }
+    getMonthlyTranByYear(year: string): Observable<HourlyTran>{
+        return this.http.get<HourlyTran>(this.url + `/api/categories/queryMonthlyTranByYear?year=${year}`, this.httpOptions).share();
+    }
+    getDailyTranByMonthYear(month: string,year: string): Observable<MonthlyTran>{
+        return this.http.get<MonthlyTran>(this.url + `/api/categories/queryDailyTranByMonthYear?month=${month}&year=${year}`, this.httpOptions).share();
+    }
 
 }
 

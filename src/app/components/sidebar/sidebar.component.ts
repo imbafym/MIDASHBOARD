@@ -13,9 +13,13 @@ export const ROUTES: RouteInfo[] = [
     { path: '/dashboard', title: 'Main Report',  icon: 'dashboard', class: '' },
     { path: '/product', title: 'Product Report',  icon: 'business_center', class: '' },
     { path: '/category', title: 'Category Report',  icon:'library_books', class: '' },
+    { path: '/hourly-report', title: 'Hourly report',  icon:'calendar_today', class: '' },
+    { path: '/daily-report', title: 'Daily report',  icon:'calendar_today', class: '' },
+    { path: '/monthly-report', title: 'Monthly report',  icon:'calendar_today', class: '' },
     { path: '/stock', title: 'Stock Movement',  icon:'archive', class: '' },
     { path: '/user-profile', title: 'User Profile',  icon:'person', class: '' },
     { path: '/user-management', title: 'User Management',  icon:'person', class: '' },
+    
     // { path: '/login', title: 'Logout',  icon:'exit_to_app', class: '' },
 
     // { path: '/table-list', title: 'Table List',  icon:'content_paste', class: '' },

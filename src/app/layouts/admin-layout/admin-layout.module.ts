@@ -26,6 +26,9 @@ import {ProductModule} from '../../product/product.module';
 import {CategoryModule} from '../../category/category.module';
 import {StockModule} from '../../stock/stock.module';
 import { AdminPageComponent } from 'app/admin-page/admin-page.component';
+import { DailyReportComponent } from 'app/transaction-report/daily-report/daily-report.component';
+import { MonthlyReportComponent } from 'app/transaction-report/monthly-report/monthly-report.component';
+import { HourlyReportComponent } from 'app/transaction-report/hourly-report/hourly-report.component';
 
 @NgModule({
     imports: [
@@ -51,7 +54,10 @@ import { AdminPageComponent } from 'app/admin-page/admin-page.component';
         TableListComponent,
         MapsComponent,
         NotificationsComponent,
-        AdminPageComponent
+        AdminPageComponent,
+        DailyReportComponent,
+        MonthlyReportComponent,
+        HourlyReportComponent
     ]
 })
 

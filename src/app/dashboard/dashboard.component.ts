@@ -329,28 +329,7 @@ export class DashboardComponent implements OnInit {
     }
 
 
-    getTodayDate(): string {
-        var today = new Date();
-        var dd = today.getDate();
-        var mm = today.getMonth() + 1; //January is 0!
-        var yyyy = today.getFullYear();
-        var mString = '';
-        var dString = '';
-        if (mm < 10) {
-            mString = '0' + mm.toString();
-        } else {
-            mString = mm.toString();
-        }
-        if (dd < 10) {
-            dString = '0' + dd.toString();
-        } else {
-            dString = dd.toString();
-        }
-
-
-        var result = yyyy + '-' + mString + '-' + dString;
-        return result;
-    }
+   
 
 
 
@@ -361,3 +340,25 @@ export class DashboardComponent implements OnInit {
 
 }
 
+export function getTodayDate(): string {
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; //January is 0!
+    var yyyy = today.getFullYear();
+    var mString = '';
+    var dString = '';
+    if (mm < 10) {
+        mString = '0' + mm.toString();
+    } else {
+        mString = mm.toString();
+    }
+    if (dd < 10) {
+        dString = '0' + dd.toString();
+    } else {
+        dString = dd.toString();
+    }
+
+
+    var result = yyyy + '-' + mString + '-' + dString;
+    return result;
+}

@@ -1,0 +1,24 @@
+.mat-column-catName {
+    flex: 0 0 40%;
+  justify-content: flex-start;
+    min-width: 100px !important;
+    text-align: left;
+  }
+  .mat-column-qtys {
+      flex: 0 0 30%;
+      justify-content: flex-start;
+      min-width: 50px !important;
+      text-align: right;
+    }
+    .mat-column-sum {
+      flex: 0 0 30%;
+      justify-content: flex-start;
+      min-width: 100px !important;
+      text-align: right;
+    }
+  
+    .price {
+      text-align: right;
+      font-size: 14px;
+      font-weight:bold; 
+    }
