@@ -54,6 +54,7 @@ export class ProductComponent implements OnInit {
         },
 
         );
+        this.getTax();
 
         var rawCategories = this.productService.getCategory();
         rawCategories.subscribe(results => {
@@ -61,7 +62,6 @@ export class ProductComponent implements OnInit {
         }
         )
         this.initShowToday()
-        this.getTax();
     }
 
     ngOnDestroy() {
