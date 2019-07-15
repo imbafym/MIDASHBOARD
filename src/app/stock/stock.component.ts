@@ -19,6 +19,7 @@ export class StockComponent implements OnInit {
     showStock: boolean;
     selected : string;
     showProgress: boolean;
+    showError: boolean;
     constructor(private router: Router, public stockService: StockService, private fb: FormBuilder) {
     }
 
@@ -133,6 +134,7 @@ export class StockComponent implements OnInit {
 
     searchStockByBarcode() {
         this.showProgress = true;
+        this.showError = false;
         if (!this.barcode || this.barcode != '') {
             var rawStockData = this.stockService.searchStockByBarcode(this.barcode);
             rawStockData.subscribe(stock => {
@@ -157,6 +159,8 @@ export class StockComponent implements OnInit {
                     this.showProgress = false;
                     this.showStock = true;
                 } else {
+                    this.showError = true;
+                    this.showProgress = false;
                     this.showStock = false;
                 }
             })
