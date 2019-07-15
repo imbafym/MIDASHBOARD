@@ -105,6 +105,10 @@ export class HourlyReportComponent implements OnInit {
 
   searchHourlyTranByDate({ value, valid }, e: Event): void {
     var date = changeDateFormate(value['date'])
+    console.log(date,'date in search')
+    if(date === "Invalid date"){
+      date = this.todayDate
+    }
     var rawReport = this.productService.getHourlyTranByDate(date);
     rawReport.subscribe(res => {
       this.populateData(res);
@@ -117,6 +121,7 @@ export class HourlyReportComponent implements OnInit {
   initDailyTrans(): void {
     let date = new Date();
     this.todayDate = changeDateFormate(getTodayDate());
+    console.log('today',this.todayDate)
     this.hoursInDay = 24;
     for (let i = 0; i < this.hoursInDay; i++) {
       let hour: HourlyTran = {
