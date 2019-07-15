@@ -1,9 +1,13 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {Router} from '@angular/router';
-import {Category, ProductService} from '../services/product.service';
-import {FormBuilder, FormControl, FormGroup, NgControl, Validators} from '@angular/forms';
-import {Stock, StockService} from '../services/stock.service';
-
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { Category, ProductService } from '../services/product.service';
+import { FormBuilder, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
+import { Stock, StockService } from '../services/stock.service';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { Observable } from 'rxjs';
+import { ProgressSpinnerDialogComponent } from 'app/shared/progress-spinner-dialog/progress-spinner-dialog.component';
+import { NgxSpinner } from 'ngx-spinner/lib/ngx-spinner.enum';
+import { NgxSpinnerService } from 'ngx-spinner';
 @Component({
     selector: 'app-category',
     templateUrl: './stock.component.html',
@@ -17,49 +21,49 @@ export class StockComponent implements OnInit {
     barcode: string;
     currentStock: Stock;
     showStock: boolean;
-    selected : string;
+    selected: string;
     showProgress: boolean;
     showError: boolean;
-    constructor(private router: Router, public stockService: StockService, private fb: FormBuilder) {
+    constructor(private router: Router, public stockService: StockService, private fb: FormBuilder,
+        private dialog: MatDialog, private spinner : NgxSpinnerService) {
     }
 
 
     ngOnInit() {
-      
         this.barcode = '';
         this.showStock = false;
         this.showProgress = false;
         this.selected = '+1';
         this.form = this.fb.group({
-                buyPrice: [{
-                    value: this.currentStock ? this.currentStock.PRICEBUY : 0,
-                    disabled: !this.isBuyPriceModified
-                }, Validators.required],
-                sellPrice: [{
-                    value: this.currentStock ? this.currentStock.PRICESELL : 0,
-                    disabled: !this.isSellPriceModified
-                }, Validators.required],
-                quantity: [{
-                    value:  0
-                }, Validators.required],
-                ID: [{
-                    value: this.currentStock ? this.currentStock.ID : 0
-                }],
+            buyPrice: [{
+                value: this.currentStock ? this.currentStock.PRICEBUY : 0,
+                disabled: !this.isBuyPriceModified
+            }, Validators.required],
+            sellPrice: [{
+                value: this.currentStock ? this.currentStock.PRICESELL : 0,
+                disabled: !this.isSellPriceModified
+            }, Validators.required],
+            quantity: [{
+                value: 0
+            }, Validators.required],
+            ID: [{
+                value: this.currentStock ? this.currentStock.ID : 0
+            }],
 
-            },
+        },
         );
-
+     
 
     }
 
 
     updatePrice(type) {
-        
+
         if (type == 'buy') {
             var result = this.stockService.updateBuyPriceByID(this.form.controls['ID'].value, this.form.controls['buyPrice'].value)
-            result.subscribe(res=>{
-               
-                if(res['affectedRows'] == 1) {
+            result.subscribe(res => {
+
+                if (res['affectedRows'] == 1) {
                     this.currentStock.PRICEBUY = this.form.controls['buyPrice'].value
                     this.isBuyPriceModified = !this.isBuyPriceModified
                     if (this.isBuyPriceModified) {
@@ -67,25 +71,25 @@ export class StockComponent implements OnInit {
                     } else {
                         this.form.controls['buyPrice'].disable()
                     }
-                }else{
+                } else {
                     console.log('update failed')
                 }
             })
         }
         if (type == 'sell') {
             var resultPrice = 0;
-            if(this.currentStock.TAX_RATE == "0.1"){
-                resultPrice = this.form.controls['sellPrice'].value/ 1.1
-            }else{
+            if (this.currentStock.TAX_RATE == "0.1") {
+                resultPrice = this.form.controls['sellPrice'].value / 1.1
+            } else {
                 resultPrice = this.form.controls['sellPrice'].value
             }
-           
+
             var result = this.stockService.updateSellPriceByID(this.form.controls['ID'].value, resultPrice)
-            result.subscribe(res=>{
-                if(res['affectedRows'] == 1){
-                   
-                    
-           
+            result.subscribe(res => {
+                if (res['affectedRows'] == 1) {
+
+
+
 
                     this.currentStock.PRICESELL = this.form.controls['sellPrice'].value
                     this.isSellPriceModified = !this.isSellPriceModified
@@ -94,7 +98,7 @@ export class StockComponent implements OnInit {
                     } else {
                         this.form.controls['sellPrice'].disable()
                     }
-                }else{
+                } else {
                     console.log('update failed')
                 }
 
@@ -103,7 +107,7 @@ export class StockComponent implements OnInit {
     }
 
     modifyPrice(type) {
-     
+
         if (type == 'buy') {
             this.isBuyPriceModified = !this.isBuyPriceModified
             if (this.isBuyPriceModified) {
@@ -112,7 +116,7 @@ export class StockComponent implements OnInit {
                 this.form.controls['buyPrice'].disable()
             }
 
-      
+
         }
         if (type == 'sell') {
             this.isSellPriceModified = !this.isSellPriceModified
@@ -122,7 +126,7 @@ export class StockComponent implements OnInit {
             } else {
                 this.form.controls['sellPrice'].disable()
             }
-        
+
 
         }
     }
@@ -133,73 +137,78 @@ export class StockComponent implements OnInit {
     }
 
     searchStockByBarcode() {
+        this.spinner.show();
         this.showProgress = true;
         this.showError = false;
-        if (!this.barcode || this.barcode != '') {
-            var rawStockData = this.stockService.searchStockByBarcode(this.barcode);
-            rawStockData.subscribe(stock => {
-                var sell_price = 0;
-                if (stock[0]) {
-                    this.currentStock = new Stock();
-                    this.currentStock = stock[0];
-                    if (!this.currentStock.STOCK) {
-                        this.currentStock.STOCK = 0;
+        setTimeout(() => {
+            if (!this.barcode || this.barcode != '') {
+                var rawStockData = this.stockService.searchStockByBarcode(this.barcode);
+                rawStockData.subscribe(stock => {
+                    var sell_price = 0;
+                    if (stock[0]) {
+                        this.currentStock = new Stock();
+                        this.currentStock = stock[0];
+                        if (!this.currentStock.STOCK) {
+                            this.currentStock.STOCK = 0;
+                        }
+                        if (this.currentStock.TAX_RATE == "0.1") {
+                            sell_price = this.currentStock.PRICESELL * 1.1
+                            sell_price = parseFloat(sell_price.toFixed(2))
+                        } else {
+                            sell_price = parseFloat(this.currentStock.PRICESELL.toFixed(2))
+                        }
+    
+                        this.form.patchValue({ buyPrice: this.currentStock.PRICEBUY });
+                        this.form.patchValue({ sellPrice: sell_price });
+                        this.form.patchValue({ quantity: 0 });
+                        this.form.patchValue({ ID: this.currentStock.ID });
+                        this.showProgress = false;
+                        this.showStock = true;
+                    } else {
+                        this.showError = true;
+                        this.showProgress = false;
+                        this.showStock = false;
                     }
-                    if(this.currentStock.TAX_RATE == "0.1"){
-                        sell_price  = this.currentStock.PRICESELL* 1.1
-                        sell_price = parseFloat(sell_price.toFixed(2))
-                    }else{
-                        sell_price = parseFloat(this.currentStock.PRICESELL.toFixed(2))
-                    }
-
-                    this.form.patchValue({buyPrice: this.currentStock.PRICEBUY});
-                    this.form.patchValue({sellPrice: sell_price});
-                    this.form.patchValue({quantity: 0});
-                    this.form.patchValue({ID: this.currentStock.ID});
-                    this.showProgress = false;
-                    this.showStock = true;
-                } else {
-                    this.showError = true;
-                    this.showProgress = false;
-                    this.showStock = false;
-                }
-            })
-        }
+                    this.spinner.hide();
+                })
+            }
+        }, 500);
+        
     }
 
 
-    updateStockStatus(e){
+    updateStockStatus(e) {
         let id = this.form.controls['ID'].value;
         let quantity = this.form.controls['quantity'].value;
         let reason = this.selected
         let location = 0;
         let price = 0;
         let currentStock = this.currentStock.STOCK
-        if(reason=="-1" || reason == "+2"){
+        if (reason == "-1" || reason == "+2") {
             price = this.currentStock.PRICESELL;
-        }else{
+        } else {
             price = this.currentStock.PRICEBUY;
         }
-        if(parseInt(reason)>0){
+        if (parseInt(reason) > 0) {
             currentStock = currentStock + quantity;
-        }else if(parseInt(reason)<0){
+        } else if (parseInt(reason) < 0) {
             currentStock = currentStock - quantity;
         }
 
-        let rawInsertResult =  this.stockService.insertRecordInStockDiary(reason,id,quantity,price,location)
-        rawInsertResult.subscribe(res=>{
+        let rawInsertResult = this.stockService.insertRecordInStockDiary(reason, id, quantity, price, location)
+        rawInsertResult.subscribe(res => {
 
-            if(res['code'] == '0'){
-                let rawUpdateResult = this.stockService.updateCurrentStock(id,location,currentStock)
-                rawUpdateResult.subscribe(res=>{
-                    if(res['code'] == '0'){
+            if (res['code'] == '0') {
+                let rawUpdateResult = this.stockService.updateCurrentStock(id, location, currentStock)
+                rawUpdateResult.subscribe(res => {
+                    if (res['code'] == '0') {
                         this.currentStock.STOCK = currentStock
-                        this.form.patchValue({quantity:0})
-                    }else{
+                        this.form.patchValue({ quantity: 0 })
+                    } else {
                         console.log('Error Notification update failed')
                     }
                 })
-            }else{
+            } else {
                 console.log('Error Notification Insert failed')
             }
         })

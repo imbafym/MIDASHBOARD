@@ -6,6 +6,7 @@ import { Category, ProductService } from '../services/product.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { Tax } from 'app/model/tax/tax';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 
 @Component({
@@ -36,7 +37,8 @@ export class ProductComponent implements OnInit {
 
 
 
-    constructor(private router: Router, private dateAdapter: DateAdapter<Date>, public productService: ProductService, private fb: FormBuilder) {
+    constructor(private router: Router, private dateAdapter: DateAdapter<Date>, 
+        public productService: ProductService, private fb: FormBuilder, private spinner: NgxSpinnerService) {
         dateAdapter.setLocale('nl');
     }
 
@@ -44,6 +46,8 @@ export class ProductComponent implements OnInit {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     ngOnInit() {
+        this.spinner.show();
+
         this.selected = 'All Categories';
         this.categoryName = [];
         this.form = this.fb.group({
@@ -61,7 +65,9 @@ export class ProductComponent implements OnInit {
             this.categoryName = results
         }
         )
+        setTimeout(() => {
         this.initShowToday()
+        }, 500);
     }
 
     ngOnDestroy() {
@@ -78,56 +84,60 @@ export class ProductComponent implements OnInit {
     initShowToday() {
         var rawProduct = this.productService.getProductToday()
         var rawCategory = this.productService.getCategoryToday()
-        this.forkService = this.productService.getTodayForkStream().subscribe(results => {
-            var productSales = results[0];
-            var categoriesSales = results[1];
-
-            categoriesSales.forEach(c => {
-                var category = new Category;
-                category.categoryName = c.catName;
-                category.categoryQuantities = c.qtys;
-                category.categoryPrices = c.prices;
-                category.categoryTotals = c.totals;
-                category.categoryProdocuts = [];
-                productSales.forEach(p => {
-                    if (p.catName == c.catName) {
-                        category.categoryProdocuts.push(p)
-                    }
-                })
-                this.categories.push(category)
-            })
-            this.productsInTable = [];
-
-            if (this.selected == 'All Categories') {
-                this.categories.forEach(c => {
-                    c.categoryProdocuts.forEach(p => {
-                        this.productsInTable.push(p)
+        setTimeout(()=>{
+            this.forkService = this.productService.getTodayForkStream().subscribe(results => {
+                var productSales = results[0];
+                var categoriesSales = results[1];
+    
+                categoriesSales.forEach(c => {
+                    var category = new Category;
+                    category.categoryName = c.catName;
+                    category.categoryQuantities = c.qtys;
+                    category.categoryPrices = c.prices;
+                    category.categoryTotals = c.totals;
+                    category.categoryProdocuts = [];
+                    productSales.forEach(p => {
+                        if (p.catName == c.catName) {
+                            category.categoryProdocuts.push(p)
+                        }
                     })
+                    this.categories.push(category)
                 })
-            } else {
-                this.categories.forEach(c => {
-                    if (c.categoryName == this.selected) {
+                this.productsInTable = [];
+    
+                if (this.selected == 'All Categories') {
+                    this.categories.forEach(c => {
                         c.categoryProdocuts.forEach(p => {
                             this.productsInTable.push(p)
                         })
-                    }
-                })
-            }
-            this.productsInTable = this.dealData(this.productsInTable);
-            this.sortData(this.productsInTable);
-
-            this.calculateTotal();
-
-            this.dataSource = new MatTableDataSource<PeriodicElement>(this.productsInTable);
-            if (this.dataSource.data.length > 0) {
-                this.hasData = true;
-            }
-            this.setTableSort();
-            this.setTablePaginator();
-            setInterval(e => {
-                this.showProgress = false
-            }, 1500)
-        })
+                    })
+                } else {
+                    this.categories.forEach(c => {
+                        if (c.categoryName == this.selected) {
+                            c.categoryProdocuts.forEach(p => {
+                                this.productsInTable.push(p)
+                            })
+                        }
+                    })
+                }
+                this.productsInTable = this.dealData(this.productsInTable);
+                this.sortData(this.productsInTable);
+    
+                this.calculateTotal();
+    
+                this.dataSource = new MatTableDataSource<PeriodicElement>(this.productsInTable);
+                if (this.dataSource.data.length > 0) {
+                    this.hasData = true;
+                }
+                this.setTableSort();
+                this.setTablePaginator();
+                setInterval(e => {
+                    this.showProgress = false
+                }, 1500)
+                this.spinner.hide();
+            })
+        }, 500)
+       
     }
 
     nav(link) {
@@ -151,10 +161,15 @@ export class ProductComponent implements OnInit {
     onSubmit({ value, valid }, e: Event) {
         e.preventDefault();
         this.showProgress = true;
+        this.spinner.show();
         if (value['radioOptions'] == '2') {
-            this.searchByDates({ value, valid }, e);
+            setTimeout(() => {
+            this.searchByDates({ value, valid }, e);                
+            }, 500);
         } else if (value['radioOptions'] == '1') {
-            this.searchByOptions({ value, valid }, e)
+            setTimeout(() => {
+            this.searchByOptions({ value, valid }, e)                
+            }, 500);
         } else {
             console.log('radio option no value', value['radioOptions'])
         }
@@ -236,6 +251,7 @@ export class ProductComponent implements OnInit {
             setInterval(e => {
                 this.showProgress = false
             }, 1500)
+            this.spinner.hide();
         })
     }
 
@@ -304,6 +320,8 @@ export class ProductComponent implements OnInit {
                 setInterval(e => {
                     this.showProgress = false
                 }, 1500)
+                this.spinner.hide();
+
             }
             )
     }

@@ -99,9 +99,11 @@ export class DashboardComponent implements OnInit {
 
         /*-------hide table if mobile-----*/
         this.toggleTable();
-
+        this.spinner.show();
         /*-----------------------------Dashboard Table Data-----------------------------------------*/
-        this.populateData();
+        setTimeout(() => {
+            this.populateData();
+        }, 500)
     }
 
 
@@ -122,7 +124,7 @@ export class DashboardComponent implements OnInit {
                 var yesterdaySales = results[2];
                 var thisMonthSales = results[3];
                 var lastMonthSales = results[4];
-             
+
 
                 if (allPayMethods.length > 0) {
                     allPayMethods.forEach(p => {
@@ -145,6 +147,7 @@ export class DashboardComponent implements OnInit {
                 this.calculateTotalThisMonth();
                 this.calculateTotalLastMonth();
                 this.cleanEmptySalesData(this.totalSales);
+                this.spinner.hide();
             });
     }
 
@@ -164,8 +167,10 @@ export class DashboardComponent implements OnInit {
         this.showTable = false;
     }
     refresh(): void {
+        this.spinner.show();
         this.initData();
-        this.populateData();
+        setTimeout(() => { this.populateData(); }, 500)
+
     }
 
 
@@ -329,7 +334,7 @@ export class DashboardComponent implements OnInit {
     }
 
 
-   
+
 
 
 

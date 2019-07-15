@@ -15,6 +15,7 @@ import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import {default as _rollupMoment, Moment} from 'moment';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 const moment = _rollupMoment || _moment;
 
@@ -59,13 +60,20 @@ export class DailyReportComponent implements OnInit {
   chartData = [];
   chartColor = [];
   day = 'day';
-  constructor(private productService: ProductService, private fb: FormBuilder) { }
+  constructor(private productService: ProductService, private fb: FormBuilder,
+    private spinner: NgxSpinnerService) { }
 
   ngOnInit() {
+    this.spinner.show();
+
     let date = new Date();
     this.daysInMonth = this.getDaysInOneMonth(date.getFullYear(), date.getMonth() + 1);
     this.initDailyTrans();
-    this.fetchData();
+    setTimeout(()=>{
+      this.fetchData();
+
+    },500)
+
     this.form = this.fb.group({
       date: [moment()]
     }) 
@@ -135,6 +143,8 @@ export class DailyReportComponent implements OnInit {
       this.chartData.push(temp);
       this.chartColor.push('#95a5a6');
     })
+    this.spinner.hide();
+
    }
 
    getBarLabel(day: number): string{
@@ -146,6 +156,8 @@ export class DailyReportComponent implements OnInit {
 
 
   onSubmit({ value, valid }, e: Event) {
+    this.spinner.show();
+
     e.preventDefault();
     this.dataSource = null;
     this.hasData = false;
@@ -165,10 +177,14 @@ export class DailyReportComponent implements OnInit {
     this.daysInMonth = this.getDaysInOneMonth(year, month);
 
     this.initDailyTrans();
-    var rawReport = this.productService.getDailyTranByMonthYear(month,year);
-    rawReport.subscribe(res => {
-      this.populateData(res);
-    });
+
+    setTimeout(()=>{
+      var rawReport = this.productService.getDailyTranByMonthYear(month,year);
+      rawReport.subscribe(res => {
+        this.populateData(res);
+      });
+    },500)
+    
   }
 
   initDailyTrans(): void {

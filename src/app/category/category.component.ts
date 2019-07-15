@@ -24,7 +24,7 @@ export class CategoryComponent implements OnInit {
     hasData = false;
     showTotal = false;
     showProgress = false;
-    dataSource:MatTableDataSource<PeriodicElement>;
+    dataSource: MatTableDataSource<PeriodicElement>;
     values$: any;
 
     time = ['Today', 'Yesterday', 'This Month', 'LastMonth'];
@@ -32,7 +32,7 @@ export class CategoryComponent implements OnInit {
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
 
-    constructor(private router: Router, private dateAdapter: DateAdapter<Date>, 
+    constructor(private router: Router, private dateAdapter: DateAdapter<Date>,
         public productService: ProductService, private fb: FormBuilder,
         private spinner: NgxSpinnerService) {
         dateAdapter.setLocale('nl');
@@ -40,7 +40,7 @@ export class CategoryComponent implements OnInit {
 
 
     ngOnInit() {
-       
+        this.spinner.show();
         this.selected = 'All Categories';
         this.categoryName = [];
         this.form = this.fb.group({
@@ -50,22 +50,22 @@ export class CategoryComponent implements OnInit {
             timeOption: ['Today']
         },
         );
-       
-        var rawCategories = this.productService.getCategory();
+        setTimeout(() => {
+            var rawCategories = this.productService.getCategory();
 
-        rawCategories.subscribe(results => {
-            this.categoryName = results
-         }
-        )
-        this.initShowToday()
+            rawCategories.subscribe(results => {
+                this.categoryName = results
+            }
+            )
+            this.initShowToday()
+        }, 500)
     }
 
 
     initShowToday() {
-        this.spinner.show();
         this.hasData = false;
-        var rawProduct = this.productService.getProductToday()
 
+        var rawProduct = this.productService.getProductToday()
         var rawCategory = this.productService.getCategoryToday()
 
         if (rawCategory && rawProduct) {
@@ -109,7 +109,9 @@ export class CategoryComponent implements OnInit {
                 this.setTablePaginator();
                 setInterval(e => {
                     this.showProgress = false
-                }, 1500)
+                }, 1000)
+                this.spinner.hide();
+
             })
         } else {
             console.log('initial data error')
@@ -122,7 +124,7 @@ export class CategoryComponent implements OnInit {
     }
 
 
-    
+
 
     changeStringNumberTo2Float(value: string) {
         var result = Number(value)
@@ -132,11 +134,16 @@ export class CategoryComponent implements OnInit {
 
     onSubmit({ value, valid }, e: Event) {
         e.preventDefault();
+        this.spinner.show();
         this.showProgress = true;
         if (value['radioOptions'] == '2') {
-            this.searchByDates({ value, valid }, e);
+            setTimeout(() => {
+                this.searchByDates({ value, valid }, e);
+            }, 500);
         } else if (value['radioOptions'] == '1') {
-            this.searchByOptions({ value, valid }, e)
+            setTimeout(() => {
+                this.searchByOptions({ value, valid }, e)
+            }, 500);
         } else {
             console.log('radio option no value', value['radioOptions'])
         }
@@ -197,12 +204,13 @@ export class CategoryComponent implements OnInit {
             if (this.dataSource.data.length > 0) {
                 this.hasData = true
             }
-        
+
 
             this.setTablePaginator();
             setInterval(e => {
                 this.showProgress = false
             }, 3000)
+            this.spinner.hide()
         })
     }
 
@@ -211,8 +219,8 @@ export class CategoryComponent implements OnInit {
     // }
 
 
-    getTotal(): number{
-        return this.categoriesInTable.map(t => t.categoryTotals).reduce((acc,value)=> (acc*100 + value*100)/100, 0);
+    getTotal(): number {
+        return this.categoriesInTable.map(t => t.categoryTotals).reduce((acc, value) => (acc * 100 + value * 100) / 100, 0);
     }
 
     searchByDates({ value, valid }, e: Event) {
@@ -222,7 +230,7 @@ export class CategoryComponent implements OnInit {
         var dateFrom = changeDateFormate(value['dateFrom'])
         var dateTo = changeDateFormate(value['dateTo'])
 
-        this.values$ = this.productService.getDateForkStream(dateFrom,dateTo)
+        this.values$ = this.productService.getDateForkStream(dateFrom, dateTo)
             .subscribe(results => {
                 var productSales = results[0];
                 var categoriesSales = results[1];
@@ -266,6 +274,7 @@ export class CategoryComponent implements OnInit {
                 setInterval(e => {
                     this.showProgress = false
                 }, 3000)
+                this.spinner.hide()
             }
             )
     }
@@ -296,8 +305,8 @@ export class CategoryComponent implements OnInit {
     }
 
 
-    sortData(data){
-        data.sort(function(a, b) {
+    sortData(data) {
+        data.sort(function (a, b) {
             var textA = a.categoryName.toUpperCase();
             var textB = b.categoryName.toUpperCase();
             return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;

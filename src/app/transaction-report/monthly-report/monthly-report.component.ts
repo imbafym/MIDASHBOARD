@@ -14,6 +14,7 @@ import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import {default as _rollupMoment, Moment} from 'moment';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 const moment = _rollupMoment || _moment;
 
@@ -56,9 +57,10 @@ export class MonthlyReportComponent implements OnInit {
   month = 'month';
   chartData = [];
   chartColor = [];
-  constructor(private productService: ProductService,private fb: FormBuilder) { }
+  constructor(private productService: ProductService,private fb: FormBuilder,private spinner: NgxSpinnerService) { }
 
   ngOnInit() {
+    this.spinner.show();
     this.initMonthlyTrans();
     this.fetchData();
     this.form = this.fb.group({
@@ -77,11 +79,13 @@ export class MonthlyReportComponent implements OnInit {
 
   async fetchData(): Promise<void> {
 
-   
-    var rawReport = await this.productService.getThisYearMonthlyTran();
-    rawReport.subscribe(res => {
-      this.populateData(res);
-    });
+    setTimeout(()=>{
+      var rawReport = this.productService.getThisYearMonthlyTran();
+      rawReport.subscribe(res => {
+        this.populateData(res);
+      });
+    },500)
+    
   }
 
 
@@ -125,11 +129,14 @@ export class MonthlyReportComponent implements OnInit {
       this.chartData.push(temp);
       this.chartColor.push('#95a5a6');
     })
+    this.spinner.hide();
    }
 
 
    onSubmit({ value, valid }, e: Event) {
     e.preventDefault();
+    this.spinner.show();
+
     this.dataSource = null;
     this.hasData = false;
     this.monthlyTrans = [];
@@ -142,10 +149,14 @@ export class MonthlyReportComponent implements OnInit {
     let date = this.form.get('date');
     var year = date.value.format('YYYY');
     this.initMonthlyTrans();
-    var rawReport = this.productService.getMonthlyTranByYear(year);
-    rawReport.subscribe(res => {
-      this.populateData(res);
-    });
+
+    setTimeout(()=>{
+      var rawReport = this.productService.getMonthlyTranByYear(year);
+      rawReport.subscribe(res => {
+        this.populateData(res);
+      });
+    },500)
+   
   }
 
 

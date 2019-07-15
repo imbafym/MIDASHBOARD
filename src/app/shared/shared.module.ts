@@ -17,6 +17,7 @@ import { SwiperModule } from 'ngx-swiper-wrapper';
 import { SweetAlert2Module } from '@toverux/ngx-sweetalert2';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { ProgressSpinnerDialogComponent } from './progress-spinner-dialog/progress-spinner-dialog.component';
 
 
 @NgModule({
@@ -87,10 +88,11 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     NgxSpinnerModule,
     MatSnackBarModule,
     NgxChartsModule,
-
+    ProgressSpinnerDialogComponent
   ],
 
-  declarations: []
+
+  declarations: [ProgressSpinnerDialogComponent]
 })
 export class SharedModule {
 

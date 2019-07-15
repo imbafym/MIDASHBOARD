@@ -16,6 +16,7 @@ import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import {default as _rollupMoment, Moment} from 'moment';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 
 const moment = _rollupMoment || _moment;
@@ -62,10 +63,12 @@ export class HourlyReportComponent implements OnInit {
   chartData = [];
   chartColor = [];
 
-  constructor(private productService: ProductService, private fb: FormBuilder) { }
+  constructor(private productService: ProductService, private fb: FormBuilder,private spinner: NgxSpinnerService) { }
 
 
   ngOnInit() {
+    this.spinner.show();
+
     this.initDailyTrans();
     this.fetchData();
     this.form = this.fb.group({
@@ -96,9 +99,12 @@ export class HourlyReportComponent implements OnInit {
 
 
     var rawReport = await this.productService.getTodayHourlyTran();
-    rawReport.subscribe(res => {
-      this.populateData(res);
-    });
+    setTimeout(()=>{
+      rawReport.subscribe(res => {
+        this.populateData(res);
+      });
+    },500)
+    
   }
 
   populateData(res: any) {
@@ -138,22 +144,26 @@ export class HourlyReportComponent implements OnInit {
       this.chartData.push(temp);
       this.chartColor.push('#95a5a6');
     })
+    this.spinner.hide();
    }
 
   searchHourlyTranByDate({ value, valid }, e: Event): void {
+    this.spinner.show();
+
     var date = changeDateFormate(value['date'])
     console.log(date,'date in search')
     if(date === "Invalid date"){
       date = this.todayDate
     }
-    var rawReport = this.productService.getHourlyTranByDate(date);
-    rawReport.subscribe(res => {
-      this.populateData(res);
-    });
+
+    setTimeout(()=>{
+      var rawReport = this.productService.getHourlyTranByDate(date);
+      rawReport.subscribe(res => {
+        this.populateData(res);
+      });
+    },500)
+   
   }
-
-
-
 
   initDailyTrans(): void {
     let date = new Date();
