@@ -56,12 +56,12 @@
                             <div class="row" *ngIf="isAdmin()">
                                 <div class="col-md-6">
                                     <mat-radio-group formControlName="status" *ngIf="isAdd()">
-                                        <mat-radio-button class="example-margin" value='active' checked>Actived</mat-radio-button>
-                                        <mat-radio-button class="example-margin" value='disabled'>Disabled</mat-radio-button>
+                                        <mat-radio-button class="example-margin" value='active' checked>Enable</mat-radio-button>
+                                        <mat-radio-button class="example-margin" value='disabled'>Disable</mat-radio-button>
                                     </mat-radio-group>
                                     <mat-radio-group formControlName="status" *ngIf="isEdit()">
-                                            <mat-radio-button class="example-margin" value='active'>Actived</mat-radio-button>
-                                            <mat-radio-button class="example-margin" value='disabled'>Disabled</mat-radio-button>
+                                            <mat-radio-button class="example-margin" value='active'>Enable</mat-radio-button>
+                                            <mat-radio-button class="example-margin" value='disabled'>Disable</mat-radio-button>
                                         </mat-radio-group>
                                 </div>
                                 <div class="col-md-2">

@@ -34,8 +34,8 @@
                     <td class="left">
                       <mat-checkbox [disabled]="u._role==='admin'" [checked]="u._active"
                         (change)="onChangeStatus(u._active,u)">
-                        <div *ngIf="u._active">Actived</div>
-                        <div *ngIf="!u._active">Disabled</div>
+                        <div *ngIf="u._active">Enable</div>
+                        <div *ngIf="!u._active">Disable</div>
                       </mat-checkbox>
                     </td>
                   </tr>
