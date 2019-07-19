@@ -7,6 +7,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 import { DatabaseInfoService } from '../services/database-info.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { UserService } from 'app/services/user.service';
+import { catchError } from 'rxjs/operators';
 
 @Component({
     selector: 'app-dashboard',
@@ -95,7 +96,7 @@ export class DashboardComponent implements OnInit {
         seq2 = 0;
     };
 
-    ngOnInit() {
+    async ngOnInit() {
 
         /*-------hide table if mobile-----*/
         this.toggleTable();
@@ -107,7 +108,7 @@ export class DashboardComponent implements OnInit {
     }
 
 
-    populateData(): void {
+    async populateData(): Promise<void> {
         var rawTodayData = this.salesService.getTodaySales();
         var rawPayMethod = this.salesService.getPayMethod();
         var rawYesterdayData = this.salesService.getYesterdaySales();
@@ -117,15 +118,16 @@ export class DashboardComponent implements OnInit {
         //     var databaseInfo = this.databaseService.getDatabase();
         // }
 
-        forkJoin([rawTodayData, rawPayMethod, rawYesterdayData, rawThisMonthData, rawLastMonthData])
-            .subscribe(results => {
+
+
+
+        await forkJoin([rawTodayData, rawPayMethod, rawYesterdayData, rawThisMonthData, rawLastMonthData]
+            ).subscribe(results => {
                 var todaySales = results[0];
                 var allPayMethods = results[1];
                 var yesterdaySales = results[2];
                 var thisMonthSales = results[3];
                 var lastMonthSales = results[4];
-
-
                 if (allPayMethods.length > 0) {
                     allPayMethods.forEach(p => {
                         var newSales = new Sales();
@@ -148,7 +150,15 @@ export class DashboardComponent implements OnInit {
                 this.calculateTotalLastMonth();
                 this.cleanEmptySalesData(this.totalSales);
                 this.spinner.hide();
+            }, (error)=>{
+                    console.log(error)
+                    this.spinner.hide();
+                    this.router.navigateByUrl('/user-profile');
+                
             });
+
+
+
     }
 
     initData(): void {

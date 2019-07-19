@@ -55,7 +55,8 @@ export class LoginComponent implements OnInit {
                     this.apiUrlService.setUrl(result._url, result._port)
                     this.spinner.hide();
                     this.router.navigateByUrl('dashboard')
-                    this.hideSpinner = true;
+                    console.log('go to dashboard')
+                    // this.hideSpinner = true;
     
                 } else if (this.hasUser && result._role === "admin") {
                     this.userService.currentUser = result;

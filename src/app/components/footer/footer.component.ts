@@ -26,16 +26,24 @@ export class FooterComponent implements OnInit {
         var db = results[0];
         var businessName = results[1];
         if (db) {
-          this.dbName = db.database
-          this.host = db.host
+          this.apiUrlService.setDbName(db.database);
+          this.apiUrlService.setHost(db.host);
         }
         if(businessName){
-          this.businessName = businessName[0].BUSINESS_NAME;
+          this.apiUrlService.setBusiness(businessName[0].BUSINESS_NAME);
         }
       })
 
     this.apiUrlService.currentUrl.subscribe(url => this.url = url);
-  }
+    this.apiUrlService.dbName.subscribe(dbName => this.dbName = dbName);
+    this.apiUrlService.host.subscribe(host => this.host = host);
+    this.apiUrlService.businessName.subscribe(businessName => this.businessName = businessName);
+
+    
+  } 
+
+
+
 
 }
 

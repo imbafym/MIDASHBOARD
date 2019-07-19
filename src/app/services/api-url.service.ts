@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
-import {HttpHeaders} from '@angular/common/http';
-import {BehaviorSubject} from 'rxjs/Rx';
+import { Injectable } from '@angular/core';
+import { HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs/Rx';
 
 @Injectable({
     providedIn: 'root'
@@ -20,18 +20,37 @@ export class ApiUrlService {
 
 
     private urlSource = new BehaviorSubject<string>('default message');
+    private dbNameSource = new BehaviorSubject<string>('default message');
+    private hostSource = new BehaviorSubject<string>('default message');
+    private businessNameSource = new BehaviorSubject<string>('default message');
     private isLoginSource = new BehaviorSubject<boolean>(false);
+
+    
     currentUrl = this.urlSource.asObservable();
+    dbName = this.dbNameSource.asObservable();
+    host = this.hostSource.asObservable();
+    businessName = this.businessNameSource.asObservable();
+
     isLogin = this.isLoginSource.asObservable();
     constructor() {
     }
 
-
-    setUrl(url: string,port:string) {
-        this.urlSource.next("http://" + url+ ":"+port);
+    setBusiness(business: string) {
+        this.businessNameSource.next(business);
+    }
+    setDbName(dbName: string) {
+        this.dbNameSource.next(dbName);
+    }
+    setHost(business: string) {
+        this.hostSource.next(business);
     }
 
-    setBoolean(flag){
+
+    setUrl(url: string, port: string) {
+        this.urlSource.next("http://" + url + ":" + port);
+    }
+
+    setBoolean(flag) {
         this.isLoginSource.next(flag);
     }
 
@@ -39,12 +58,12 @@ export class ApiUrlService {
 
 
 
-    getHttpOption(){
+    getHttpOption() {
         return this.serverUrl.httpOptions
     }
 
 
-// const serverUrl: string = '//192.168.123.150:3011';
+    // const serverUrl: string = '//192.168.123.150:3011';
 
 
 }
