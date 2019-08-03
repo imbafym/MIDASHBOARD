@@ -116,7 +116,9 @@
                             <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
                         </mat-table>
 
+
                         <mat-paginator *ngIf="hasData" [pageSizeOptions]="[50,100,500,1000]" showFirstLastButtons></mat-paginator>
+
                         <h3 *ngIf="!(hasData||showProgress)">No Result</h3>
                     </div>
 

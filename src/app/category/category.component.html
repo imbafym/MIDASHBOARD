@@ -84,14 +84,14 @@
                             <!-- Name Column -->
                             <ng-container matColumnDef="catName" >
                                 <mat-header-cell *matHeaderCellDef sticky mat-sort-header class="price text-warning"> Category</mat-header-cell>
-                                <mat-cell *matCellDef="let element"> {{element.categoryName}}</mat-cell>
+                                <mat-cell *matCellDef="let element"> {{element.catName}}</mat-cell>
                                 <mat-footer-cell *matFooterCellDef class="price"><b>Total</b></mat-footer-cell >
                             </ng-container>
 
                             <!-- Weight Column -->
                             <ng-container matColumnDef="qtys" >
                                 <mat-header-cell  *matHeaderCellDef  mat-sort-header class="price text-warning">Qty</mat-header-cell>
-                                <mat-cell *matCellDef="let element"> {{element.categoryQuantities}}</mat-cell>
+                                <mat-cell *matCellDef="let element"> {{element.qtys}}</mat-cell>
                                 <mat-footer-cell *matFooterCellDef></mat-footer-cell>
                             </ng-container>
 

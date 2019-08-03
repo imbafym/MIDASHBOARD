@@ -16,10 +16,8 @@ import { Tax } from 'app/model/tax/tax';
     templateUrl: './category.component.html',
     styleUrls: ['./category.component.scss']
 })
-export class CategoryComponent implements OnInit,AfterViewChecked {
-    ngAfterViewChecked(): void {
-        this.dataSource.sort = this.sort;
-    }
+export class CategoryComponent implements OnInit {
+
     selected: string;
     categoryName: Array<any>;
     categories = [];
@@ -34,8 +32,23 @@ export class CategoryComponent implements OnInit,AfterViewChecked {
     time = ['Today', 'Yesterday', 'This Month', 'LastMonth'];
     displayedColumns: string[] = ['catName', 'qtys', 'sum'];
 
-    @ViewChild(MatPaginator) paginator: MatPaginator;
-    @ViewChild(MatSort) sort: MatSort;
+    private paginator: MatPaginator;
+    private sort: MatSort;
+
+    @ViewChild(MatSort) set matSort(ms: MatSort) {
+        this.sort = ms;
+        this.setDataSourceAttributes();
+    }
+
+    @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+        this.paginator = mp;
+        this.setDataSourceAttributes();
+    }
+
+    setDataSourceAttributes() {
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+    }
     constructor(private router: Router, private dateAdapter: DateAdapter<Date>,
         public productService: ProductService, private fb: FormBuilder,
         private spinner: NgxSpinnerService) {
@@ -119,7 +132,7 @@ export class CategoryComponent implements OnInit,AfterViewChecked {
                 if (this.dataSource.data.length > 0) {
                     this.hasData = true
                 }
-                this.setTablePaginator();
+
                 setInterval(e => {
                     this.showProgress = false
                 }, 1000)
@@ -219,7 +232,7 @@ export class CategoryComponent implements OnInit,AfterViewChecked {
             }
 
 
-            this.setTablePaginator();
+
             setInterval(e => {
                 this.showProgress = false
             }, 3000)
@@ -283,7 +296,7 @@ export class CategoryComponent implements OnInit,AfterViewChecked {
                 if (this.dataSource.data.length > 0) {
                     this.hasData = true
                 }
-                this.setTablePaginator();
+
                 setInterval(e => {
                     this.showProgress = false
                 }, 3000)
@@ -310,6 +323,8 @@ export class CategoryComponent implements OnInit,AfterViewChecked {
                 c.categoryTotals += this.calPriceWithTax(p.price , p.qtys);
             }
             )
+            c.catName = c.categoryName;
+            c.qtys= c.categoryQuantities;
             c.sum = c.categoryTotals = c.categoryTotals.toFixed(2);
         })
         this.showProgress = false;
@@ -320,10 +335,7 @@ export class CategoryComponent implements OnInit,AfterViewChecked {
     calPriceWithTax(price: string, qty: number): number {
         return parseFloat(parseFloat(price).toFixed(2)) * qty;
     }
-    setTablePaginator() {
-        this.dataSource.paginator = this.paginator;
-    }
-
+  
 
     sortData(data) {
         data.sort(function (a, b) {

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewChecked, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DateAdapter, MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { Category, ProductService } from '../services/product.service';
@@ -14,12 +14,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
     templateUrl: './product.component.html',
     styleUrls: ['./product.component.scss']
 })
-export class ProductComponent implements OnInit,AfterViewChecked {
-    ngAfterViewChecked(): void {
-        this.dataSource.sort = this.sort;
-        // this.dataSource.paginator = this.paginator;
+export class ProductComponent implements OnInit {
 
-    }
     selected: string;
     categoryName: Array<any>;
     categories = [];
@@ -45,11 +41,26 @@ export class ProductComponent implements OnInit,AfterViewChecked {
     }
 
 
-    @ViewChild(MatPaginator) paginator: MatPaginator;
-    @ViewChild(MatSort) sort: MatSort;
+    private paginator: MatPaginator;
+    private sort: MatSort;
+
+    @ViewChild(MatSort) set matSort(ms: MatSort) {
+        this.sort = ms;
+        this.setDataSourceAttributes();
+    }
+
+    @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+        this.paginator = mp;
+        this.setDataSourceAttributes();
+    }
+
+    setDataSourceAttributes() {
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+    }
+
     ngOnInit() {
         this.spinner.show();
-        
         this.selected = 'All Categories';
         this.categoryName = [];
         this.form = this.fb.group({
@@ -64,7 +75,7 @@ export class ProductComponent implements OnInit,AfterViewChecked {
 
         var rawCategories = this.productService.getCategory();
         rawCategories.subscribe(results => {
-            this.categoryName =  results;
+            this.categoryName = results;
             this.categoryName.sort((a, b) => {
                 var nameA = a.NAME.toLowerCase(), nameB = b.NAME.toLowerCase();
                 if (nameA < nameB) //sort string ascending
@@ -139,7 +150,7 @@ export class ProductComponent implements OnInit,AfterViewChecked {
                 if (this.dataSource.data.length > 0) {
                     this.hasData = true;
                 }
-            
+
                 setInterval(e => {
                     this.showProgress = false
                 }, 1500)
@@ -251,13 +262,13 @@ export class ProductComponent implements OnInit,AfterViewChecked {
 
             this.calculateTotal();
 
-            this.dataSource = new MatTableDataSource<PeriodicElement>(this.productsInTable);
+            this.dataSource.data = this.productsInTable;
             if (this.dataSource.data.length > 0) {
                 this.hasData = true;
             }
-          
             setInterval(e => {
-                this.showProgress = false
+                this.showProgress = false;
+
             }, 1500)
             this.spinner.hide();
         })
@@ -317,7 +328,7 @@ export class ProductComponent implements OnInit,AfterViewChecked {
                 if (this.dataSource.data.length > 0) {
                     this.hasData = true;
                 }
-            
+
                 setInterval(e => {
                     this.showProgress = false
                 }, 1500)
@@ -348,8 +359,8 @@ export class ProductComponent implements OnInit,AfterViewChecked {
 
             this.totalPrice += (p.prices * p.qtys);
 
-            p.sum = this.calPriceWithTax(p.prices,p.qtys);
-         
+            p.sum = this.calPriceWithTax(p.prices, p.qtys);
+
             this.totalQty += p.qtys;
         })
         this.showProgress = false;
@@ -363,7 +374,7 @@ export class ProductComponent implements OnInit,AfterViewChecked {
     }
 
 
-    
+
     dealData(data: any) {
         var listArr = [];
         data.forEach(p => {
