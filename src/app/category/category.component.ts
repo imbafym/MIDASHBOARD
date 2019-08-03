@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewChecked } from '@angular/core';
 import { Router } from '@angular/router';
-import { DateAdapter, MatPaginator, MatTableDataSource } from '@angular/material';
+import { DateAdapter, MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { Category, ProductService } from '../services/product.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs/internal/observable/forkJoin';
@@ -10,12 +10,16 @@ import { Observable } from 'rxjs/Rx';
 import { delay, catchError } from 'rxjs/operators';
 import { of, throwError } from 'rxjs';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Tax } from 'app/model/tax/tax';
 @Component({
     selector: 'app-category',
     templateUrl: './category.component.html',
     styleUrls: ['./category.component.scss']
 })
-export class CategoryComponent implements OnInit {
+export class CategoryComponent implements OnInit,AfterViewChecked {
+    ngAfterViewChecked(): void {
+        this.dataSource.sort = this.sort;
+    }
     selected: string;
     categoryName: Array<any>;
     categories = [];
@@ -24,14 +28,14 @@ export class CategoryComponent implements OnInit {
     hasData = false;
     showTotal = false;
     showProgress = false;
-    dataSource: MatTableDataSource<PeriodicElement>;
+    dataSource = new MatTableDataSource<PeriodicElement>(this.categoriesInTable);
     values$: any;
 
     time = ['Today', 'Yesterday', 'This Month', 'LastMonth'];
     displayedColumns: string[] = ['catName', 'qtys', 'sum'];
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
-
+    @ViewChild(MatSort) sort: MatSort;
     constructor(private router: Router, private dateAdapter: DateAdapter<Date>,
         public productService: ProductService, private fb: FormBuilder,
         private spinner: NgxSpinnerService) {
@@ -50,11 +54,20 @@ export class CategoryComponent implements OnInit {
             timeOption: ['Today']
         },
         );
+        this.getTax();
         setTimeout(() => {
             var rawCategories = this.productService.getCategory();
 
             rawCategories.subscribe(results => {
-                this.categoryName = results
+                this.categoryName = results;
+                this.categoryName.sort((a, b) => {
+                    var nameA = a.NAME.toLowerCase(), nameB = b.NAME.toLowerCase();
+                    if (nameA < nameB) //sort string ascending
+                        return -1;
+                    if (nameA > nameB)
+                        return 1;
+                    return 0; //default return value (no sorting)
+                })
             }
             )
             this.initShowToday()
@@ -220,7 +233,7 @@ export class CategoryComponent implements OnInit {
 
 
     getTotal(): number {
-        return this.categoriesInTable.map(t => t.categoryTotals).reduce((acc, value) => (acc * 100 + value * 100) / 100, 0);
+        return this.categoriesInTable.map(t => t.sum).reduce((acc, value) => (acc * 100 + value * 100) / 100, 0);
     }
 
     searchByDates({ value, valid }, e: Event) {
@@ -279,27 +292,34 @@ export class CategoryComponent implements OnInit {
             )
     }
 
-
+    getTax() {
+        var rawTax = this.productService.getTaxes();
+        rawTax.subscribe(res => {
+            this.taxes = res;
+        })
+    }
+    taxes: Tax[] = [];
     calculateEachCategoryTotal() {
         this.categoriesInTable.forEach(c => {
             c.categoryProdocuts.forEach(p => {
                 var price = 0;
-                if (p.taxRate === '001') {
-                    price = parseFloat(parseFloat(p.prices).toFixed(2)) * 1.1;
-                } else {
-                    price = parseFloat(parseFloat(p.prices).toFixed(2))
-                }
-                price = parseFloat(price.toFixed(2));
-                p.price = price;
-                c.categoryTotals += (price * p.qtys);
+                var tax = this.taxes.filter(r => r.taxCategory === p.taxRate);
+                price = parseFloat(parseFloat(p.prices).toFixed(2)) * (1 + tax[0].rate);
+                p.price = price.toFixed(2);
+
+                c.categoryTotals += this.calPriceWithTax(p.price , p.qtys);
             }
             )
-            c.categoryTotals = c.categoryTotals.toFixed(2);
+            c.sum = c.categoryTotals = c.categoryTotals.toFixed(2);
         })
         this.showProgress = false;
         this.showTotal = true;
     }
 
+
+    calPriceWithTax(price: string, qty: number): number {
+        return parseFloat(parseFloat(price).toFixed(2)) * qty;
+    }
     setTablePaginator() {
         this.dataSource.paginator = this.paginator;
     }
@@ -321,7 +341,8 @@ export interface PeriodicElement {
     qtys: number;
     prices: number;
     totals: number;
-    total: number
+    total: number;
+    sum: number;
 }
 
 export function changeDateFormate(date): string {

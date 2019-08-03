@@ -79,27 +79,27 @@
                         <div>
                             <mat-spinner mode="indeterminate" *ngIf="showProgress"></mat-spinner>
                         </div>
-                        <table mat-table class="table table-striped" [dataSource]="dataSource" *ngIf="hasData">
+                        <table mat-table class="table table-striped" [dataSource]="dataSource" *ngIf="hasData" matSort>
                         
                             <!-- Name Column -->
-                            <ng-container matColumnDef="catName" sticky>
-                                <mat-header-cell *matHeaderCellDef  class="price text-warning"> Category</mat-header-cell>
+                            <ng-container matColumnDef="catName" >
+                                <mat-header-cell *matHeaderCellDef sticky mat-sort-header class="price text-warning"> Category</mat-header-cell>
                                 <mat-cell *matCellDef="let element"> {{element.categoryName}}</mat-cell>
                                 <mat-footer-cell *matFooterCellDef class="price"><b>Total</b></mat-footer-cell >
                             </ng-container>
 
                             <!-- Weight Column -->
-                            <ng-container matColumnDef="qtys">
-                                <mat-header-cell  *matHeaderCellDef class="price text-warning">Qty</mat-header-cell>
+                            <ng-container matColumnDef="qtys" >
+                                <mat-header-cell  *matHeaderCellDef  mat-sort-header class="price text-warning">Qty</mat-header-cell>
                                 <mat-cell *matCellDef="let element"> {{element.categoryQuantities}}</mat-cell>
                                 <mat-footer-cell *matFooterCellDef></mat-footer-cell>
                             </ng-container>
 
 
-                            <ng-container matColumnDef="sum">
-                                <mat-header-cell *matHeaderCellDef class="price text-warning">Total</mat-header-cell>
+                            <ng-container matColumnDef="sum" >
+                                <mat-header-cell *matHeaderCellDef  mat-sort-header class="price text-warning">Sale</mat-header-cell>
                                 <mat-cell *matCellDef="let element">
-                                    {{element.categoryTotals | currency}}
+                                    {{element.sum | currency}}
                                 </mat-cell>
                                 <mat-footer-cell  *matFooterCellDef class="price"><b>{{getTotal() | currency}}</b></mat-footer-cell >
                             </ng-container>

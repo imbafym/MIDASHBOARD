@@ -80,19 +80,19 @@
                         <mat-table *ngIf="hasData" class="table table-striped"  [dataSource]="dataSource" matSort >
 
                             <ng-container  matColumnDef="productName" sticky>
-                                <mat-header-cell *matHeaderCellDef class="price text-warning"> Product</mat-header-cell>
+                                <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Product</mat-header-cell>
                                 <mat-cell *matCellDef="let element"> {{element.productName}}</mat-cell>
                                 <mat-footer-cell *matFooterCellDef class="price"> Total </mat-footer-cell>
                             </ng-container>
 
-                            <ng-container matColumnDef="catName">
-                                <mat-header-cell *matHeaderCellDef class="price text-warning"> Category</mat-header-cell>
+                            <!-- <ng-container matColumnDef="catName">
+                                <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Category</mat-header-cell>
                                 <mat-cell *matCellDef="let element"> {{element.catName}}</mat-cell>
                                 <mat-footer-cell *matFooterCellDef>  </mat-footer-cell>
-                            </ng-container>
+                            </ng-container> -->
                        
                             <ng-container matColumnDef="qtys">
-                                <mat-header-cell *matHeaderCellDef class="price text-warning"> Qty</mat-header-cell>
+                                <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Qty</mat-header-cell>
                                 <mat-cell *matCellDef="let element"> {{element.qtys}}</mat-cell>
                                 <mat-footer-cell *matFooterCellDef class="price"></mat-footer-cell>
                             </ng-container>
@@ -104,12 +104,11 @@
                             </ng-container> -->
 
                             <ng-container matColumnDef="sum" stickyEnd>
-                                <mat-header-cell *matHeaderCellDef class="price text-warning"> Total</mat-header-cell>
-                                <mat-cell *matCellDef="let element"> {{calPriceWithTax(element.prices,element.qtys) | currency}}</mat-cell> 
+                                <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Sale</mat-header-cell>
+                                <mat-cell *matCellDef="let element"> {{element.sum| currency}}</mat-cell> 
                                <!-- <mat-footer-cell *matFooterCellDef class="price"> {{totalPrice | currency}} </mat-footer-cell> -->
                                <!-- <mat-cell *matCellDef="let element"> {{element.totals | currency}}</mat-cell> -->
                                <mat-footer-cell *matFooterCellDef class="price"> {{getTotal() | currency}} </mat-footer-cell> 
-                               
                             </ng-container>
 
                             <mat-header-row class="text-warning" *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>

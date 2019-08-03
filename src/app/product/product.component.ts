@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewChecked } from '@angular/core';
 import { Router } from '@angular/router';
 import { DateAdapter, MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { Category, ProductService } from '../services/product.service';
@@ -14,7 +14,12 @@ import { NgxSpinnerService } from 'ngx-spinner';
     templateUrl: './product.component.html',
     styleUrls: ['./product.component.scss']
 })
-export class ProductComponent implements OnInit {
+export class ProductComponent implements OnInit,AfterViewChecked {
+    ngAfterViewChecked(): void {
+        this.dataSource.sort = this.sort;
+        // this.dataSource.paginator = this.paginator;
+
+    }
     selected: string;
     categoryName: Array<any>;
     categories = [];
@@ -26,18 +31,15 @@ export class ProductComponent implements OnInit {
     showTotal = false;
     showProgress = false;
     hasData: boolean = false;
-    dataSource: any;
     dataSourceNoPirce: any;
 
     time = ['Today', 'Yesterday', 'This Month', 'Last Month'];
     //    displayedColumns: string[] = ['productName', 'qtys', 'prices', 'sum', 'catName'];
-    displayedColumns: string[] = ['productName', 'qtys', 'sum'];
     forkService: any
     taxes: Tax[] = [];
-
-
-
-    constructor(private router: Router, private dateAdapter: DateAdapter<Date>, 
+    displayedColumns: string[] = ['productName', 'qtys', 'sum'];
+    dataSource = new MatTableDataSource<PeriodicElement>(this.productsInTable);
+    constructor(private router: Router, private dateAdapter: DateAdapter<Date>,
         public productService: ProductService, private fb: FormBuilder, private spinner: NgxSpinnerService) {
         dateAdapter.setLocale('nl');
     }
@@ -47,7 +49,7 @@ export class ProductComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
     ngOnInit() {
         this.spinner.show();
-
+        
         this.selected = 'All Categories';
         this.categoryName = [];
         this.form = this.fb.group({
@@ -62,11 +64,19 @@ export class ProductComponent implements OnInit {
 
         var rawCategories = this.productService.getCategory();
         rawCategories.subscribe(results => {
-            this.categoryName = results
+            this.categoryName =  results;
+            this.categoryName.sort((a, b) => {
+                var nameA = a.NAME.toLowerCase(), nameB = b.NAME.toLowerCase();
+                if (nameA < nameB) //sort string ascending
+                    return -1;
+                if (nameA > nameB)
+                    return 1;
+                return 0; //default return value (no sorting)
+            })
         }
         )
         setTimeout(() => {
-        this.initShowToday()
+            this.initShowToday()
         }, 500);
     }
 
@@ -84,11 +94,11 @@ export class ProductComponent implements OnInit {
     initShowToday() {
         var rawProduct = this.productService.getProductToday()
         var rawCategory = this.productService.getCategoryToday()
-        setTimeout(()=>{
+        setTimeout(() => {
             this.forkService = this.productService.getTodayForkStream().subscribe(results => {
                 var productSales = results[0];
                 var categoriesSales = results[1];
-    
+
                 categoriesSales.forEach(c => {
                     var category = new Category;
                     category.categoryName = c.catName;
@@ -104,7 +114,7 @@ export class ProductComponent implements OnInit {
                     this.categories.push(category)
                 })
                 this.productsInTable = [];
-    
+
                 if (this.selected == 'All Categories') {
                     this.categories.forEach(c => {
                         c.categoryProdocuts.forEach(p => {
@@ -122,22 +132,21 @@ export class ProductComponent implements OnInit {
                 }
                 this.productsInTable = this.dealData(this.productsInTable);
                 this.sortData(this.productsInTable);
-    
+
                 this.calculateTotal();
-    
+
                 this.dataSource = new MatTableDataSource<PeriodicElement>(this.productsInTable);
                 if (this.dataSource.data.length > 0) {
                     this.hasData = true;
                 }
-                this.setTableSort();
-                this.setTablePaginator();
+            
                 setInterval(e => {
                     this.showProgress = false
                 }, 1500)
                 this.spinner.hide();
             })
         }, 500)
-       
+
     }
 
     nav(link) {
@@ -164,11 +173,11 @@ export class ProductComponent implements OnInit {
         this.spinner.show();
         if (value['radioOptions'] == '2') {
             setTimeout(() => {
-            this.searchByDates({ value, valid }, e);                
+                this.searchByDates({ value, valid }, e);
             }, 500);
         } else if (value['radioOptions'] == '1') {
             setTimeout(() => {
-            this.searchByOptions({ value, valid }, e)                
+                this.searchByOptions({ value, valid }, e)
             }, 500);
         } else {
             console.log('radio option no value', value['radioOptions'])
@@ -246,8 +255,7 @@ export class ProductComponent implements OnInit {
             if (this.dataSource.data.length > 0) {
                 this.hasData = true;
             }
-            this.setTableSort();
-            this.setTablePaginator();
+          
             setInterval(e => {
                 this.showProgress = false
             }, 1500)
@@ -255,12 +263,6 @@ export class ProductComponent implements OnInit {
         })
     }
 
-    getTotalQuantities() {
-        return this.dataSource.map(t => t.qtys).reduce((acc, value) => acc + value, 0);
-    }
-    getTotalPrice() {
-        return this.dataSource.map(t => t.qtys * t.prices).reduce((acc, value) => acc + value, 0);
-    }
 
 
     searchByDates({ value, valid }, e: Event) {
@@ -315,8 +317,7 @@ export class ProductComponent implements OnInit {
                 if (this.dataSource.data.length > 0) {
                     this.hasData = true;
                 }
-                this.setTableSort();
-                this.setTablePaginator();
+            
                 setInterval(e => {
                     this.showProgress = false
                 }, 1500)
@@ -338,43 +339,38 @@ export class ProductComponent implements OnInit {
     calculateTotal() {
         this.totalPrice = 0;
         this.totalQty = 0;
-        if(this.productsInTable.length === 0) return;
+        if (this.productsInTable.length === 0) return;
         this.productsInTable.forEach(p => {
             var price = 0;
             var tax = this.taxes.filter(r => r.taxCategory === p.taxRate);
-            price = parseFloat(parseFloat(p.prices).toFixed(2)) * (1+tax[0].rate);
+            price = parseFloat(parseFloat(p.prices).toFixed(2)) * (1 + tax[0].rate);
             p.prices = price.toFixed(2);
 
             this.totalPrice += (p.prices * p.qtys);
+
+            p.sum = this.calPriceWithTax(p.prices,p.qtys);
+         
             this.totalQty += p.qtys;
         })
         this.showProgress = false;
         this.showTotal = true;
     }
 
+
+
+    calPriceWithTax(price: string, qty: number): number {
+        return parseFloat(parseFloat(price).toFixed(2)) * qty;
+    }
+
+
     
-
-    calPriceWithTax(price : string,qty: number): number{
-
-
-         return parseFloat(parseFloat(price).toFixed(2))*qty;
-    }
-
-
-    setTablePaginator() {
-        this.dataSource.paginator = this.paginator;
-    }
-
-    setTableSort() {
-        this.dataSource.sort = this.sort;
-    }
     dealData(data: any) {
         var listArr = [];
         data.forEach(p => {
             for (var i = 0; i < listArr.length; i++) {
                 if (listArr[i].productName == p.productName) {
-                    listArr[i].qtys += p.qtys
-                    listArr[i].totals += p.totals
+                    listArr[i].qtys += p.qtys;
+                    listArr[i].totals += p.totals;
                     return;
                 }
             }
@@ -385,14 +381,16 @@ export class ProductComponent implements OnInit {
                 productName: p.productName,
                 qtys: p.qtys,
                 taxRate: p.taxRate,
-                totals: p.totals
+                totals: p.totals,
             })
         })
         return listArr;
     }
 
-    getTotal(): number{
-        return this.productsInTable.map(t => t.prices*t.qtys).reduce((acc,value)=> (acc*1000 + value*1000)/1000, 0);
+    getTotal(): number {
+        // return this.productsInTable.map(t => t.prices * t.qtys).reduce((acc, value) => (acc * 1000 + value * 1000) / 1000, 0);
+        return this.productsInTable.map(t => t.sum).reduce((acc, value) => (acc * 1000 + value * 1000) / 1000, 0);
+
     }
 
 
@@ -407,7 +405,8 @@ export interface PeriodicElement {
     qtys: number;
     prices: number;
     totals: number;
-    total: number
+    total: number;
+    sum: number;
 }
 
 
