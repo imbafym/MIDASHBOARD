@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DatabaseInfoService } from '../../services/database-info.service';
 import { ApiUrlService } from '../../services/api-url.service';
 import { forkJoin } from 'rxjs';
+import { UserService } from 'app/services/user.service';
 
 @Component({
   selector: 'app-footer',
@@ -14,7 +15,7 @@ export class FooterComponent implements OnInit {
   host = '';
   businessName: string;
   url: string;
-  constructor(public databaseService: DatabaseInfoService, public apiUrlService: ApiUrlService) { }
+  constructor(public userService : UserService, public databaseService: DatabaseInfoService, public apiUrlService: ApiUrlService) { }
 
   ngOnInit() {
 

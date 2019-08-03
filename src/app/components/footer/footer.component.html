@@ -1,9 +1,11 @@
 <footer class="my-footer">
     <div class="container-fluid">
-
+        <div class=" nav-item">
+            <div>User: {{userService.currentUser._username}}</div>
+            <div class="break-text">Business: {{businessName}}</div>
+            <div>Database: {{dbName}}</div>
+        </div>
         <div class="copyright pull-left">
-            <h4 class="break-text">Business: {{businessName}}</h4>
-            <h4>Database: {{dbName}}</h4>
             <p>&copy;{{test | date: 'yyyy'}} MiDASHBOARD</p>
         </div>
     </div>
