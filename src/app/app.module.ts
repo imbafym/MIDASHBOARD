@@ -49,6 +49,7 @@ import {RequestInterceptor} from './services/httpInterceptor/http_interceptor';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { ProgressSpinnerDialogComponent } from './shared/progress-spinner-dialog/progress-spinner-dialog.component';
+import { DirectSaleReportComponent } from './direct-sale-report/direct-sale-report.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     direction: 'horizontal',

@@ -17,6 +17,7 @@ import { AdminPageComponent } from 'app/admin-page/admin-page.component';
 import { HourlyReportComponent } from 'app/transaction-report/hourly-report/hourly-report.component';
 import { DailyReportComponent } from 'app/transaction-report/daily-report/daily-report.component';
 import { MonthlyReportComponent } from 'app/transaction-report/monthly-report/monthly-report.component';
+import { DirectSaleReportComponent } from 'app/direct-sale-report/direct-sale-report.component';
 
 
 
@@ -38,7 +39,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'hourly-report', component: HourlyReportComponent },
     { path: 'daily-report', component: DailyReportComponent },
     { path: 'monthly-report', component: MonthlyReportComponent },
-    // { path: 'upgrade',        component: UpgradeComponent },
+    { path: 'direct-sales-report',        component: DirectSaleReportComponent },
     { path: 'dailyTable', component: DailyTableComponent },
     { path: 'monthlyTable', component: MonthlyTableComponent },
     { path: 'categoryTable', component: CategoryTableComponent },

@@ -8,6 +8,7 @@ import { catchError } from 'rxjs/operators';
 import { Tax } from 'app/model/tax/tax';
 import { HourlyTran } from 'app/transaction-report/hourly-report/hourly-report.component';
 import { MonthlyTran } from 'app/transaction-report/monthly-report/monthly-report.component';
+import { DirectSale } from 'app/direct-sale-report/direct-sale-report.component';
 @Injectable()
 export class ProductService {
 
@@ -78,32 +79,6 @@ export class ProductService {
      return this.forkDateStream;
     }
 
-    getStreamTodayProducts() {
-        if (this.todayProcut) {
-            return Observable.of(this.todayProcut);
-        }
-        if (this.allTodayProductsData$) {
-            return this.allTodayProductsData$
-        }
-        this.allTodayProductsData$ = this.http
-            .get(this.url + `/api/categories/queryProductToday`, this.httpOptions)
-            .pipe(catchError(error => of(error)))
-            .share();
-        return this.allTodayProductsData$
-    }
-    getStreamTodayCategories() {
-        if (this.todayProcut) {
-            return Observable.of(this.todayProcut);
-        }
-        if (this.allTodayCategortyData$) {
-            return this.allTodayCategortyData$
-        }
-        this.allTodayCategortyData$ = this.http
-            .get(this.url + `/api/categories/queryCategoryToday`, this.httpOptions).share()
-            .pipe(catchError(error => of(error)))
-            .share();
-        return this.allTodayCategortyData$
-    }
 
 
 
@@ -125,6 +100,9 @@ export class ProductService {
         return this.http.get(this.url + `/api/categories/queryCategoriesProductSalesWithDate?dateFrom=${dateFrom}&dateTo=${dateTo}`, this.httpOptions).share();
     }
 
+    getDirectSaleCategoryProductSalesByDate(dateFrom, dateTo): Observable<DirectSale[]> {
+        return this.http.get<DirectSale[]>(this.url + `/api/categories/queryDirectSaleCategoriesProductSalesWithDate?dateFrom=${dateFrom}&dateTo=${dateTo}`, this.httpOptions).share();
+    }
 
 
     getProductToday(): Observable<any> {
@@ -148,6 +126,26 @@ export class ProductService {
 
         return this.http.get(this.url + `/api/categories/queryProductLastMonth`, this.httpOptions).share();
     }
+
+//////////////////////////////////////////////
+getDirectSaleProductToday(): Observable<DirectSale[]> {
+
+    return this.http.get<DirectSale[]>(this.url + `/api/categories/queryDirectSaleProductToday`, this.httpOptions).share();
+}
+getDirectSaleProductYesterday(): Observable<DirectSale[]> {
+
+    return this.http.get<DirectSale[]>(this.url + `/api/categories/queryDirectSaleProductYesterday`, this.httpOptions).share();
+}
+
+getDirectSaleProductThisMonth(): Observable<DirectSale[]> {
+    return this.http.get<DirectSale[]>(this.url + `/api/categories/queryDirectSaleProductThisMonth`, this.httpOptions).share();
+}
+
+getDirectSaleProductLastMonth(): Observable<DirectSale[]> {
+    return this.http.get<DirectSale[]>(this.url + `/api/categories/queryDirectSaleProductLastMonth`, this.httpOptions).share();
+}
+/////////////////////////////////////////////
+
 
     getCategoryToday(): Observable<any> {
 

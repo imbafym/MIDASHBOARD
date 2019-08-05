@@ -31,6 +31,7 @@ import { MonthlyReportComponent } from 'app/transaction-report/monthly-report/mo
 import { HourlyReportComponent } from 'app/transaction-report/hourly-report/hourly-report.component';
 import { GridPanelComponent } from '@swimlane/ngx-charts';
 import { ReportGridComponent } from 'app/transaction-report/report-grid/report-grid.component';
+import { DirectSaleReportComponent } from 'app/direct-sale-report/direct-sale-report.component';
 
 @NgModule({
     imports: [
@@ -60,7 +61,8 @@ import { ReportGridComponent } from 'app/transaction-report/report-grid/report-g
         DailyReportComponent,
         MonthlyReportComponent,
         HourlyReportComponent,
-        ReportGridComponent
+        ReportGridComponent,
+        DirectSaleReportComponent
     ]
 })
 
