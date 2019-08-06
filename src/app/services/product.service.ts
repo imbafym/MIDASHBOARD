@@ -104,7 +104,16 @@ export class ProductService {
         return this.http.get<DirectSale[]>(this.url + `/api/categories/queryDirectSaleCategoriesProductSalesWithDate?dateFrom=${dateFrom}&dateTo=${dateTo}`, this.httpOptions).share();
     }
 
+    getDeletedItem(): Observable<DeletedItem[]> {
+        return this.http.get<DeletedItem[]>(this.url + `/api/categories/queryDeletedItem`, this.httpOptions).share();
+    }
 
+    flushDeletedView(){
+        return this.http.get(this.url + `/api/categories/queryFlushDeletedView`, this.httpOptions).share();
+    }
+    flushDeletedtickets() {
+        return this.http.get(this.url + `/api/categories/queryFlushDeletedtickets`, this.httpOptions).share();
+    }
     getProductToday(): Observable<any> {
 
 
@@ -207,4 +216,13 @@ export class Category {
     }
 }
 
+
+export interface DeletedItem{
+    date: string, 
+    productName: string, 
+    qty: number, 
+    sale: string,
+    customer: string, // assume id from customer
+    user: string
+}
 

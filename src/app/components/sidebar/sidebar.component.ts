@@ -19,6 +19,8 @@ export const ROUTES: RouteInfo[] = [
     { path: '/direct-sales-report', title: 'Direct Sales',  icon:'calendar_today', class: '' },
 
     { path: '/stock', title: 'Stock Movement',  icon:'archive', class: '' },
+    { path: '/deletedItem-report', title: 'Deleted Items',  icon:'archive', class: '' },
+
     { path: '/user-profile', title: 'User Profile',  icon:'person', class: '' },
     { path: '/user-management', title: 'User Management',  icon:'person', class: '' },
     

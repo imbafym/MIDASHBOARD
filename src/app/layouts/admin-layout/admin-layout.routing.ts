@@ -18,6 +18,7 @@ import { HourlyReportComponent } from 'app/transaction-report/hourly-report/hour
 import { DailyReportComponent } from 'app/transaction-report/daily-report/daily-report.component';
 import { MonthlyReportComponent } from 'app/transaction-report/monthly-report/monthly-report.component';
 import { DirectSaleReportComponent } from 'app/direct-sale-report/direct-sale-report.component';
+import { DeletedItemComponent } from 'app/deleted-item/deleted-item.component';
 
 
 
@@ -40,6 +41,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'daily-report', component: DailyReportComponent },
     { path: 'monthly-report', component: MonthlyReportComponent },
     { path: 'direct-sales-report',        component: DirectSaleReportComponent },
+    { path: 'deletedItem-report',        component: DeletedItemComponent },
+
     { path: 'dailyTable', component: DailyTableComponent },
     { path: 'monthlyTable', component: MonthlyTableComponent },
     { path: 'categoryTable', component: CategoryTableComponent },
