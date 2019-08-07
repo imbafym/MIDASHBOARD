@@ -9,6 +9,7 @@ import { Tax } from 'app/model/tax/tax';
 import { HourlyTran } from 'app/transaction-report/hourly-report/hourly-report.component';
 import { MonthlyTran } from 'app/transaction-report/monthly-report/monthly-report.component';
 import { DirectSale } from 'app/direct-sale-report/direct-sale-report.component';
+import { ProductCategoryDiscountWithAllCustomerDto, ProductCategoryDiscountWithCustomerDto } from 'app/product/product.component';
 @Injectable()
 export class ProductService {
 
@@ -98,6 +99,17 @@ export class ProductService {
 
 
         return this.http.get(this.url + `/api/categories/queryCategoriesProductSalesWithDate?dateFrom=${dateFrom}&dateTo=${dateTo}`, this.httpOptions).share();
+    }
+
+    // get all product 
+    getProductWithCategoryAndUserAndDiscountWithAllCustomer(dateFrom, dateTo): Observable<ProductCategoryDiscountWithAllCustomerDto> {
+
+        return this.http.get<ProductCategoryDiscountWithAllCustomerDto>(this.url + `/api/categories/queryProductWithCategoryAndUserAndDiscountWithAllCustomer?dateFrom=${dateFrom}&dateTo=${dateTo}`, this.httpOptions).share();
+    }
+    // get all product with customer id
+    getProductWithCategoryAndUserAndDiscountWithCustomer(dateFrom, dateTo): Observable<ProductCategoryDiscountWithCustomerDto> {
+
+        return this.http.get<ProductCategoryDiscountWithCustomerDto>(this.url + `/api/categories/queryProductWithCategoryAndUserAndDiscountWithCustomer?dateFrom=${dateFrom}&dateTo=${dateTo}`, this.httpOptions).share();
     }
 
     getDirectSaleCategoryProductSalesByDate(dateFrom, dateTo): Observable<DirectSale[]> {

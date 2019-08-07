@@ -7,6 +7,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { Tax } from 'app/model/tax/tax';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { getToday, getThisMonth, getLastMonth, getYesterday } from 'app/utils/date-format';
+import { DatabaseInfoService } from 'app/services/database-info.service';
+import { Customer, OptionType } from 'app/direct-sale-report/direct-sale-report.component';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -20,7 +24,7 @@ export class ProductComponent implements OnInit {
     categoryName: Array<any>;
     categories = [];
     form: FormGroup;
-    productsInTable: Array<any>;
+    productsInTable: (ProductCategoryDiscountWithCustomerDto | ProductCategoryDiscountWithAllCustomerDto)[] = [];
     totalQty: number;
     totalPrice: number;
     // totalTotal: number;
@@ -28,15 +32,20 @@ export class ProductComponent implements OnInit {
     showProgress = false;
     hasData: boolean = false;
     dataSourceNoPirce: any;
+    customers: Customer[] = [];
 
-    time = ['Today', 'Yesterday', 'This Month', 'Last Month'];
+
     //    displayedColumns: string[] = ['productName', 'qtys', 'prices', 'sum', 'catName'];
     forkService: any
     taxes: Tax[] = [];
-    displayedColumns: string[] = ['productName', 'qtys', 'sum'];
-    dataSource = new MatTableDataSource<PeriodicElement>(this.productsInTable);
+    selectedCustomer: Customer;
+    time: OptionType[] = [];
+
+    displayedColumns: string[] = ['productName', 'qtys', 'sum', 'discount'];
+    dataSource = new MatTableDataSource<ProductCategoryDiscountWithCustomerDto | ProductCategoryDiscountWithAllCustomerDto>(this.productsInTable);
     constructor(private router: Router, private dateAdapter: DateAdapter<Date>,
-        public productService: ProductService, private fb: FormBuilder, private spinner: NgxSpinnerService) {
+        public productService: ProductService, private fb: FormBuilder, private spinner: NgxSpinnerService,
+        private dbInfoService: DatabaseInfoService) {
         dateAdapter.setLocale('nl');
     }
 
@@ -63,16 +72,22 @@ export class ProductComponent implements OnInit {
         this.spinner.show();
         this.selected = 'All Categories';
         this.categoryName = [];
+        this.selectedCustomer = {
+            id: "-999",
+            name: "All Customers",
+        };
+
         this.form = this.fb.group({
             dateFrom: [null],
             dateTo: [null],
             radioOptions: ['1', Validators.required],
-            timeOption: ['Today']
+            timeOption: [OptionType.Today]
         },
 
         );
+        this.time = this.getTimeOptions();
         this.getTax();
-
+        this.getCustomers();
         var rawCategories = this.productService.getCategory();
         rawCategories.subscribe(results => {
             this.categoryName = results;
@@ -87,12 +102,12 @@ export class ProductComponent implements OnInit {
         }
         )
         setTimeout(() => {
-            this.initShowToday()
+            this.initData(0)
         }, 500);
     }
 
     ngOnDestroy() {
-        this.forkService.unsubscribe();
+        // this.forkService.unsubscribe();
     }
 
     getTax() {
@@ -102,63 +117,71 @@ export class ProductComponent implements OnInit {
         })
     }
 
-    initShowToday() {
-        var rawProduct = this.productService.getProductToday()
-        var rawCategory = this.productService.getCategoryToday()
-        setTimeout(() => {
-            this.forkService = this.productService.getTodayForkStream().subscribe(results => {
-                var productSales = results[0];
-                var categoriesSales = results[1];
-
-                categoriesSales.forEach(c => {
-                    var category = new Category;
-                    category.categoryName = c.catName;
-                    category.categoryQuantities = c.qtys;
-                    category.categoryPrices = c.prices;
-                    category.categoryTotals = c.totals;
-                    category.categoryProdocuts = [];
-                    productSales.forEach(p => {
-                        if (p.catName == c.catName) {
-                            category.categoryProdocuts.push(p)
-                        }
-                    })
-                    this.categories.push(category)
-                })
-                this.productsInTable = [];
-
-                if (this.selected == 'All Categories') {
-                    this.categories.forEach(c => {
-                        c.categoryProdocuts.forEach(p => {
-                            this.productsInTable.push(p)
-                        })
-                    })
-                } else {
-                    this.categories.forEach(c => {
-                        if (c.categoryName == this.selected) {
-                            c.categoryProdocuts.forEach(p => {
-                                this.productsInTable.push(p)
-                            })
-                        }
-                    })
-                }
-                this.productsInTable = this.dealData(this.productsInTable);
-                this.sortData(this.productsInTable);
-
-                this.calculateTotal();
-
-                this.dataSource = new MatTableDataSource<PeriodicElement>(this.productsInTable);
-                if (this.dataSource.data.length > 0) {
-                    this.hasData = true;
-                }
-
-                setInterval(e => {
-                    this.showProgress = false
-                }, 1500)
-                this.spinner.hide();
+    getCustomers() {
+        var rawCustomer = this.dbInfoService.getCustomers();
+        rawCustomer.subscribe(res => {
+            this.customers = res;
+            this.customers.push(this.selectedCustomer);
+            this.customers.sort((a, b) => {
+                var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase();
+                if (nameA < nameB) //sort string ascending
+                    return -1;
+                if (nameA > nameB)
+                    return 1;
+                return 0;
             })
-        }, 500)
+            console.log(this.customers)
+        })
+    }
+
+
+    async getFilteredCustomerSearch(dateFrom: string, dateTo: string): Promise<ProductCategoryDiscountWithCustomerDto[] | ProductCategoryDiscountWithAllCustomerDto[]> {
+        let res = null;
+        if (this.selectedCustomer.id === "-999") {
+            res = await this.productService.getProductWithCategoryAndUserAndDiscountWithAllCustomer(dateFrom, dateTo).toPromise();
+        } else {
+            res = await this.productService.getProductWithCategoryAndUserAndDiscountWithCustomer(dateFrom, dateTo).toPromise();
+        }
+        return res;
+    }
+
+
+
+    async initData(option: OptionType, value = null, valid = null): Promise<void> {
+        this.spinner.show();
+        let dateFrom: string, dateTo: string = null;
+        let rawData: ProductCategoryDiscountWithCustomerDto[] | ProductCategoryDiscountWithAllCustomerDto[] = null;
+        switch (option) {
+            case OptionType.Today: dateFrom = dateTo = getToday(); break;
+            case OptionType.Yesterday: dateFrom = dateTo = getYesterday(); break;
+            case OptionType.ThisMonth: [dateFrom, dateTo] = getThisMonth(); break;
+            case OptionType.LastMonth: [dateFrom, dateTo] = getLastMonth(); break;
+            case OptionType.ByDate:
+                dateFrom = this.changeDateFormate(value['dateFrom']);
+                dateTo = this.changeDateFormate(value['dateTo']);
+                break;
+        }
+        rawData = await this.getFilteredCustomerSearch(dateFrom, dateTo);
+
+        this.productsInTable = rawData;
+        if (this.selected !== 'All Categories') {
+            this.productsInTable = this.productsInTable.filter(p => p.CategoryName === this.selected)
+        }
+        if (this.selectedCustomer.id !== "-999") {
+            this.productsInTable = this.productsInTable.filter(p => p.CustomerId === this.selectedCustomer.id)
+        }
+
+        this.dataSource = new MatTableDataSource<ProductCategoryDiscountWithCustomerDto | ProductCategoryDiscountWithAllCustomerDto>(this.productsInTable);
+        if (this.dataSource.data.length > 0) {
+            this.hasData = true;
+        }
+        setInterval(e => {
+            this.showProgress = false
+        }, 1500)
+        this.spinner.hide();
 
     }
+
 
     nav(link) {
         this.router.navigateByUrl(link);
@@ -181,161 +204,19 @@ export class ProductComponent implements OnInit {
     onSubmit({ value, valid }, e: Event) {
         e.preventDefault();
         this.showProgress = true;
-        this.spinner.show();
+        // this.spinner.show();
+        let option: OptionType = null;
+
         if (value['radioOptions'] == '2') {
-            setTimeout(() => {
-                this.searchByDates({ value, valid }, e);
-            }, 500);
+            option = OptionType.ByDate;
         } else if (value['radioOptions'] == '1') {
-            setTimeout(() => {
-                this.searchByOptions({ value, valid }, e)
-            }, 500);
+            option = Number(value['timeOption']);
         } else {
             console.log('radio option no value', value['radioOptions'])
         }
-
-
-    }
-
-
-    searchByOptions({ value, valid }, e: Event) {
-        this.hasData = false;;
-        this.categories = [];
-        var option = value['timeOption']
-        var stream;
-        switch (option) {
-            case 'Today':
-                stream = this.productService.getTodayForkStream();
-                break;
-            case 'Yesterday':
-                stream = this.productService.getYesterdayForkStream();
-
-                break;
-            case 'This Month':
-                stream = this.productService.getThisMonthForkStream();
-
-                break;
-            case 'Last Month':
-                stream = this.productService.getLastMonthForkStream();
-
-                break;
-        }
-        stream.subscribe(results => {
-            var productSales = results[0];
-            var categoriesSales = results[1];
-
-            categoriesSales.forEach(c => {
-                var category = new Category;
-                category.categoryName = c.catName;
-                category.categoryQuantities = c.qtys;
-                category.categoryPrices = c.prices;
-                category.categoryTotals = c.totals;
-                category.categoryProdocuts = [];
-                productSales.forEach(p => {
-                    if (p.catName == c.catName) {
-                        category.categoryProdocuts.push(p)
-                    }
-                })
-                this.categories.push(category)
-            })
-            this.productsInTable = [];
-            var obj = {};
-            if (this.selected == 'All Categories') {
-                this.categories.forEach(c => {
-                    c.categoryProdocuts.forEach(p => {
-                        this.productsInTable.push(p)
-                    })
-                })
-            } else {
-                this.categories.forEach(c => {
-                    if (c.categoryName == this.selected) {
-                        c.categoryProdocuts.forEach(p => {
-                            this.productsInTable.push(p)
-                        })
-                    }
-                })
-
-            }
-
-            this.productsInTable = this.dealData(this.productsInTable);
-            this.sortData(this.productsInTable);
-
-            this.calculateTotal();
-
-            this.dataSource.data = this.productsInTable;
-            if (this.dataSource.data.length > 0) {
-                this.hasData = true;
-            }
-            setInterval(e => {
-                this.showProgress = false;
-
-            }, 1500)
-            this.spinner.hide();
-        })
-    }
-
-
-
-    searchByDates({ value, valid }, e: Event) {
-        this.hasData = false;
-        this.categories = [];
-        var dateFrom = this.changeDateFormate(value['dateFrom'])
-        var dateTo = this.changeDateFormate(value['dateTo'])
-
-        var rawProductSales = this.productService.getCategoryProductSalesByDate(dateFrom, dateTo);
-        var rawCategoriesSales = this.productService.getCategorySalesByDate(dateFrom, dateTo);
-        this.productService.getDateForkStream(dateFrom, dateTo)
-            .subscribe(results => {
-                var productSales = results[0];
-                var categoriesSales = results[1];
-
-                categoriesSales.forEach(c => {
-                    var category = new Category;
-                    category.categoryName = c.catName;
-                    category.categoryQuantities = c.qtys;
-                    category.categoryPrices = c.prices;
-                    category.categoryTotals = c.totals;
-                    category.categoryProdocuts = [];
-                    productSales.forEach(p => {
-                        if (p.catName == c.catName) {
-                            category.categoryProdocuts.push(p)
-                        }
-                    })
-                    this.categories.push(category)
-                })
-                this.productsInTable = [];
-                if (this.selected == 'All Categories') {
-                    this.categories.forEach(c => {
-                        c.categoryProdocuts.forEach(p => {
-                            this.productsInTable.push(p)
-                        })
-                    })
-                } else {
-                    this.categories.forEach(c => {
-                        if (c.categoryName == this.selected) {
-                            c.categoryProdocuts.forEach(p => {
-                                this.productsInTable.push(p)
-                            })
-                        }
-                    })
-                }
-                this.productsInTable = this.dealData(this.productsInTable);
-                console.log(this.productsInTable)
-                this.sortData(this.productsInTable);
-
-                this.calculateTotal();
-                this.dataSource = new MatTableDataSource<PeriodicElement>(this.productsInTable);
-                if (this.dataSource.data.length > 0) {
-                    this.hasData = true;
-                }
-
-                setInterval(e => {
-                    this.showProgress = false
-                }, 1500)
-                this.spinner.hide();
-
-            }
-            )
+        setTimeout(() => {
+            this.initData(option, value, valid)
+        }, 500);
     }
 
     sortData(data) {
@@ -346,67 +227,54 @@ export class ProductComponent implements OnInit {
         });
     }
 
-
-    calculateTotal() {
-        this.totalPrice = 0;
-        this.totalQty = 0;
-        if (this.productsInTable.length === 0) return;
-        this.productsInTable.forEach(p => {
-            var price = 0;
-            var tax = this.taxes.filter(r => r.taxCategory === p.taxRate);
-            price = parseFloat(parseFloat(p.prices).toFixed(2)) * (1 + tax[0].rate);
-            p.prices = price.toFixed(2);
-
-            this.totalPrice += (p.prices * p.qtys);
-
-            p.sum = this.calPriceWithTax(p.prices, p.qtys);
-
-            this.totalQty += p.qtys;
-        })
-        this.showProgress = false;
-        this.showTotal = true;
+    getTimeOptions(): OptionType[] {
+        return [
+            OptionType.Today,
+            OptionType.Yesterday,
+            OptionType.ThisMonth,
+            OptionType.LastMonth
+        ]
     }
-
-
-
-    calPriceWithTax(price: string, qty: number): number {
-        return parseFloat(parseFloat(price).toFixed(2)) * qty;
-    }
-
-
-
-    dealData(data: any) {
-        var listArr = [];
-        data.forEach(p => {
-            for (var i = 0; i < listArr.length; i++) {
-                if (listArr[i].productName == p.productName) {
-                    listArr[i].qtys += p.qtys;
-                    listArr[i].totals += p.totals;
-                    return;
-                }
-            }
-            // first time no data
-            listArr.push({
-                catName: p.catName,
-                prices: p.prices,
-                productName: p.productName,
-                qtys: p.qtys,
-                taxRate: p.taxRate,
-                totals: p.totals,
-            })
-        })
-        return listArr;
+    getTimeOptionName(option: OptionType): string {
+        switch (option) {
+            case OptionType.Today: return "Today";
+            case OptionType.Yesterday: return "Yesterday";
+            case OptionType.ThisMonth: return "ThisMonth";
+            case OptionType.LastMonth: return "LastMonth";
+        }
     }
 
     getTotal(): number {
         // return this.productsInTable.map(t => t.prices * t.qtys).reduce((acc, value) => (acc * 1000 + value * 1000) / 1000, 0);
-        return this.productsInTable.map(t => t.sum).reduce((acc, value) => (acc * 1000 + value * 1000) / 1000, 0);
+        return this.productsInTable.map(t => t.sale).reduce((acc, value) => (acc * 1000 + value * 1000) / 1000, 0);
 
     }
 
+    getTotalDiscount(): number {
+        // return this.productsInTable.map(t => t.prices * t.qtys).reduce((acc, value) => (acc * 1000 + value * 1000) / 1000, 0);
+        return this.productsInTable.map(t => t.discount).reduce((acc, value) => (acc * 1000 + value * 1000) / 1000, 0);
+
+    }
+
+}
 
 
-
+export interface ProductCategoryDiscountWithAllCustomerDto {
+    productName: string,
+    CategoryName: string,
+    qtys: number,
+    discount: number,
+    sale: number,
+    CustomerId: string
+}
+export interface ProductCategoryDiscountWithCustomerDto {
+    productName: string,
+    CategoryName: string,
+    qtys: number,
+    discount: number,
+    sale: number,
+    customerName: string,
+    CustomerId: string
 }
 
 
@@ -419,5 +287,3 @@ export interface PeriodicElement {
     total: number;
     sum: number;
 }
-
-

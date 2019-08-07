@@ -4,7 +4,6 @@ import { DateAdapter, MatPaginator, MatTableDataSource, MatSort } from '@angular
 import { Category, ProductService } from '../services/product.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs/internal/observable/forkJoin';
-import { PeriodicElement } from '../product/product.component';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Rx';
 import { delay, catchError } from 'rxjs/operators';
