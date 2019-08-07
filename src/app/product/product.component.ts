@@ -41,7 +41,7 @@ export class ProductComponent implements OnInit {
     selectedCustomer: Customer;
     time: OptionType[] = [];
 
-    displayedColumns: string[] = ['productName', 'qtys', 'sum', 'discount'];
+    displayedColumns: string[] = ['productName', 'qty', 'sale', 'discount'];
     dataSource = new MatTableDataSource<ProductCategoryDiscountWithCustomerDto | ProductCategoryDiscountWithAllCustomerDto>(this.productsInTable);
     constructor(private router: Router, private dateAdapter: DateAdapter<Date>,
         public productService: ProductService, private fb: FormBuilder, private spinner: NgxSpinnerService,

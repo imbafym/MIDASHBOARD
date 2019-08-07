@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { PeriodicElement } from 'app/product/product.component';
 import { ProductService } from 'app/services/product.service';
-import { changeDateFormate } from 'app/category/category.component';
+
 import {MomentDateAdapter} from '@angular/material-moment-adapter';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
 import {MatDatepicker} from '@angular/material/datepicker';
