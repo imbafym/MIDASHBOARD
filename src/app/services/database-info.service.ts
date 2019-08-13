@@ -4,6 +4,7 @@ import {Observable} from 'rxjs/Rx';
 import {ApiUrlService} from './api-url.service';
 import { UserService } from './user.service';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -31,9 +32,21 @@ export class DatabaseInfoService {
       return this.http.get(this.url + `/api/users/getCustomers`, this.httpOptions);
   }
 
+  getUsers():Observable<User[]>{
+    this.apiUrlService.currentUrl.subscribe(url => this.url = url);
+    return this.http.get<User[]>(this.url + `/api/users/getUsers`, this.httpOptions);
+}
+
+
     getBusiness():Observable<any>{
         this.apiUrlService.currentUrl.subscribe(url => this.url = url);
 
         return this.http.get(this.url + `/api/users/getBusinessName`, this.httpOptions);
     }
+}
+
+
+export interface User{
+  userName: string;
+  userId: string;
 }

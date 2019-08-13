@@ -5,7 +5,7 @@ import { MatTableDataSource, DateAdapter, MatPaginator, MatSort } from '@angular
 import { Router } from '@angular/router';
 import { ProductService, DeletedItem } from 'app/services/product.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { DatabaseInfoService } from 'app/services/database-info.service';
+import { DatabaseInfoService, User } from 'app/services/database-info.service';
 import { forkJoin, Observable } from 'rxjs';
 import moment from 'moment';
 import { Customer } from 'app/direct-sale-report/direct-sale-report.component';
@@ -17,7 +17,7 @@ import { Customer } from 'app/direct-sale-report/direct-sale-report.component';
   styleUrls: ['./deleted-item.component.scss']
 })
 export class DeletedItemComponent implements OnInit {
-  selectedCustomer: Customer;
+  selectedUser: User;
   categories = [];
   form: FormGroup;
   deletedItemInTable:DeletedItem[] = [];
@@ -32,7 +32,9 @@ export class DeletedItemComponent implements OnInit {
 
   forkService: any
   taxes: Tax[] = [];
-  customers: Customer[] = [];
+  // customers: Customer[] = [];
+  users: User[] = [];
+
   displayedColumns: string[] = ['date', 'customer','productName', 'qty','sale','user'];
   dataSource = new MatTableDataSource<DeletedItem>(this.deletedItemInTable);
   constructor(private router: Router, private dateAdapter: DateAdapter<Date>,
@@ -63,9 +65,9 @@ export class DeletedItemComponent implements OnInit {
   ngOnInit() {
     this.spinner.show();
 
-    this.selectedCustomer = {
-      id: "-999",
-      name: "All Customers",
+    this.selectedUser = {
+      userId: "-999",
+      userName: "All Users",
     };
     this.form = this.fb.group({
     },
@@ -73,13 +75,12 @@ export class DeletedItemComponent implements OnInit {
 
     this.getTax();
 
-    this.getCustomers();
+    this.getUsers();
     setTimeout(() => {
       this.initData()
     }, 500);
   }
   onSelectChanged(event: any){
-    console.log('i am changed',event);
     this.initData();
   }
 
@@ -100,30 +101,34 @@ export class DeletedItemComponent implements OnInit {
     })
   }
 
-  getCustomers() {
-    var rawCustomer = this.dbInfoService.getCustomers();
-    rawCustomer.subscribe(res => {
-      this.customers = res;
-      this.customers.push(this.selectedCustomer);
-      this.customers.sort((a, b) => {
-        var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase();
+  getUsers() {
+    var rawUser = this.dbInfoService.getUsers();
+    rawUser.subscribe(res => {
+      this.users = res;
+      this.users.push(this.selectedUser);
+      this.users.sort((a, b) => {
+        var nameA = a.userName.toLowerCase(), nameB = b.userName.toLowerCase();
         if (nameA < nameB) //sort string ascending
           return -1;
         if (nameA > nameB)
           return 1;
         return 0;
     })
-    console.log(this.customers)
+    console.log(this.users)
   })
   }
 
 
   async flushData():Promise<void>{
-    
-    let flush1 = await this.productService.flushDeletedView().toPromise();
-    let flush2 = await this.productService.flushDeletedtickets().toPromise();
-
-    this.initData();
+    let result = confirm('Are you sure to flush Data?');
+    console.log(result);
+    if(!result) return;
+    else{
+      let flush1 = await this.productService.flushDeletedView().toPromise();
+      let flush2 = await this.productService.flushDeletedtickets().toPromise();
+      this.initData();
+    }
+   
   }
  
 
@@ -136,9 +141,9 @@ export class DeletedItemComponent implements OnInit {
 
     forkJoin(rawData).subscribe(results => {
       this.deletedItemInTable = results[0];
-      console.log(this.selectedCustomer)
-      if(this.selectedCustomer && this.selectedCustomer.id !== '-999'){
-        this.deletedItemInTable = this.deletedItemInTable.filter(p=>p.customer === this.selectedCustomer.id)
+      console.log(this.selectedUser)
+      if(this.selectedUser && this.selectedUser.userId !== '-999'){
+        this.deletedItemInTable = this.deletedItemInTable.filter(p=>p.user === this.selectedUser.userName)
       }
 
       this.dealData(this.deletedItemInTable);
@@ -164,7 +169,7 @@ export class DeletedItemComponent implements OnInit {
   changeDateFormate(date): string {
     // var date = "2018-05-29T02:51:39.692104";
     var stillUtc = moment.utc(date).toDate(); //change utc time
-    var local = moment(stillUtc).local().format('YYYY-MM-DD'); //change local timezone
+    var local = moment(stillUtc).local().format('YYYY-MM-DD hh:mm'); //change local timezone
     return local;
   }
 
