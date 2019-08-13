@@ -8,7 +8,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Category } from 'app/services/category.service';
 import moment from 'moment';
 import { forkJoin, Observable } from 'rxjs';
-import { DatabaseInfoService } from 'app/services/database-info.service';
+import { DatabaseInfoService, User } from 'app/services/database-info.service';
 
 @Component({
   selector: 'direct-sale-report',
@@ -16,7 +16,7 @@ import { DatabaseInfoService } from 'app/services/database-info.service';
   styleUrls: ['./direct-sale-report.component.scss']
 })
 export class DirectSaleReportComponent implements OnInit {
-  selectedCustomer: Customer;
+  selectedUser: User;
   categoryName: Array<any>;
   categories = [];
   form: FormGroup;
@@ -33,8 +33,8 @@ export class DirectSaleReportComponent implements OnInit {
   //    displayedColumns: string[] = ['productName', 'qtys', 'prices', 'sum', 'catName'];
   forkService: any
   taxes: Tax[] = [];
-  customers: Customer[] = [];
-  displayedColumns: string[] = ['ticketId', 'customerName','paytype', 'date','sales'];
+  users: User[] = [];
+  displayedColumns: string[] = ['ticketId', 'userName','paytype', 'date','sales'];
   dataSource = new MatTableDataSource<DirectSale>(this.productsInTable);
   constructor(private router: Router, private dateAdapter: DateAdapter<Date>,
     public productService: ProductService, private fb: FormBuilder, private spinner: NgxSpinnerService,
@@ -64,9 +64,9 @@ export class DirectSaleReportComponent implements OnInit {
   ngOnInit() {
     this.spinner.show();
     this.categoryName = [];
-    this.selectedCustomer = {
-      id: "-999",
-      name: "All Customers",
+    this.selectedUser = {
+      userId: "-999",
+      userName: "All Users",
     };
     this.form = this.fb.group({
       dateFrom: [null],
@@ -80,7 +80,7 @@ export class DirectSaleReportComponent implements OnInit {
     this.getTax();
    
 
-    this.getCustomers();
+    this.getUsers();
     setTimeout(() => {
       this.initShowToday()
     }, 500);
@@ -117,20 +117,20 @@ export class DirectSaleReportComponent implements OnInit {
     })
   }
 
-  getCustomers() {
-    var rawCustomer = this.dbInfoService.getCustomers();
+  getUsers() {
+    var rawCustomer = this.dbInfoService.getUsers();
     rawCustomer.subscribe(res => {
-      this.customers = res;
-      this.customers.push(this.selectedCustomer);
-      this.customers.sort((a, b) => {
-        var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase();
+      this.users = res;
+      this.users.push(this.selectedUser);
+      this.users.sort((a, b) => {
+        var nameA = a.userName.toLowerCase(), nameB = b.userName.toLowerCase();
         if (nameA < nameB) //sort string ascending
           return -1;
         if (nameA > nameB)
           return 1;
         return 0;
     })
-    console.log(this.customers)
+    console.log(this.users)
   })
   }
 
@@ -187,9 +187,9 @@ export class DirectSaleReportComponent implements OnInit {
 
     forkJoin(rawData).subscribe(results => {
       this.productsInTable = results[0];
-      console.log(this.selectedCustomer)
-      if(this.selectedCustomer && this.selectedCustomer.id !== '-999'){
-        this.productsInTable = this.productsInTable.filter(p=>p.customerId === this.selectedCustomer.id)
+      console.log(this.selectedUser)
+      if(this.selectedUser && this.selectedUser.userId !== '-999'){
+        this.productsInTable = this.productsInTable.filter(p=>p.userId === this.selectedUser.userId)
       }
 
       this.dealData(this.productsInTable);
@@ -209,8 +209,8 @@ export class DirectSaleReportComponent implements OnInit {
   dealData(productsInTable: DirectSale[]){
     for(let product of productsInTable){
         product.date = this.changeDateFormate(product.date);
-        const tax = this.taxes.filter(r => r.taxCategory === product.taxRate);
-        product.sales = parseFloat((product.sales * 1000 * (1 + tax[0].rate) / 1000).toFixed(2));
+        // const tax = this.taxes.filter(r => r.taxCategory === product.taxRate);
+        // product.sales = parseFloat((product.sales * 1000 * (1 + tax[0].rate) / 1000).toFixed(2));
     }
   }
 
@@ -273,13 +273,12 @@ export enum OptionType{
 
 
 export interface DirectSale {
-  customerName: string,
+  user: string,
   date: string,
   paytype: string,
   sales: number,
-  taxRate: string,
-  ticketId: number,
-  customerId: string
+  ticketId: string,
+  userId: string
 }
 
 
