@@ -35,7 +35,7 @@ var getDateStr = function (dayCount) {
     var y = dd.getFullYear();
     var m = dd.getMonth() + 1;//获取当前月份的日期
     var d = dd.getDate();
-    return y + "-" + m + "-" + d;
+    return y + "-" + Appendzero(m) + "-" + Appendzero(d);
 }
 
 
@@ -64,14 +64,21 @@ var getDateStr = function (dayCount) {
     if (month < 10) {
         month = Number("0" + month);
     }
-    var firstDay = year + "-" + month + "-" + "01";// zhe个月的第一天
+    var firstDay = year + "-" + Appendzero(month) + "-" + "01";// zhe个月的第一天
     var myDate = new Date(year, month, 0);
-    var lastDay = year + "-" + month + "-" + myDate.getDate();// zhe个月的最后一天
+    var lastDay = year + "-" + Appendzero(month) + "-" + Appendzero(myDate.getDate());// zhe个月的最后一天
      let dates: string[] =[];
      dates.push(firstDay);
      dates.push(lastDay);
    return dates;
 }
+
+function Appendzero(obj)
+    {
+        if(obj<10) return "0" +""+ obj;
+        else return obj;
+    }
+    
 
 export function getLastMonth(): string[]{
     var nowdays = new Date();
@@ -84,9 +91,9 @@ export function getLastMonth(): string[]{
     if (month < 10) {
         month = Number("0" + month);
     }
-    var firstDay = year + "-" + month + "-" + "01";// 上个月的第一天
+    var firstDay = year + "-" + Appendzero(month) + "-" + "01";// 上个月的第一天
     var myDate = new Date(year, month, 0);
-    var lastDay = year + "-" + month + "-" + myDate.getDate();// 上个月的最后一天
+    var lastDay = year + "-" + Appendzero(month) + "-" + Appendzero(myDate.getDate());// 上个月的最后一天
     let dates: string[] =[];
     dates.push(firstDay);
     dates.push(lastDay);
