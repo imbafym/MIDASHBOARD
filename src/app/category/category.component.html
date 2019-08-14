@@ -94,7 +94,7 @@
                             </div>
                         </form>
 
-                        <mat-table *ngIf="hasData" class="table table-striped" [dataSource]="dataSource" matSort>
+                        <mat-table *ngIf="productsInTable.length>0" class="table table-striped" [dataSource]="dataSource" matSort>
 
                             <ng-container matColumnDef="CategoryName" sticky>
                                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Category

@@ -115,6 +115,7 @@ export class UserProfileComponent implements OnInit {
     }
 
     save(id, value) {
+        
         this.userService.updateUser(id, value);
         this.user = new UserModel();
     }
@@ -130,7 +131,8 @@ export class UserProfileComponent implements OnInit {
         this.user._url = this.form.value.url;
 
         this.user._port = this.form.getRawValue().port;
-
+        console.log(this.user)
+        console.log(this.form.value)
         this.save(this.user.key, this.user);
 
         var databaseInfo = this.databaseService.getDatabase();

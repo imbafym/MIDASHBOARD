@@ -25,7 +25,7 @@ export class CategoryComponent implements OnInit {
     categories = [];
     form: FormGroup;
     productsInTable: (ProductCategoryDiscountWithCustomerDto | ProductCategoryDiscountWithAllCustomerDto)[] = [];
-    
+
     categoryTable: CategoryDto[] = [];
     totalQty: number;
     totalPrice: number;
@@ -42,7 +42,7 @@ export class CategoryComponent implements OnInit {
     time: OptionType[] = [];
 
     displayedColumns: string[] = ['CategoryName', 'qty', 'sale', 'discount'];
-    dataSource = new MatTableDataSource<CategoryDto>(this.categoryTable);
+    _dataSource = new MatTableDataSource<CategoryDto>(this.categoryTable);
     constructor(private router: Router, private dateAdapter: DateAdapter<Date>,
         public productService: ProductService, private fb: FormBuilder, private spinner: NgxSpinnerService,
         private dbInfoService: DatabaseInfoService) {
@@ -68,7 +68,7 @@ export class CategoryComponent implements OnInit {
         this.dataSource.sort = this.sort;
     }
 
-    ngOnInit() {
+    async ngOnInit(): Promise<void> {
         this.spinner.show();
         this.selected = 'All Categories';
         this.categoryName = [];
@@ -101,9 +101,9 @@ export class CategoryComponent implements OnInit {
             })
         }
         )
-        setTimeout(() => {
-            this.initData(0)
-        }, 500);
+
+        await this.initData(0);
+
     }
 
     ngOnDestroy() {
@@ -172,36 +172,46 @@ export class CategoryComponent implements OnInit {
         }
         this.categoryTable = this.dealData(this.productsInTable);
         this.dataSource = new MatTableDataSource<CategoryDto>(this.categoryTable);
-        if (this.dataSource.data.length > 0) {
+
+        if (this.dataSource.data.length > 0 || this.productsInTable.length>0) {
             this.hasData = true;
         }
+
         setInterval(e => {
-            this.showProgress = false
+            this.showProgress = false;
+            this.spinner.hide();
         }, 1500)
-        this.spinner.hide();
+       
 
     }
 
-    dealData(data: (ProductCategoryDiscountWithCustomerDto | ProductCategoryDiscountWithAllCustomerDto)[]): CategoryDto[]{
+ get dataSource(){
+     return this._dataSource;
+ }
+set dataSource(input: any){
+    this._dataSource = input;
+}
+
+    dealData(data: (ProductCategoryDiscountWithCustomerDto | ProductCategoryDiscountWithAllCustomerDto)[]): CategoryDto[] {
         let categories: CategoryDto[] = [];
-       for(let catename of this.categoryName){
-        let tempCat:CategoryDto = {
-            CategoryName: catename.NAME,
-            qty: 0,
-            sale: 0,
-            discount:0
-        }
-        for(let p of data){
-            if(p.CategoryName === catename.NAME){
-               tempCat.qty += p.qty;
-               tempCat.sale += p.sale;
-               tempCat.discount += p.discount;
+        for (let catename of this.categoryName) {
+            let tempCat: CategoryDto = {
+                CategoryName: catename.NAME,
+                qty: 0,
+                sale: 0,
+                discount: 0
+            }
+            for (let p of data) {
+                if (p.CategoryName === catename.NAME) {
+                    tempCat.qty += p.qty;
+                    tempCat.sale += p.sale;
+                    tempCat.discount += p.discount;
+                }
+            }
+            if (tempCat.qty !== 0) {
+                categories.push(tempCat);
             }
         }
-        if(tempCat.qty !== 0){
-            categories.push(tempCat);
-        }
-       }
         return categories;
     }
 
@@ -300,7 +310,7 @@ export interface ProductCategoryDiscountWithCustomerDto {
     CustomerId: string
 }
 
-export interface CategoryDto{
+export interface CategoryDto {
     CategoryName: string,
     qty: number,
     sale: number,

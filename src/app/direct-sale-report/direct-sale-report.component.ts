@@ -217,7 +217,7 @@ export class DirectSaleReportComponent implements OnInit {
   changeDateFormate(date): string {
     // var date = "2018-05-29T02:51:39.692104";
     var stillUtc = moment.utc(date).toDate(); //change utc time
-    var local = moment(stillUtc).local().format('YYYY-MM-DD'); //change local timezone
+    var local = moment(stillUtc).local().format('YYYY-MM-DD HH:MM'); //change local timezone
     return local;
   }
 

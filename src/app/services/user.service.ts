@@ -78,7 +78,11 @@ export class UserService {
     }
 
     updateUser(key: string, value: any): void {
-        this.usersRef.update(key, value).catch(error => this.handleError(error));
+        this.usersRef.update(key, value).catch(error => {
+            console.log(error);
+            this.handleError(error)
+        }
+            );
     }
 
     deleteUser(key: string): void {
