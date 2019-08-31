@@ -34,7 +34,7 @@ export class DirectSaleReportComponent implements OnInit {
   forkService: any
   taxes: Tax[] = [];
   users: User[] = [];
-  displayedColumns: string[] = ['ticketId', 'userName','paytype', 'date','sales'];
+  displayedColumns: string[] = ['date','ticketId', 'userName','paytype','sales'];
   dataSource = new MatTableDataSource<DirectSale>(this.productsInTable);
   constructor(private router: Router, private dateAdapter: DateAdapter<Date>,
     public productService: ProductService, private fb: FormBuilder, private spinner: NgxSpinnerService,

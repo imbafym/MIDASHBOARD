@@ -35,7 +35,7 @@ export class DeletedItemComponent implements OnInit {
   // customers: Customer[] = [];
   users: User[] = [];
 
-  displayedColumns: string[] = ['date', 'customer','productName', 'qty','sale','user'];
+  displayedColumns: string[] = ['date', 'user','productName', 'qty','sale','customer'];
   dataSource = new MatTableDataSource<DeletedItem>(this.deletedItemInTable);
   constructor(private router: Router, private dateAdapter: DateAdapter<Date>,
     public productService: ProductService, private fb: FormBuilder, private spinner: NgxSpinnerService,

@@ -194,7 +194,7 @@ export class HourlyReportComponent implements OnInit {
     if (Number(hour) < 10) {
       hour = '0' + hour;
     }
-    return `${hour}:00 - ${hour}:59`;
+    return `${hour}:00`;
   }
 }
 

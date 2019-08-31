@@ -101,13 +101,8 @@ export class CategoryComponent implements OnInit {
             })
         }
         )
-
         await this.initData(0);
 
-    }
-
-    ngOnDestroy() {
-        // this.forkService.unsubscribe();
     }
 
     getTax() {
