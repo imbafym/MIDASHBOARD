@@ -6,7 +6,7 @@ import { ProductService } from 'app/services/product.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { DatabaseInfoService } from 'app/services/database-info.service';
 import moment from 'moment';
-
+import { AngularCsv } from 'angular-csv-ext/dist/Angular-csv';
 @Component({
   selector: 'app-customer-list',
   templateUrl: './customer-list.component.html',
@@ -91,23 +91,19 @@ export class CustomerListComponent implements OnInit {
       return parseFloat(result.toFixed(2))
   }
 
-
-  onSubmit({ value, valid }, e: Event) {
-      e.preventDefault();
-      this.showProgress = true;
-      // this.spinner.show();
-      let option: OptionType = null;
-
-      if (value['radioOptions'] == '2') {
-          option = OptionType.ByDate;
-      } else if (value['radioOptions'] == '1') {
-          option = Number(value['timeOption']);
-      } else {
-          console.log('radio option no value', value['radioOptions'])
-      }
-      setTimeout(() => {
-          this.initData(option, value, valid)
-      }, 500);
+  csvOptions = {
+    fieldSeparator: ',',
+    quoteStrings: '"',
+    decimalseparator: '.',
+    showLabels: true,
+    showTitle: true,
+    title: 'Customer List :',
+    useBom: true,
+    noDownload: false,
+    headers: ['Customer ID', 'Name', 'Mobile', 'Email','Address','Address 2', 'City', 'Postcode','Group','Points','Debt','Note']
+  };
+  download() {
+    new AngularCsv(this.customerInfos, 'My Report',this.csvOptions);
   }
 
   sortData(data) {

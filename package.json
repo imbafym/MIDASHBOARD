@@ -38,6 +38,7 @@
     "@types/core-js": "^2.5.0",
     "@types/mathjs": "^4.4.1",
     "ajv": "6.5.5",
+    "angular-csv-ext": "^1.0.0",
     "angularfire2": "^5.1.0",
     "arrive": "2.4.1",
     "bootstrap": "4.1.3",
