@@ -23,7 +23,8 @@ export const ROUTES: RouteInfo[] = [
 
     { path: '/stock', title: 'Stock Movement',  icon:'archive', class: '' },
     { path: '/deletedItem-report', title: 'Deleted Items',  icon:'archive', class: '' },
-
+    { path: '/customer-list', title: 'Customer List',  icon:'archive', class: '' },
+    { path: '/daily-presence', title: 'Daily Presence',  icon:'archive', class: '' },
     { path: '/user-profile', title: 'User Profile',  icon:'person', class: '' },
     { path: '/user-management', title: 'User Management',  icon:'person', class: '' },
     

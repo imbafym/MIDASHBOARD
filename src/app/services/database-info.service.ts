@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Rx';
 import {ApiUrlService} from './api-url.service';
 import { UserService } from './user.service';
+import { CustomerInfo } from 'app/customer-list/customer-list.component';
 
 
 @Injectable({
@@ -31,6 +32,11 @@ export class DatabaseInfoService {
       this.apiUrlService.currentUrl.subscribe(url => this.url = url);
       return this.http.get(this.url + `/api/users/getCustomers`, this.httpOptions);
   }
+getCustomerInfo():Observable<CustomerInfo[]>{
+  this.apiUrlService.currentUrl.subscribe(url => this.url = url);
+  return this.http.get<CustomerInfo[]>(this.url + `/api/users/queryCustomerInfo`, this.httpOptions);
+}
+
 
   getUsers():Observable<User[]>{
     this.apiUrlService.currentUrl.subscribe(url => this.url = url);

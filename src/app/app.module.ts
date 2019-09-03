@@ -48,8 +48,8 @@ import {RequestInterceptor} from './services/httpInterceptor/http_interceptor';
 
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
-import { CustomerSalesComponent } from './customer-sales/customer-sales.component';
-import { UserSalesComponent } from './user-sales/user-sales.component';
+
+
 
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -79,7 +79,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ],
     declarations: [
         AppComponent,
-        AdminLayoutComponent
+        AdminLayoutComponent,
     ],
     providers:
         [

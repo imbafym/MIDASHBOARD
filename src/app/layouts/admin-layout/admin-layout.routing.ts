@@ -21,6 +21,8 @@ import { DirectSaleReportComponent } from 'app/direct-sale-report/direct-sale-re
 import { DeletedItemComponent } from 'app/deleted-item/deleted-item.component';
 import { CustomerSalesComponent } from 'app/customer-sales/customer-sales.component';
 import { UserSalesComponent } from 'app/user-sales/user-sales.component';
+import { CustomerListComponent } from 'app/customer-list/customer-list.component';
+import { DailyPresenceComponent } from 'app/daily-presence/daily-presence.component';
 
 
 
@@ -46,7 +48,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'deletedItem-report',        component: DeletedItemComponent },
     { path: 'customer-sales',        component: CustomerSalesComponent },
     { path: 'user-sales',        component: UserSalesComponent },
-
+    { path: 'customer-list',        component: CustomerListComponent },
+    { path: 'daily-presence',        component: DailyPresenceComponent },
     { path: 'dailyTable', component: DailyTableComponent },
     { path: 'monthlyTable', component: MonthlyTableComponent },
     { path: 'categoryTable', component: CategoryTableComponent },
