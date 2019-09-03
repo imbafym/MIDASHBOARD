@@ -11,12 +11,15 @@ declare interface RouteInfo {
 }
 export const ROUTES: RouteInfo[] = [
     { path: '/dashboard', title: 'Home',  icon: 'dashboard', class: '' },
-    { path: '/product', title: 'Product Sales',  icon: 'business_center', class: '' },
-    { path: '/category', title: 'Category Sales',  icon:'library_books', class: '' },
-    { path: '/hourly-report', title: 'Hourly Sales',  icon:'calendar_today', class: '' },
-    { path: '/daily-report', title: 'Daily Sales',  icon:'calendar_today', class: '' },
-    { path: '/monthly-report', title: 'Monthly Sales',  icon:'calendar_today', class: '' },
-    { path: '/direct-sales-report', title: 'Direct Sales',  icon:'calendar_today', class: '' },
+    { path: '/product', title: 'Product Sale',  icon: 'business_center', class: '' },
+    { path: '/category', title: 'Category Sale',  icon:'library_books', class: '' },
+    { path: '/hourly-report', title: 'Hourly Sale',  icon:'calendar_today', class: '' },
+    { path: '/daily-report', title: 'Daily Sale',  icon:'calendar_today', class: '' },
+    { path: '/monthly-report', title: 'Monthly Sale',  icon:'calendar_today', class: '' },
+    { path: '/customer-sales', title: 'Customer Sale',  icon:'calendar_today', class: '' },
+    { path: '/user-sales', title: 'User Sale',  icon:'calendar_today', class: '' },
+
+    { path: '/direct-sales-report', title: 'Direct Sale',  icon:'calendar_today', class: '' },
 
     { path: '/stock', title: 'Stock Movement',  icon:'archive', class: '' },
     { path: '/deletedItem-report', title: 'Deleted Items',  icon:'archive', class: '' },

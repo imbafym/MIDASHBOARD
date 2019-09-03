@@ -33,6 +33,8 @@ import { GridPanelComponent } from '@swimlane/ngx-charts';
 import { ReportGridComponent } from 'app/transaction-report/report-grid/report-grid.component';
 import { DirectSaleReportComponent } from 'app/direct-sale-report/direct-sale-report.component';
 import { DeletedItemComponent } from 'app/deleted-item/deleted-item.component';
+import { CustomerSalesComponent } from 'app/customer-sales/customer-sales.component';
+import { UserSalesComponent } from 'app/user-sales/user-sales.component';
 
 @NgModule({
     imports: [
@@ -64,6 +66,8 @@ import { DeletedItemComponent } from 'app/deleted-item/deleted-item.component';
         HourlyReportComponent,
         ReportGridComponent,
         DirectSaleReportComponent,
+        CustomerSalesComponent,
+        UserSalesComponent,
         DeletedItemComponent
     ]
 })

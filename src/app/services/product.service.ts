@@ -10,6 +10,7 @@ import { HourlyTran } from 'app/transaction-report/hourly-report/hourly-report.c
 import { MonthlyTran } from 'app/transaction-report/monthly-report/monthly-report.component';
 import { DirectSale } from 'app/direct-sale-report/direct-sale-report.component';
 import { ProductCategoryDiscountWithAllCustomerDto, ProductCategoryDiscountWithCustomerDto } from 'app/product/product.component';
+import { CustomerSale } from 'app/customer-sales/customer-sales.component';
 @Injectable()
 export class ProductService {
 
@@ -167,6 +168,21 @@ getDirectSaleProductLastMonth(): Observable<DirectSale[]> {
 }
 /////////////////////////////////////////////
 
+
+//==============customer sale==========================
+getCustomerSale(dateFrom, dateTo): Observable<CustomerSale[]> {
+
+    return this.http.get<CustomerSale[]>(this.url + `/api/categories/queryCustomerSales?dateFrom=${dateFrom}&dateTo=${dateTo}`, this.httpOptions).share();
+}
+
+getUserSale(dateFrom, dateTo): Observable<CustomerSale[]> {
+
+    return this.http.get<CustomerSale[]>(this.url + `/api/categories/queryUserSales?dateFrom=${dateFrom}&dateTo=${dateTo}`, this.httpOptions).share();
+}
+
+
+
+//==============user sale==========================
 
     getCategoryToday(): Observable<any> {
 
