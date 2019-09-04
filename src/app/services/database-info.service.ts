@@ -4,6 +4,7 @@ import {Observable} from 'rxjs/Rx';
 import {ApiUrlService} from './api-url.service';
 import { UserService } from './user.service';
 import { CustomerInfo } from 'app/customer-list/customer-list.component';
+import { UserShift } from 'app/daily-presence/daily-presence.component';
 
 
 @Injectable({
@@ -32,6 +33,10 @@ export class DatabaseInfoService {
       this.apiUrlService.currentUrl.subscribe(url => this.url = url);
       return this.http.get(this.url + `/api/users/getCustomers`, this.httpOptions);
   }
+  getUserShifts(dateFrom, dateTo):Observable<UserShift[]>{
+    this.apiUrlService.currentUrl.subscribe(url => this.url = url);
+    return this.http.get<UserShift[]>(this.url + `/api/users/queryUserShifts?dateFrom=${dateFrom}&dateTo=${dateTo}`, this.httpOptions);
+}
 getCustomerInfo():Observable<CustomerInfo[]>{
   this.apiUrlService.currentUrl.subscribe(url => this.url = url);
   return this.http.get<CustomerInfo[]>(this.url + `/api/users/queryCustomerInfo`, this.httpOptions);

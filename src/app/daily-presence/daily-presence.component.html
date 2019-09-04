@@ -1,3 +1,137 @@
-<p>
-  daily-presence works!
-</p>
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-3">
+                <div class="card card-stats">
+                    <div class="card-header card-header-success card-header-icon">
+                        <div class="card-icon">
+                            <i class="material-icons">business_center</i>
+                        </div>
+                        <h3 class="card-title">Daily Precense</h3>
+                    </div>
+                    <div class="card-body">
+                        <form [formGroup]="form" (ngSubmit)="onSubmit(form,$event)">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <mat-radio-group formControlName="radioOptions">
+                                        <div class="col-lg-3 col-md-3 col-sm-3">
+                                            <mat-radio-button value="2">
+
+                                                <mat-form-field>
+                                                    <input matInput [matDatepicker]="pickerFrom"
+                                                        [attr.disabled]="form['radioOption'] == '2'"
+                                                        placeholder="Date From" formControlName="dateFrom">
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [attr.disabled]="form['radioOption'] == '2'" [for]="pickerFrom">
+                                                    </mat-datepicker-toggle>
+                                                    <mat-datepicker #pickerFrom></mat-datepicker>
+                                                </mat-form-field>
+
+
+                                                <mat-form-field>
+                                                    <input matInput [matDatepicker]="pickerTo"
+                                                        [attr.disabled]="form['radioOption'] == '2'"
+                                                        placeholder="Date To" formControlName="dateTo">
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [attr.disabled]="form['radioOption'] == '2'" [for]="pickerTo">
+                                                    </mat-datepicker-toggle>
+                                                    <mat-datepicker #pickerTo></mat-datepicker>
+                                                </mat-form-field>
+
+                                            </mat-radio-button>
+                                        </div>
+                                        <div class="col-lg-3 col-md-3 col-sm-3">
+                                            <mat-radio-button value="1">
+                                                <mat-form-field>
+                                                    <mat-select formControlName="timeOption"
+                                                        [attr.disabled]="form['radioOption'] == '1'">
+                                                        <mat-option *ngFor="let t of time" [value]="t">
+                                                            {{getTimeOptionName(t)}}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </mat-radio-button>
+                                        </div>
+                                    </mat-radio-group>
+                                </div>
+
+
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                   
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-sm-6">
+                                            <mat-form-field>
+                                                <mat-select [(value)]="selectedUser">
+                                                    <mat-option *ngFor="let c of users" [value]="c">
+                                                        {{c.userName}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-lg-3 col-md-3 col-sm-3">
+                                                <button mat-raised-button type="submit" [disabled]="!form.valid">Search</button>
+                                            </div>
+                                    </div>
+
+                                   
+
+                                </div>
+
+
+                            </div>
+                            <div>
+                                <mat-spinner mode="indeterminate" *ngIf="showProgress"></mat-spinner>
+                            </div>
+                        </form>
+
+                        <mat-table *ngIf="hasData" class="table table-striped" [dataSource]="dataSource" matSort>
+
+                            <ng-container matColumnDef="User" sticky>
+                                <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> User
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element"> {{element.name}}</mat-cell>
+                           
+                            </ng-container>
+
+                            <ng-container matColumnDef="Start" sticky>
+                                <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Start
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element"> {{element.startTime}}</mat-cell>
+                             
+                            </ng-container>
+
+                            <ng-container matColumnDef="End" sticky>
+                                <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> End
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element"> {{element.endTime}}</mat-cell>
+                             
+                            </ng-container>
+
+                            <ng-container matColumnDef="Hours">
+                                <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Hours</mat-header-cell>
+                                <mat-cell *matCellDef="let element"> {{element.hours | currency}}</mat-cell>
+                               
+                            </ng-container>
+
+                    
+
+                            <mat-header-row class="text-warning" *matHeaderRowDef="displayedColumns; sticky: true">
+                            </mat-header-row>
+                            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                            
+                        </mat-table>
+
+
+                        <mat-paginator *ngIf="hasData" [pageSizeOptions]="[50,100,500,1000]" showFirstLastButtons>
+                        </mat-paginator>
+
+                        <h3 *ngIf="!(hasData||showProgress)">No Result</h3>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

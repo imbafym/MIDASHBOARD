@@ -7,7 +7,7 @@
                         <div class="card-icon">
                             <i class="material-icons">business_center</i>
                         </div>
-                        <h3 class="card-title">Products Sales</h3>
+                        <h3 class="card-title">Customer Sales</h3>
                     </div>
                     <div class="card-body">
                         <form [formGroup]="form" (ngSubmit)="onSubmit(form,$event)">
@@ -68,11 +68,12 @@
                                                 </mat-select>
                                             </mat-form-field>
                                         </div>
+                                        <div class="col-lg-3 col-md-3 col-sm-3">
+                                            <button mat-raised-button type="submit" [disabled]="!form.valid">Search</button>
+                                        </div>
                                     </div>
 
-                                    <div class="col-lg-3 col-md-3 col-sm-3">
-                                        <button mat-raised-button type="submit" [disabled]="!form.valid">Search</button>
-                                    </div>
+                                   
 
                                 </div>
 
