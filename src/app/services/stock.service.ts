@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders, HttpParams, HttpRequest} from '@angular/common/
 import {Observable} from 'rxjs/Observable';
 import {ApiUrlService} from './api-url.service';
 import {catchError} from 'rxjs/operators';
+import { StockDiary } from 'app/stock/stock.component';
 
 
 @Injectable({
@@ -40,6 +41,9 @@ export class StockService {
             JSON.stringify(data),options);
     }
 
+
+
+
     searchStockByProductName(productName: string): Observable<Stock[]> {
         var data = {
             productName: productName
@@ -61,6 +65,17 @@ export class StockService {
         return this.http.post<Stock[]>(this.url + '/api/stock/queryStockByName',
             JSON.stringify(data),options);
     }
+
+    getStockDiary(): Observable<StockDiary[]> {
+        this.apiUrlService.currentUrl.subscribe(url => this.url = url)
+        // Add safe, URL encoded search parameter if there is a search term
+       
+
+        return this.http.get<StockDiary[]>(this.url + '/api/stock/queryStockDiary');
+    }
+
+
+
 
     updateSellPriceByID(id, price){
        return this.http.put(`${this.url}/api/stock/queryUpdateProductSellPrice?id=${id}&sellprice=${price}`,

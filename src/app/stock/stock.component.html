@@ -176,6 +176,68 @@
                             </div>
 
                         </div>
+
+                        <div class='row'>
+                            <mat-table *ngIf="stockDiaries.length>0" class="table table-striped" [dataSource]="dataSource" matSort>
+
+                                <ng-container matColumnDef="product" sticky>
+                                    <mat-header-cell *matHeaderCellDef class="price text-warning"  mat-sort-header> Product
+                                    </mat-header-cell>
+                                    <mat-cell *matCellDef="let element" style="text-align: left"> {{element.name}}</mat-cell>
+                                    <mat-footer-cell *matFooterCellDef class="price">  </mat-footer-cell>
+                                </ng-container>
+    
+                                <!-- <ng-container matColumnDef="catName">
+                                        <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Category</mat-header-cell>
+                                        <mat-cell *matCellDef="let element"> {{element.catName}}</mat-cell>
+                                        <mat-footer-cell *matFooterCellDef>  </mat-footer-cell>
+                                    </ng-container> -->
+    
+                                <ng-container matColumnDef="qty">
+                                    <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Qty
+                                    </mat-header-cell>
+                                    <mat-cell *matCellDef="let element"> {{element.units}}</mat-cell>
+                                    <mat-footer-cell *matFooterCellDef class="price"></mat-footer-cell>
+                                </ng-container>
+    
+                                <ng-container matColumnDef="price">
+                                    <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Price</mat-header-cell>
+                                    <mat-cell *matCellDef="let element"> {{element.Price | currency}}</mat-cell>
+                                    <mat-footer-cell *matFooterCellDef class="price">
+                                    </mat-footer-cell>
+                                </ng-container>
+    
+                                <ng-container matColumnDef="reason" stickyEnd>
+                                    <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Reason
+                                    </mat-header-cell>
+                                    <mat-cell *matCellDef="let element"> {{element.reason}}</mat-cell>
+                                    <!-- <mat-footer-cell *matFooterCellDef class="price"> {{totalPrice | currency}} </mat-footer-cell> -->
+                                    <!-- <mat-cell *matCellDef="let element"> {{element.totals | currency}}</mat-cell> -->
+                                    <mat-footer-cell *matFooterCellDef class="price">
+                                    </mat-footer-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="date" stickyEnd>
+                                    <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Date
+                                    </mat-header-cell>
+                                    <mat-cell *matCellDef="let element"> {{element.date}}</mat-cell>
+                                    <!-- <mat-footer-cell *matFooterCellDef class="price"> {{totalPrice | currency}} </mat-footer-cell> -->
+                                    <!-- <mat-cell *matCellDef="let element"> {{element.totals | currency}}</mat-cell> -->
+                                    <mat-footer-cell *matFooterCellDef class="price">
+                                    </mat-footer-cell>
+                                </ng-container>
+    
+                                <mat-header-row class="text-warning" *matHeaderRowDef="displayedColumns; sticky: true">
+                                </mat-header-row>
+                                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                                <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+                            </mat-table>
+    
+    
+                            <mat-paginator *ngIf="hasData" [pageSizeOptions]="[50,100,500,1000]" showFirstLastButtons>
+                            </mat-paginator>
+                        </div>
+
                     </div>
                 </div>
             </div>

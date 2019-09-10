@@ -3,11 +3,12 @@ import { Router } from '@angular/router';
 import { Category, ProductService } from '../services/product.service';
 import { FormBuilder, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
 import { Stock, StockService } from '../services/stock.service';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef, DateAdapter, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { Observable } from 'rxjs';
 import { ProgressSpinnerDialogComponent } from 'app/shared/progress-spinner-dialog/progress-spinner-dialog.component';
 import { NgxSpinner } from 'ngx-spinner/lib/ngx-spinner.enum';
 import { NgxSpinnerService } from 'ngx-spinner';
+import moment from 'moment';
 @Component({
     selector: 'app-category',
     templateUrl: './stock.component.html',
@@ -25,12 +26,42 @@ export class StockComponent implements OnInit {
     selected: string;
     showProgress: boolean;
     showError: boolean;
-    constructor(private router: Router, public stockService: StockService, private fb: FormBuilder,
+    private paginator: MatPaginator;
+    private sort: MatSort;
+    displayedColumns: string[] = ['product', 'qty', 'price', 'reason','date'];
+    stockDiaries: StockDiary[] = [];
+
+    _dataSource = new MatTableDataSource<StockDiary>(this.stockDiaries);
+    hasData: boolean = false;
+    @ViewChild(MatSort) set matSort(ms: MatSort) {
+        this.sort = ms;
+        this.setDataSourceAttributes();
+    }
+
+    @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+        this.paginator = mp;
+        this.setDataSourceAttributes();
+    }
+
+    setDataSourceAttributes() {
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+    }
+    get dataSource(){
+        return this._dataSource;
+    }
+   set dataSource(input: any){
+       this._dataSource = input;
+   }
+
+
+    constructor(private router: Router, private dateAdapter: DateAdapter<Date>,public stockService: StockService, private fb: FormBuilder,
         private dialog: MatDialog, private spinner : NgxSpinnerService) {
+            dateAdapter.setLocale('nl');
     }
 
 
-    ngOnInit() {
+    async ngOnInit() {
         this.barcode = '';
         this.productName = '';
 
@@ -55,7 +86,8 @@ export class StockComponent implements OnInit {
 
         },
         );
-     
+        
+        await this.initData();
 
     }
 
@@ -263,8 +295,70 @@ export class StockComponent implements OnInit {
     }
 
 
+    async initData(): Promise<void> {
+        this.spinner.show();
+        let dateFrom: string, dateTo: string = null;
+        let rawData: StockDiary[] = null;
+      
+        rawData = await this.stockService.getStockDiary().toPromise();
+
+        this.stockDiaries = rawData;
+      
+        this.dealData(this.stockDiaries);
+        this.dataSource = new MatTableDataSource<StockDiary>(this.stockDiaries);
+
+        if (this.dataSource.data.length > 0 || this.stockDiaries.length>0) {
+            this.hasData = true;
+        }
+
+        setInterval(e => {
+            this.showProgress = false;
+            this.spinner.hide();
+        }, 1500)
+       
+
+    }
+
+    dealData(stockDiaries: StockDiary[]){
+        for(let s of stockDiaries){
+            s.date = this.changeDateFormate(s.date);
+            s.reason = this.getReasonName(s.reason);
+        }
+      }
+    
+      changeDateFormate(date): string {
+        // var date = "2018-05-29T02:51:39.692104";
+        var stillUtc = moment.utc(date).toDate(); //change utc time
+        var local = moment(stillUtc).local().format('YYYY-MM-DD hh:mm'); //change local timezone
+        return local;
+      }
+
+
+
+      getReasonName(reasonId: string){
+
+        switch(reasonId.toString()){
+            case '-1': return 'OUT_EXPIRED';
+            case '-2': return 'OUT_REFUND';
+            case '-3': return 'OUT_BREAK';
+            case '-4': return 'OUT_MOVEMENT';
+            case '1': return 'IN_PURCHASE';
+            case '2': return 'IN_REFUND';
+            case '4': return 'IN_MOVEMENT';
+        }
+      }
+
+
+
 }
 
-
+export interface StockDiary {
+    ID: string,
+    date: string,
+    reason: string,
+    name: string,
+    units: string,
+    Price: string
+}
 
 
