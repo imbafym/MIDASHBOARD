@@ -19,6 +19,7 @@ export class StockComponent implements OnInit {
     isBuyPriceModified: boolean;
     isSellPriceModified: boolean;
     barcode: string;
+    productName:string;
     currentStock: Stock;
     showStock: boolean;
     selected: string;
@@ -31,6 +32,8 @@ export class StockComponent implements OnInit {
 
     ngOnInit() {
         this.barcode = '';
+        this.productName = '';
+
         this.showStock = false;
         this.showProgress = false;
         this.selected = '+1';
@@ -136,6 +139,11 @@ export class StockComponent implements OnInit {
         this.barcode = barcode;
     }
 
+    onKey2(e) {
+        var productName = e.target.value;
+        this.productName = productName;
+    }
+
     searchStockByBarcode() {
         this.spinner.show();
         this.showProgress = true;
@@ -143,6 +151,46 @@ export class StockComponent implements OnInit {
         setTimeout(() => {
             if (!this.barcode || this.barcode != '') {
                 var rawStockData = this.stockService.searchStockByBarcode(this.barcode);
+                rawStockData.subscribe(stock => {
+                    var sell_price = 0;
+                    if (stock[0]) {
+                        this.currentStock = new Stock();
+                        this.currentStock = stock[0];
+                        if (!this.currentStock.STOCK) {
+                            this.currentStock.STOCK = 0;
+                        }
+                        if (this.currentStock.TAX_RATE == "0.1") {
+                            sell_price = this.currentStock.PRICESELL * 1.1
+                            sell_price = parseFloat(sell_price.toFixed(2))
+                        } else {
+                            sell_price = parseFloat(this.currentStock.PRICESELL.toFixed(2))
+                        }
+    
+                        this.form.patchValue({ buyPrice: this.currentStock.PRICEBUY });
+                        this.form.patchValue({ sellPrice: sell_price });
+                        this.form.patchValue({ quantity: 0 });
+                        this.form.patchValue({ ID: this.currentStock.ID });
+                        this.showProgress = false;
+                        this.showStock = true;
+                    } else {
+                        this.showError = true;
+                        this.showProgress = false;
+                        this.showStock = false;
+                    }
+                    this.spinner.hide();
+                })
+            }
+        }, 500);
+        
+    }
+
+    searchStockByProductName() {
+        this.spinner.show();
+        this.showProgress = true;
+        this.showError = false;
+        setTimeout(() => {
+            if (!this.productName || this.productName != '') {
+                var rawStockData = this.stockService.searchStockByProductName(this.productName);
                 rawStockData.subscribe(stock => {
                     var sell_price = 0;
                     if (stock[0]) {

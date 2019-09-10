@@ -40,6 +40,28 @@ export class StockService {
             JSON.stringify(data),options);
     }
 
+    searchStockByProductName(productName: string): Observable<Stock[]> {
+        var data = {
+            productName: productName
+        };
+        this.apiUrlService.currentUrl.subscribe(url => this.url = url)
+        // Add safe, URL encoded search parameter if there is a search term
+        const options = productName ?
+            {
+                headers: new HttpHeaders({
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type':'application/json'
+                })
+            } : {
+                headers: new HttpHeaders({
+                    'Access-Control-Allow-Origin': '*',
+                })
+            };
+
+        return this.http.post<Stock[]>(this.url + '/api/stock/queryStockByName',
+            JSON.stringify(data),options);
+    }
+
     updateSellPriceByID(id, price){
        return this.http.put(`${this.url}/api/stock/queryUpdateProductSellPrice?id=${id}&sellprice=${price}`,
            this.httpOptions);
