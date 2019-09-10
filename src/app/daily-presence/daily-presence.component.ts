@@ -137,7 +137,7 @@ export class DailyPresenceComponent implements OnInit {
       if (this.selectedUser.userId !== "-999") {
           this.userShifts = this.userShifts.filter(p => p.id === this.selectedUser.userId)
       }
-
+      this.dealData(this.userShifts)
       this.dataSource = new MatTableDataSource<UserShift>(this.userShifts);
       if (this.dataSource.data.length > 0) {
           this.hasData = true;
@@ -168,8 +168,32 @@ export class DailyPresenceComponent implements OnInit {
   }
 
 
+  onSelectChanged({ value, valid }, e: Event){
+    this.onSubmit({ value, valid }, e);
+}
+
+dealData(shifts: UserShift[]){
+    for(let shift of shifts){
+        shift.endTime = this.changeDateFormateForCleanDataInList(shift.endTime);
+        shift.startTime = this.changeDateFormateForCleanDataInList(shift.startTime);
+        if(shift.endTime  === shift.startTime ){
+            shift.hours = '-';
+            shift.endTime = '-';
+        }
+    }
+  }
+
+  changeDateFormateForCleanDataInList(date): string {
+    // var date = "2018-05-29T02:51:39.692104";
+    var stillUtc = moment.utc(date).toDate(); //change utc time
+    var local = moment(stillUtc).local().format('hh:mm'); //change local timezone
+    return local;
+  }
+
+
+
   onSubmit({ value, valid }, e: Event) {
-      e.preventDefault();
+    //   e.preventDefault();
       this.showProgress = true;
       // this.spinner.show();
       let option: OptionType = null;

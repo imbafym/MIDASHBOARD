@@ -106,6 +106,12 @@ export class ProductComponent implements OnInit {
         }, 500);
     }
 
+
+    onSelectChanged({ value, valid }, e: Event){
+        this.onSubmit({ value, valid }, e);
+      }
+
+
     ngOnDestroy() {
         // this.forkService.unsubscribe();
     }
@@ -202,7 +208,7 @@ export class ProductComponent implements OnInit {
 
 
     onSubmit({ value, valid }, e: Event) {
-        e.preventDefault();
+        // e.preventDefault();
         this.showProgress = true;
         // this.spinner.show();
         let option: OptionType = null;

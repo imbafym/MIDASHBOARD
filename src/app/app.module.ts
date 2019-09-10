@@ -10,14 +10,6 @@ import {ComponentsModule} from './components/components.module';
 
 import {AppComponent} from './app.component';
 
-import {DashboardComponent} from './dashboard/dashboard.component';
-import {UserProfileComponent} from './user-profile/user-profile.component';
-import {TableListComponent} from './table-list/table-list.component';
-import {MapsComponent} from './maps/maps.component';
-import {NotificationsComponent} from './notifications/notifications.component';
-import {
-    AgmCoreModule
-} from '@agm/core';
 import {AdminLayoutComponent} from './layouts/admin-layout/admin-layout.component';
 import {UserService} from './services/user.service';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
@@ -26,7 +18,7 @@ import {CategoryService} from './services/category.service';
 import {SharedModule} from './shared/shared.module';
 
 import {SalesService} from './services/sales.service';
-import {DateAdapter, MAT_DATE_LOCALE, MatDatepickerModule, MatNativeDateModule} from '@angular/material';
+import {DateAdapter, MatDatepickerModule, MatNativeDateModule} from '@angular/material';
 import {DateFormat} from './utils/date-format';
 import {ProductService} from './services/product.service';
 import {SWIPER_CONFIG} from 'ngx-swiper-wrapper';
@@ -49,7 +41,8 @@ import {RequestInterceptor} from './services/httpInterceptor/http_interceptor';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
-
+import { MatFormFieldModule, MatSelectModule } from '@angular/material';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -72,7 +65,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
         LoginModule,
         AngularFireModule.initializeApp(environment.firebase),
         AngularFireDatabaseModule,
-        NgxSpinnerModule
+        NgxSpinnerModule,
+        MatSelectModule,
+        MatFormFieldModule,
+        NgxMatSelectSearchModule
 // AgmCoreModule.forRoot({
 //     apiKey: 'YOUR_GOOGLE_MAPS_API_KEY'
 // })

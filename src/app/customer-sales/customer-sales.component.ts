@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Tax } from 'app/model/tax/tax';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { MatTableDataSource, DateAdapter, MatPaginator, MatSort } from '@angular/material';
 import { Router } from '@angular/router';
 import { ProductService } from 'app/services/product.service';
@@ -9,7 +8,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { DatabaseInfoService, User } from 'app/services/database-info.service';
 import moment from 'moment';
 import { getToday, getYesterday, getThisMonth, getLastMonth } from 'app/utils/date-format';
-
+import { Observable } from 'rxjs';
+import { startWith, map } from 'rxjs/operators';
 @Component({
   selector: 'app-customer-sales',
   templateUrl: './customer-sales.component.html',
@@ -27,7 +27,7 @@ export class CustomerSalesComponent implements OnInit {
   hasData: boolean = false;
   dataSourceNoPirce: any;
   customers: Customer[] = [];
-
+  filteredCustomers: Observable<Customer[]>;
 
   forkService: any
   selectedCustomer: Customer;
@@ -35,12 +35,23 @@ export class CustomerSalesComponent implements OnInit {
 
   displayedColumns: string[] = ['customerName', 'sale'];
   dataSource = new MatTableDataSource<CustomerSale>(this.customerSales);
+
+//   myControl = new FormControl();
+
+  filteredOptions: Observable<Customer[]>;
+  private _filter(name: string): Customer[] {
+    const filterValue = name.toLowerCase();
+
+    return this.customers.filter(option => (option.name).toLowerCase().includes(filterValue));
+  }
+
+
+
   constructor(private router: Router, private dateAdapter: DateAdapter<Date>,
       public productService: ProductService, private fb: FormBuilder, private spinner: NgxSpinnerService,
       private dbInfoService: DatabaseInfoService) {
       dateAdapter.setLocale('nl');
   }
-
 
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -61,23 +72,31 @@ export class CustomerSalesComponent implements OnInit {
   }
 
   ngOnInit() {
+      this.getCustomers();
       this.spinner.show();
       this.selected = 'All Categories';
       this.selectedCustomer = {
           id: "-999",
           name: "All Customers",
       };
-
       this.form = this.fb.group({
-          dateFrom: [null],
-          dateTo: [null],
-          radioOptions: ['1', Validators.required],
-          timeOption: [OptionType.Today]
-      },
+        dateFrom: [null],
+        dateTo: [null],
+        radioOptions: ['1', Validators.required],
+        timeOption: [OptionType.Today],
+        customer: ['']
+    },
 
+    );
+      this.filteredCustomers = this.form.get('customer').valueChanges
+      .pipe(
+        startWith('All Customers'),
+        map(value => this._filter(value))
       );
+
+     
       this.time = this.getTimeOptions();
-      this.getCustomers();
+     
       setTimeout(() => {
           this.initData(0)
       }, 500);
@@ -170,9 +189,12 @@ export class CustomerSalesComponent implements OnInit {
       return parseFloat(result.toFixed(2))
   }
 
+  onSelectChanged({ value, valid }, e: Event){
+    this.onSubmit({ value, valid }, e);
+}
 
   onSubmit({ value, valid }, e: Event) {
-      e.preventDefault();
+    //   e.preventDefault();
       this.showProgress = true;
       // this.spinner.show();
       let option: OptionType = null;

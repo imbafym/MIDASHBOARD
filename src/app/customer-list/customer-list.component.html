@@ -31,62 +31,62 @@
               <ng-container matColumnDef="Name" sticky>
                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Name
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" class="left"> {{element.name}}</mat-cell>
+                <mat-cell *matCellDef="let element" class="left"> {{element?.name}}</mat-cell>
              
               </ng-container>
 
               <ng-container matColumnDef="Mobile" sticky>
                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Mobile
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" class="left"> {{element.mobile}}</mat-cell>
+                <mat-cell *matCellDef="let element" class="left"> {{element?.mobile}}</mat-cell>
              
               </ng-container>
 
               <ng-container matColumnDef="Email" sticky>
                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Email
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" class="left"> {{element.email}}</mat-cell>
+                <mat-cell *matCellDef="let element" class="left"> {{element?.email}}</mat-cell>
              
               </ng-container>
 
               <ng-container matColumnDef="Address" sticky>
                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Address
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" class="left"> {{element.address + " " + element.address2}}</mat-cell>
+                <mat-cell *matCellDef="let element" class="left"> {{element?.address}}  {{element?.address2}}</mat-cell>
              
               </ng-container>
 
               <ng-container matColumnDef="City">
                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> City
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" class="left"> {{element.city}}</mat-cell>
+                <mat-cell *matCellDef="let element" class="left"> {{element?.city}}</mat-cell>
               
               </ng-container>
 
               <ng-container matColumnDef="Postcode">
                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Postcode</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="left"> {{element.postcode}}</mat-cell>
+                <mat-cell *matCellDef="let element" class="left"> {{element?.postcode}}</mat-cell>
              
               </ng-container>
 
               <ng-container matColumnDef="Group" >
                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Group
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" class="left"> {{element.groups}}</mat-cell>
+                <mat-cell *matCellDef="let element" class="left"> {{element?.groups}}</mat-cell>
                 
               </ng-container>
 
               <ng-container matColumnDef="Points" >
                   <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Points
                   </mat-header-cell>
-                  <mat-cell *matCellDef="let element" class="left"> {{element.points}}</mat-cell>
+                  <mat-cell *matCellDef="let element" class="left"> {{element?.points}}</mat-cell>
                 
                 </ng-container>
 
                 <ng-container matColumnDef="Debt" >
                     <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Debt
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element" class="left"> {{element.debt}}</mat-cell>
+                    <mat-cell *matCellDef="let element" class="left"> {{element?.debt}}</mat-cell>
               
                   </ng-container>
 

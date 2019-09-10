@@ -63,6 +63,7 @@ export class CustomerListComponent implements OnInit {
      
       rawData = await this.dbInfoService.getCustomerInfo().toPromise();
       this.customerInfos = rawData;
+      this.cleanData(this.customerInfos);
       this.dataSource = new MatTableDataSource<CustomerInfo>(this.customerInfos);
       if (this.dataSource.data.length > 0) {
           this.hasData = true;
@@ -72,7 +73,22 @@ export class CustomerListComponent implements OnInit {
       }, 1500)
       this.spinner.hide();
   }
-
+  cleanData(customerInfo: CustomerInfo[]){
+      for(let info of customerInfo){
+          if(!info.id) info.id = '-';
+          if(!info.address) info.address = '-';
+          if(!info.address2) info.address2 = '-';
+          if(!info.city) info.city = '-';
+          if(!info.debt) info.debt = 0;
+          if(!info.email) info.email = '-';
+          if(!info.groups) info.groups = '-';
+          if(!info.mobile) info.mobile = '-';
+          if(!info.name) info.name = '-';
+          if(!info.note) info.note = '-';
+          if(!info.points) info.points = 0;
+          if(!info.postcode) info.postcode = '-';
+      }
+  }
 
   nav(link) {
       this.router.navigateByUrl(link);

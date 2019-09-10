@@ -60,7 +60,8 @@
                                     <div class="row">
                                         <div class="col-lg-6 col-md-6 col-sm-6">
                                             <mat-form-field>
-                                                <mat-select [(value)]="selected">
+                                                <mat-select [(value)]="selected"
+                                                (selectionChange)="onSelectChanged(form,$event)">
                                                     <mat-option value="All Categories">All Categories</mat-option>
                                                     <mat-option *ngFor="let cat of categoryName" value={{cat.NAME}}>
                                                         {{cat.NAME}}
@@ -72,7 +73,8 @@
                                     <div class="row">
                                         <div class="col-lg-6 col-md-6 col-sm-6">
                                             <mat-form-field>
-                                                <mat-select [(value)]="selectedCustomer">
+                                                <mat-select [(value)]="selectedCustomer"
+                                                (selectionChange)="onSelectChanged(form,$event)">
                                                     <mat-option *ngFor="let c of customers" [value]="c">
                                                         {{c.name}}
                                                     </mat-option>

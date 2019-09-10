@@ -167,9 +167,13 @@ export class UserSalesComponent implements OnInit {
       return parseFloat(result.toFixed(2))
   }
 
+  onSelectChanged({ value, valid }, e: Event){
+    this.onSubmit({ value, valid }, e);
+}
+
 
   onSubmit({ value, valid }, e: Event) {
-      e.preventDefault();
+    //   e.preventDefault();
       this.showProgress = true;
       // this.spinner.show();
       let option: OptionType = null;
