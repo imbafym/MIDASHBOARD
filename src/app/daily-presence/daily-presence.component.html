@@ -97,20 +97,20 @@
                             <ng-container matColumnDef="Start" sticky>
                                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Start
                                 </mat-header-cell>
-                                <mat-cell *matCellDef="let element"> {{element.startTime}}</mat-cell>
+                                <mat-cell *matCellDef="let element"> {{changeDateFormateForCleanDataInList(element.startTime)}}</mat-cell>
                              
                             </ng-container>
 
                             <ng-container matColumnDef="End" sticky>
                                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> End
                                 </mat-header-cell>
-                                <mat-cell *matCellDef="let element"> {{element.endTime}}</mat-cell>
+                                <mat-cell *matCellDef="let element"> {{changeDateFormateForCleanDataInList(element.endTime)}}</mat-cell>
                              
                             </ng-container>
 
                             <ng-container matColumnDef="Hours">
                                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Hours</mat-header-cell>
-                                <mat-cell *matCellDef="let element"> {{element.hours }}</mat-cell>
+                                <mat-cell *matCellDef="let element"> {{getDuration(element.startTime,element.endTime)}}</mat-cell>
                                
                             </ng-container>
 
