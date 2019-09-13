@@ -9,13 +9,14 @@ import { ProgressSpinnerDialogComponent } from 'app/shared/progress-spinner-dial
 import { NgxSpinner } from 'ngx-spinner/lib/ngx-spinner.enum';
 import { NgxSpinnerService } from 'ngx-spinner';
 import moment from 'moment';
+import  uuidv1  from 'uuid/v1';
 @Component({
     selector: 'app-category',
     templateUrl: './stock.component.html',
     styleUrls: ['./stock.component.scss']
 })
 export class StockComponent implements OnInit {
-
+    selectedRowIndex: string = '';
     form: FormGroup;
     isBuyPriceModified: boolean;
     isSellPriceModified: boolean;
@@ -64,7 +65,7 @@ export class StockComponent implements OnInit {
     async ngOnInit() {
         this.barcode = '';
         this.productName = '';
-
+console.log(uuidv1());
         this.showStock = false;
         this.showProgress = false;
         this.selected = '+1';
@@ -105,6 +106,7 @@ export class StockComponent implements OnInit {
                         this.form.controls['buyPrice'].enable()
                     } else {
                         this.form.controls['buyPrice'].disable()
+                        alert('Buy price updated.');
                     }
                 } else {
                     console.log('update failed')
@@ -122,15 +124,12 @@ export class StockComponent implements OnInit {
             var result = this.stockService.updateSellPriceByID(this.form.controls['ID'].value, resultPrice)
             result.subscribe(res => {
                 if (res['affectedRows'] == 1) {
-
-
-
-
                     this.currentStock.PRICESELL = this.form.controls['sellPrice'].value
                     this.isSellPriceModified = !this.isSellPriceModified
                     if (this.isSellPriceModified) {
                         this.form.controls['sellPrice'].enable()
                     } else {
+                        alert('Sell price updated.');
                         this.form.controls['sellPrice'].disable()
                     }
                 } else {
@@ -256,10 +255,51 @@ export class StockComponent implements OnInit {
         
     }
 
+    getRecord(row:StockDiary){
+        this.selectedRowIndex = row.ID;
+        var rawStockData =   this.stockService.searchStockByProductId(row.productId);
+                rawStockData.subscribe(stock => {
+                    var sell_price = 0;
+                    if (stock[0]) {
+                        this.currentStock = new Stock();
+                        this.currentStock = stock[0];
+                        if (!this.currentStock.STOCK) {
+                            this.currentStock.STOCK = 0;
+                        }
+                        if (this.currentStock.TAX_RATE == "0.1") {
+                            sell_price = this.currentStock.PRICESELL * 1.1
+                            sell_price = parseFloat(sell_price.toFixed(2))
+                        } else {
+                            sell_price = parseFloat(this.currentStock.PRICESELL.toFixed(2))
+                        }
+    
+                        this.form.patchValue({ buyPrice: this.currentStock.PRICEBUY });
+                        this.form.patchValue({ sellPrice: sell_price });
+                        this.form.patchValue({ quantity: 0 });
+                        this.form.patchValue({ ID: this.currentStock.ID });
+                        this.showProgress = false;
+                        this.showStock = true;
+                    } else {
+                        this.showError = true;
+                        this.showProgress = false;
+                        this.showStock = false;
+                    }
+                    this.spinner.hide();
+                })
+    }
 
     updateStockStatus(e) {
+        this.spinner.show();
         let id = this.form.controls['ID'].value;
         let quantity = this.form.controls['quantity'].value;
+        if(quantity === 0) {
+            alert('Quantity cannot be 0.');
+            return;
+        };
+        if(quantity<0){
+            alert('Quantity cannot be less than 0.');
+            return;
+        }
         let reason = this.selected
         let location = 0;
         let price = 0;
@@ -283,7 +323,7 @@ export class StockComponent implements OnInit {
                 rawUpdateResult.subscribe(res => {
                     if (res['code'] == '0') {
                         this.currentStock.STOCK = currentStock
-                        this.form.patchValue({ quantity: 0 })
+                        // this.form.patchValue({ quantity: 0 })
                     } else {
                         console.log('Error Notification update failed')
                     }
@@ -291,7 +331,12 @@ export class StockComponent implements OnInit {
             } else {
                 console.log('Error Notification Insert failed')
             }
+            alert('Change Updated.');
+            this.showStock= false;
+            this.initData();
+            this.spinner.hide();
         })
+        
     }
 
 
@@ -358,7 +403,8 @@ export interface StockDiary {
     reason: string,
     name: string,
     units: string,
-    Price: string
+    Price: string,
+    productId: string
 }
 
 

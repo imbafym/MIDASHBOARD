@@ -139,19 +139,14 @@
                                             
                                         </form>
                                     </div>
-                                    <!--
-                                            <div class="card-footer">
-                                                <div class="img-container"><img class="img" style="width: 100%;height:auto" src="../../assets/img/image_available.svg.png">
-                                                </div>
-                                            </div>
-                                            -->
                                 </div>
                             </div>
 
                         </div>
 
                         <div class='row'>
-                            <mat-table *ngIf="stockDiaries.length>0" class="table table-striped" [dataSource]="dataSource" matSort>
+                            <mat-table *ngIf="stockDiaries.length>0" class="table table-striped" [dataSource]="dataSource" matSort
+                                    matSortActive="date" matSortDirection="desc" matSortDisableClear>
 
                                 <ng-container matColumnDef="product" sticky>
                                     <mat-header-cell *matHeaderCellDef class="price text-warning"  mat-sort-header> Product
@@ -202,7 +197,8 @@
     
                                 <mat-header-row class="text-warning" *matHeaderRowDef="displayedColumns; sticky: true">
                                 </mat-header-row>
-                                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                                <mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row" tabindex="1" (click)="getRecord(row)"
+                                ></mat-row>
                                 <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
                             </mat-table>
     

@@ -14,3 +14,17 @@
   font-weight: bold;
   // text-align: left;
 }
+
+
+.selected{
+  background: blue;
+}
+
+
+.table-row:focus {
+  background: rgb(82, 82, 216);
+  outline: none;
+}
+.table-row:focus mat-cell {
+  color: white; 
+}

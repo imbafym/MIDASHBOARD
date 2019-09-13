@@ -41,6 +41,29 @@ export class StockService {
             JSON.stringify(data),options);
     }
 
+    searchStockByProductId(id: string): Observable<Stock[]> {
+        var data = {
+            productId: id
+        };
+        this.apiUrlService.currentUrl.subscribe(url => this.url = url)
+        // Add safe, URL encoded search parameter if there is a search term
+        const options = data ?
+            {
+                headers: new HttpHeaders({
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type':'application/json'
+                })
+            } : {
+                headers: new HttpHeaders({
+                    'Access-Control-Allow-Origin': '*',
+                })
+            };
+
+        return this.http.post<Stock[]>(this.url + '/api/stock/queryStockByProductId',
+            JSON.stringify(data),options);
+    }
+
+
 
 
 
@@ -125,6 +148,9 @@ export class StockService {
         return this.http.post(this.url +'/api/stock/queryInsertRecordInStockDiary',
             JSON.stringify(data),options);
     }
+
+
+
 
 }
 
