@@ -9,7 +9,8 @@ import { ProgressSpinnerDialogComponent } from 'app/shared/progress-spinner-dial
 import { NgxSpinner } from 'ngx-spinner/lib/ngx-spinner.enum';
 import { NgxSpinnerService } from 'ngx-spinner';
 import moment from 'moment';
-import  uuidv1  from 'uuid/v1';
+import uuidv1 from 'uuid/v1';
+import { startWith, map } from 'rxjs/operators';
 @Component({
     selector: 'app-category',
     templateUrl: './stock.component.html',
@@ -18,10 +19,11 @@ import  uuidv1  from 'uuid/v1';
 export class StockComponent implements OnInit {
     selectedRowIndex: string = '';
     form: FormGroup;
+    searchForm: FormGroup;
     isBuyPriceModified: boolean;
     isSellPriceModified: boolean;
     barcode: string;
-    productName:string;
+    productName: string;
     currentStock: Stock;
     showStock: boolean;
     selected: string;
@@ -29,8 +31,34 @@ export class StockComponent implements OnInit {
     showError: boolean;
     private paginator: MatPaginator;
     private sort: MatSort;
-    displayedColumns: string[] = ['product', 'qty', 'price', 'reason','date'];
+    displayedColumns: string[] = ['product', 'qty', 'price', 'reason', 'date'];
     stockDiaries: StockDiary[] = [];
+    searchType:number;
+
+
+
+    options: Stock[] = [];
+
+    searchTypeFormControl= new FormControl();
+
+    productNameFormControl = new FormControl();
+    filteredNameOptions: Observable<Stock[]>;
+    private _filterName(value: string): Stock[] {
+        const filterValue = value.toLowerCase();
+        return this.options.filter(stock => stock.NAME.toLowerCase().includes(filterValue));
+    }
+
+
+
+    productBarcodeFormControl = new FormControl();
+    filteredBarcodeOptions: Observable<Stock[]>;
+    private _filterBarcode(value: string): Stock[] {
+        const filterValue = value.toLowerCase();
+        return this.options.filter(stock => stock.CODE.toLowerCase().includes(filterValue));
+    }
+
+
+
 
     _dataSource = new MatTableDataSource<StockDiary>(this.stockDiaries);
     hasData: boolean = false;
@@ -48,27 +76,29 @@ export class StockComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
     }
-    get dataSource(){
+    get dataSource() {
         return this._dataSource;
     }
-   set dataSource(input: any){
-       this._dataSource = input;
-   }
+    set dataSource(input: any) {
+        this._dataSource = input;
+    }
 
 
-    constructor(private router: Router, private dateAdapter: DateAdapter<Date>,public stockService: StockService, private fb: FormBuilder,
-        private dialog: MatDialog, private spinner : NgxSpinnerService) {
-            dateAdapter.setLocale('nl');
+    constructor(private router: Router, private dateAdapter: DateAdapter<Date>, public stockService: StockService, private fb: FormBuilder,
+        private dialog: MatDialog, private spinner: NgxSpinnerService) {
+        dateAdapter.setLocale('nl');
     }
 
 
     async ngOnInit() {
+        await this.initStockOptions();
+        this.searchType= 0;
         this.barcode = '';
         this.productName = '';
-console.log(uuidv1());
         this.showStock = false;
         this.showProgress = false;
         this.selected = '+1';
+      
         this.form = this.fb.group({
             buyPrice: [{
                 value: this.currentStock ? this.currentStock.PRICEBUY : 0,
@@ -84,14 +114,48 @@ console.log(uuidv1());
             ID: [{
                 value: this.currentStock ? this.currentStock.ID : 0
             }],
+            barcode: [''],
+            productName: [''],
+            searchType:['0',Validators.required]
 
         },
         );
-        
+        this.initAutoComplete();
+
         await this.initData();
 
     }
 
+    toggleRadio(type){
+        this.searchType = type;
+    }
+
+
+    // get searchType(){
+    //     let result = this.searchTypeFormControl.value;
+    //     return result;
+    // }
+
+    async initStockOptions(): Promise<void> {
+        let rawData = this.stockService.getAllStocks().toPromise();
+        this.options = await rawData;
+    }
+
+    test(e) {
+        console.log(e);
+    }
+    initAutoComplete() {
+        this.filteredNameOptions = this.productNameFormControl.valueChanges
+            .pipe(
+                startWith(''),
+                map(value => this._filterName(value))
+            );
+        this.filteredBarcodeOptions = this.productBarcodeFormControl.valueChanges
+            .pipe(
+                startWith(''),
+                map(value => this._filterBarcode(value))
+            );
+    }
 
     updatePrice(type) {
 
@@ -176,6 +240,8 @@ console.log(uuidv1());
     }
 
     searchStockByBarcode() {
+        this.barcode = this.productBarcodeFormControl.value;
+
         this.spinner.show();
         this.showProgress = true;
         this.showError = false;
@@ -196,7 +262,7 @@ console.log(uuidv1());
                         } else {
                             sell_price = parseFloat(this.currentStock.PRICESELL.toFixed(2))
                         }
-    
+
                         this.form.patchValue({ buyPrice: this.currentStock.PRICEBUY });
                         this.form.patchValue({ sellPrice: sell_price });
                         this.form.patchValue({ quantity: 0 });
@@ -212,10 +278,11 @@ console.log(uuidv1());
                 })
             }
         }, 500);
-        
+
     }
 
     searchStockByProductName() {
+        this.productName = this.productNameFormControl.value;
         this.spinner.show();
         this.showProgress = true;
         this.showError = false;
@@ -236,7 +303,7 @@ console.log(uuidv1());
                         } else {
                             sell_price = parseFloat(this.currentStock.PRICESELL.toFixed(2))
                         }
-    
+
                         this.form.patchValue({ buyPrice: this.currentStock.PRICEBUY });
                         this.form.patchValue({ sellPrice: sell_price });
                         this.form.patchValue({ quantity: 0 });
@@ -252,51 +319,51 @@ console.log(uuidv1());
                 })
             }
         }, 500);
-        
+
     }
 
-    getRecord(row:StockDiary){
+    getRecord(row: StockDiary) {
         this.selectedRowIndex = row.ID;
-        var rawStockData =   this.stockService.searchStockByProductId(row.productId);
-                rawStockData.subscribe(stock => {
-                    var sell_price = 0;
-                    if (stock[0]) {
-                        this.currentStock = new Stock();
-                        this.currentStock = stock[0];
-                        if (!this.currentStock.STOCK) {
-                            this.currentStock.STOCK = 0;
-                        }
-                        if (this.currentStock.TAX_RATE == "0.1") {
-                            sell_price = this.currentStock.PRICESELL * 1.1
-                            sell_price = parseFloat(sell_price.toFixed(2))
-                        } else {
-                            sell_price = parseFloat(this.currentStock.PRICESELL.toFixed(2))
-                        }
-    
-                        this.form.patchValue({ buyPrice: this.currentStock.PRICEBUY });
-                        this.form.patchValue({ sellPrice: sell_price });
-                        this.form.patchValue({ quantity: 0 });
-                        this.form.patchValue({ ID: this.currentStock.ID });
-                        this.showProgress = false;
-                        this.showStock = true;
-                    } else {
-                        this.showError = true;
-                        this.showProgress = false;
-                        this.showStock = false;
-                    }
-                    this.spinner.hide();
-                })
+        var rawStockData = this.stockService.searchStockByProductId(row.productId);
+        rawStockData.subscribe(stock => {
+            var sell_price = 0;
+            if (stock[0]) {
+                this.currentStock = new Stock();
+                this.currentStock = stock[0];
+                if (!this.currentStock.STOCK) {
+                    this.currentStock.STOCK = 0;
+                }
+                if (this.currentStock.TAX_RATE == "0.1") {
+                    sell_price = this.currentStock.PRICESELL * 1.1
+                    sell_price = parseFloat(sell_price.toFixed(2))
+                } else {
+                    sell_price = parseFloat(this.currentStock.PRICESELL.toFixed(2))
+                }
+
+                this.form.patchValue({ buyPrice: this.currentStock.PRICEBUY });
+                this.form.patchValue({ sellPrice: sell_price });
+                this.form.patchValue({ quantity: 0 });
+                this.form.patchValue({ ID: this.currentStock.ID });
+                this.showProgress = false;
+                this.showStock = true;
+            } else {
+                this.showError = true;
+                this.showProgress = false;
+                this.showStock = false;
+            }
+            this.spinner.hide();
+        })
     }
 
     updateStockStatus(e) {
         this.spinner.show();
         let id = this.form.controls['ID'].value;
         let quantity = this.form.controls['quantity'].value;
-        if(quantity === 0) {
+        if (quantity === 0) {
             alert('Quantity cannot be 0.');
             return;
         };
-        if(quantity<0){
+        if (quantity < 0) {
             alert('Quantity cannot be less than 0.');
             return;
         }
@@ -332,11 +399,11 @@ console.log(uuidv1());
                 console.log('Error Notification Insert failed')
             }
             alert('Change Updated.');
-            this.showStock= false;
+            this.showStock = false;
             this.initData();
             this.spinner.hide();
         })
-        
+
     }
 
 
@@ -344,15 +411,15 @@ console.log(uuidv1());
         this.spinner.show();
         let dateFrom: string, dateTo: string = null;
         let rawData: StockDiary[] = null;
-      
+
         rawData = await this.stockService.getStockDiary().toPromise();
 
         this.stockDiaries = rawData;
-      
+
         this.dealData(this.stockDiaries);
         this.dataSource = new MatTableDataSource<StockDiary>(this.stockDiaries);
 
-        if (this.dataSource.data.length > 0 || this.stockDiaries.length>0) {
+        if (this.dataSource.data.length > 0 || this.stockDiaries.length > 0) {
             this.hasData = true;
         }
 
@@ -360,29 +427,29 @@ console.log(uuidv1());
             this.showProgress = false;
             this.spinner.hide();
         }, 1500)
-       
+
 
     }
 
-    dealData(stockDiaries: StockDiary[]){
-        for(let s of stockDiaries){
+    dealData(stockDiaries: StockDiary[]) {
+        for (let s of stockDiaries) {
             s.date = this.changeDateFormate(s.date);
             s.reason = this.getReasonName(s.reason);
         }
-      }
-    
-      changeDateFormate(date): string {
+    }
+
+    changeDateFormate(date): string {
         // var date = "2018-05-29T02:51:39.692104";
         var stillUtc = moment.utc(date).toDate(); //change utc time
         var local = moment(stillUtc).local().format('YYYY-MM-DD HH:mm'); //change local timezone
         return local;
-      }
+    }
 
 
 
-      getReasonName(reasonId: string){
+    getReasonName(reasonId: string) {
 
-        switch(reasonId.toString()){
+        switch (reasonId.toString()) {
             case '-1': return 'OUT_EXPIRED';
             case '-2': return 'OUT_REFUND';
             case '-3': return 'OUT_BREAK';
@@ -391,7 +458,7 @@ console.log(uuidv1());
             case '2': return 'IN_REFUND';
             case '4': return 'IN_MOVEMENT';
         }
-      }
+    }
 
 
 

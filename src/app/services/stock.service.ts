@@ -41,6 +41,15 @@ export class StockService {
             JSON.stringify(data),options);
     }
 
+
+    getAllStocks(): Observable<Stock[]> {
+        
+        this.apiUrlService.currentUrl.subscribe(url => this.url = url)
+        // Add safe, URL encoded search parameter if there is a search term
+
+        return this.http.get<Stock[]>(this.url + '/api/stock/queryAllStocks');
+    }
+
     searchStockByProductId(id: string): Observable<Stock[]> {
         var data = {
             productId: id
