@@ -91,14 +91,15 @@ export class StockComponent implements OnInit {
 
 
     async ngOnInit() {
-        await this.initStockOptions();
+        
         this.searchType= 0;
         this.barcode = '';
         this.productName = '';
         this.showStock = false;
         this.showProgress = false;
         this.selected = '+1';
-      
+        await this.initStockOptions();
+       
         this.form = this.fb.group({
             buyPrice: [{
                 value: this.currentStock ? this.currentStock.PRICEBUY : 0,
@@ -120,9 +121,10 @@ export class StockComponent implements OnInit {
 
         },
         );
+        await this.initData();
         this.initAutoComplete();
 
-        await this.initData();
+        
 
     }
 

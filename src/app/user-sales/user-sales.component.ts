@@ -210,8 +210,8 @@ export class UserSalesComponent implements OnInit {
       switch (option) {
           case OptionType.Today: return "Today";
           case OptionType.Yesterday: return "Yesterday";
-          case OptionType.ThisMonth: return "ThisMonth";
-          case OptionType.LastMonth: return "LastMonth";
+          case OptionType.ThisMonth: return "This Month";
+          case OptionType.LastMonth: return "Last Month";
       }
   }
 

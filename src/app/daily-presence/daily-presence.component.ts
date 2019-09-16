@@ -173,44 +173,68 @@ export class DailyPresenceComponent implements OnInit {
     }
 
     dealData(shift: UserShift, dateType: string) {
-        
-            shift.endTime = this.changeDateFormateForCleanDataInList(shift.endTime);
-            shift.startTime = this.changeDateFormateForCleanDataInList(shift.startTime);
-            if (shift.endTime === shift.startTime) {
-                shift.hours = '-';
-                shift.endTime = '-';
-            }
-            if(dateType === 'end'){
-                return shift.endTime;
-            }else{
-                return shift.startTime;
-            }
 
+        shift.endTime = this.changeDateFormateForCleanDataInList(shift.endTime);
+        shift.startTime = this.changeDateFormateForCleanDataInList(shift.startTime);
+
+        if (shift.endTime === shift.startTime) {
+            shift.hours = '-';
+            shift.endTime = '-';
+        }
+        if (dateType === 'end') {
+            return shift.endTime;
+        } else {
+            return shift.startTime;
+        }
     }
 
     getDuration(start_date, end_date) {
+        start_date = moment(start_date, "YYYY-MM-DD HH:mm:ss");
+        end_date = moment(end_date, "YYYY-MM-DD HH:mm:ss");
+        if (start_date === end_date || !end_date) return '-';
 
-
-        start_date = moment(start_date,"YYYY-MM-DD HH:mm:ss");
-        end_date = moment(end_date,"YYYY-MM-DD HH:mm:ss");
-       if(start_date === end_date) return '-';
-        
         const milliseconds = end_date.diff(start_date);
         let result = moment.utc(milliseconds).format('HH:mm:ss');
 
-        if(milliseconds > 86400000){
-            let days =  end_date.diff(start_date,'days');
-            let hours =  end_date.diff(start_date,'hours');
-            hours = hours - days*24;
-            return days + 'D' + ' ' + hours + 'h' ;
+        if (milliseconds > 86400000) {
+            let mil = parseInt(milliseconds);
+            var hours = Math.floor(mil / 3600000);
+            var minutes = Math.floor((mil - (hours * 3600000)) / 60000);
+            var seconds = (mil - (hours * 3600000) - (minutes * 60000)) / 1000;
+
+
+
+            return this.setTimeFormate(hours.toString()) + ":" + this.setTimeFormate(minutes.toString()) + ":" + this.setTimeFormate(seconds.toString());
         }
+
+
+
+        // if (milliseconds > 86400000) {
+        //     let days = end_date.diff(start_date, 'days');
+        //     let hours = end_date.diff(start_date, 'hours');
+        //     let minutes = end_date.diff(start_date, 'minutes');
+        //     let seconds = end_date.diff(start_date, 'seconds');
+        //     // hours = hours - days*24;
+        //     let min = Math.floor((minutes / 1000 / 60) << 0);
+        //     let sec = Math.floor((milliseconds / 1000) % 60);
+
+        //     // return days + 'D' + ' ' + hours + 'h' ;
+        //     return hours + ':' + min + ':' + sec;
+        // }
+        if (result === 'Invalid date') result = '-';
         return result;
     }
 
 
+    setTimeFormate(time: string){
+        if(time.length===1){
+            time = '0' + time;
+        }
+        return time;
+    }
 
     changeDateFormateForCleanDataInList(date): string {
-        if(!date) return '-';
+        if (!date) return '-';
         // var date = "2018-05-29T02:51:39.692104";
         var stillUtc = moment.utc(date).toDate(); //change utc time
         var local = moment(stillUtc).local().format('YYYY-MM-DD HH:mm:ss'); //change local timezone
@@ -259,8 +283,8 @@ export class DailyPresenceComponent implements OnInit {
         switch (option) {
             case OptionType.Today: return "Today";
             case OptionType.Yesterday: return "Yesterday";
-            case OptionType.ThisMonth: return "ThisMonth";
-            case OptionType.LastMonth: return "LastMonth";
+            case OptionType.ThisMonth: return "This Month";
+            case OptionType.LastMonth: return "Last Month";
         }
     }
 
