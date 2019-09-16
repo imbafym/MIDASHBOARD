@@ -130,11 +130,17 @@ export class CustomerListComponent implements OnInit {
       });
   }
 
- 
+  
 
+  toDecimal(value: number){
+    return value.toFixed(2);
+}
 
 
 }
+
+
+
 
 export enum OptionType{
   Today,

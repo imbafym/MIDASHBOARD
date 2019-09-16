@@ -79,14 +79,14 @@
               <ng-container matColumnDef="Points" >
                   <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Points
                   </mat-header-cell>
-                  <mat-cell *matCellDef="let element" class="left"> {{element?.points}}</mat-cell>
+                  <mat-cell *matCellDef="let element" class="left"> {{toDecimal(element?.points)}}</mat-cell>
                 
                 </ng-container>
 
                 <ng-container matColumnDef="Debt" >
                     <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Debt
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element" class="left"> {{element?.debt}}</mat-cell>
+                    <mat-cell *matCellDef="let element" class="left"> {{toDecimal(element?.debt)}}</mat-cell>
               
                   </ng-container>
 
