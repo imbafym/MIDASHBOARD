@@ -30,7 +30,7 @@ export class StockComponent implements OnInit {
     showError: boolean;
     private paginator: MatPaginator;
     private sort: MatSort;
-    displayedColumns: string[] = ['product', 'qty', 'price', 'reason', 'date'];
+    displayedColumns: string[] = ['product', 'qty', 'buy','price', 'reason', 'date'];
     stockDiaries: StockDiary[] = [];
     searchType:number;
 
@@ -471,6 +471,7 @@ export interface StockDiary {
     reason: string,
     name: string,
     units: string,
+    buy: string,
     Price: string,
     productId: string
 }

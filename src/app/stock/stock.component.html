@@ -226,8 +226,18 @@
                                     <mat-footer-cell *matFooterCellDef class="price"></mat-footer-cell>
                                 </ng-container>
 
+
+
+                                <ng-container matColumnDef="buy">
+                                    <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Buy
+                                    </mat-header-cell>
+                                    <mat-cell *matCellDef="let element"> {{element.buy | currency}}</mat-cell>
+                                    <mat-footer-cell *matFooterCellDef class="price">
+                                    </mat-footer-cell>
+                                </ng-container>
+
                                 <ng-container matColumnDef="price">
-                                    <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Price
+                                    <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Sell
                                     </mat-header-cell>
                                     <mat-cell *matCellDef="let element"> {{element.Price | currency}}</mat-cell>
                                     <mat-footer-cell *matFooterCellDef class="price">
