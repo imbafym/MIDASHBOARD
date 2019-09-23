@@ -91,27 +91,31 @@
                                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> User
                                 </mat-header-cell>
                                 <mat-cell *matCellDef="let element"> {{element.name}}</mat-cell>
-                           
+                                <mat-footer-cell *matFooterCellDef class="price">
+                                </mat-footer-cell>
                             </ng-container>
 
                             <ng-container matColumnDef="Start" sticky>
                                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Start
                                 </mat-header-cell>
                                 <mat-cell *matCellDef="let element"> {{changeDateFormateForCleanDataInList(element.startTime)}}</mat-cell>
-                             
+                                <mat-footer-cell *matFooterCellDef class="price">
+                                </mat-footer-cell>
                             </ng-container>
 
                             <ng-container matColumnDef="End" sticky>
                                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> End
                                 </mat-header-cell>
                                 <mat-cell *matCellDef="let element"> {{changeDateFormateForCleanDataInList(element.endTime)}}</mat-cell>
-                             
+                                <mat-footer-cell *matFooterCellDef class="price"> <div *ngIf="isUserSelected">Total</div>
+                                </mat-footer-cell>
                             </ng-container>
 
                             <ng-container matColumnDef="Hours">
                                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Hours</mat-header-cell>
-                                <mat-cell *matCellDef="let element"> {{getDuration(element.startTime,element.endTime)}}</mat-cell>
-                               
+                                <mat-cell *matCellDef="let element" [ngClass]="isOvertime(element)?'overtime': ''"> {{getDuration(element.startTime,element.endTime)}}</mat-cell>
+                                <mat-footer-cell *matFooterCellDef class="price"><div *ngIf="isUserSelected">{{getTotalDuration()}}</div>
+                                </mat-footer-cell>
                             </ng-container>
 
                     
@@ -119,7 +123,7 @@
                             <mat-header-row class="text-warning" *matHeaderRowDef="displayedColumns; sticky: true">
                             </mat-header-row>
                             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-                            
+                            <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
                         </mat-table>
 
 

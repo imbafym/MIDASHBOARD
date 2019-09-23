@@ -8,6 +8,9 @@ import { DatabaseInfoService, User } from 'app/services/database-info.service';
 import { getToday, getYesterday, getThisMonth, getLastMonth } from 'app/utils/date-format';
 import moment from 'moment';
 
+
+import {  FormControl,NgControl } from '@angular/forms';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-user-sales',
   templateUrl: './user-sales.component.html',

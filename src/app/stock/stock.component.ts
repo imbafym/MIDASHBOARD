@@ -9,7 +9,6 @@ import { ProgressSpinnerDialogComponent } from 'app/shared/progress-spinner-dial
 import { NgxSpinner } from 'ngx-spinner/lib/ngx-spinner.enum';
 import { NgxSpinnerService } from 'ngx-spinner';
 import moment from 'moment';
-import uuidv1 from 'uuid/v1';
 import { startWith, map } from 'rxjs/operators';
 @Component({
     selector: 'app-category',

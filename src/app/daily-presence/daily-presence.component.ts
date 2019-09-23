@@ -25,7 +25,6 @@ export class DailyPresenceComponent implements OnInit {
     dataSourceNoPirce: any;
     users: User[] = [];
 
-
     forkService: any
     selectedUser: User;
     time: OptionType[] = [];
@@ -84,7 +83,9 @@ export class DailyPresenceComponent implements OnInit {
         // this.forkService.unsubscribe();
     }
 
-
+    get isUserSelected():boolean{
+        return this.selectedUser.userId !== '-999';
+    }
 
     getUsers() {
         var rawUser = this.dbInfoService.getUsers();
@@ -103,6 +104,9 @@ export class DailyPresenceComponent implements OnInit {
         })
     }
 
+    isOvertime(element: UserShift):boolean{
+        return Number(this.getDuration(element.startTime, element.endTime).split(':')[0]) > 24;
+    }
 
     async getFilteredUserSearch(dateFrom: string, dateTo: string): Promise<UserShift[]> {
         let res = null;
@@ -188,7 +192,7 @@ export class DailyPresenceComponent implements OnInit {
         }
     }
 
-    getDuration(start_date, end_date) {
+    getDuration(start_date, end_date): string{
         start_date = moment(start_date, "YYYY-MM-DD HH:mm:ss");
         end_date = moment(end_date, "YYYY-MM-DD HH:mm:ss");
         if (start_date === end_date || !end_date) return '-';
@@ -226,6 +230,33 @@ export class DailyPresenceComponent implements OnInit {
     }
 
 
+    getTotalDuration(shifts):string{
+       if(this.userShifts.length === 0) return;
+        let totalMillisec = 0;
+        for(let shift of this.userShifts){
+            let duration = this.getDuration(shift.startTime, shift.endTime);
+            console.log(duration)
+            if(duration === '-') continue;
+            
+            const days = moment.duration(Number(duration.split(':')[0]),'h').asMilliseconds();
+            const hours= moment.duration(Number(duration.split(':')[1]),'m').asMilliseconds();
+            const minutes = moment.duration(Number(duration.split(':')[2]),'s').asMilliseconds();
+            console.log(days, hours, minutes)
+            totalMillisec = totalMillisec + days+ hours + minutes;
+        }
+
+        let result = moment.utc(totalMillisec).format('HH:mm:ss');
+
+        if (totalMillisec > 86400000) {
+            let mil = totalMillisec;
+            var hours = Math.floor(mil / 3600000);
+            var minutes = Math.floor((mil - (hours * 3600000)) / 60000);
+            var seconds = (mil - (hours * 3600000) - (minutes * 60000)) / 1000;
+            return this.setTimeFormate(hours.toString()) + ":" + this.setTimeFormate(minutes.toString()) + ":" + this.setTimeFormate(seconds.toString());
+        }else{
+            return result;
+        }
+}
     setTimeFormate(time: string){
         if(time.length===1){
             time = '0' + time;

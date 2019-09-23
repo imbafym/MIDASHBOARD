@@ -58,14 +58,24 @@
 
                   <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-6">
-                      <mat-form-field>
-                        <mat-select [(value)]="selectedCustomer"
-                        (selectionChange)="onSelectChanged(form,$event)">
-                          <mat-option *ngFor="let c of customers" [value]="c">
-                            {{c.name}}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
+                      
+
+                      <mat-form-field  class="example-full-width">
+                        <input type="text" placeholder="Search by name" aria-label="Number"
+                            matInput [formControl]="productNameFormControl"
+                            (keyup.enter)="onSubmit(form,$event)"  [matAutocomplete]="auto2">
+                        <mat-autocomplete #auto2="matAutocomplete">
+                            <mat-option *ngFor="let option of filteredOptions | async"
+                                [value]="option.id"
+                                (click)="onSubmit(form,$event)">
+                                {{option}}
+                            </mat-option>
+                        </mat-autocomplete>
+                        <!-- <mat-icon matSuffix fix (click)="searchStockByProductName()">search</mat-icon> -->
+                    </mat-form-field>
+
+
+
                     </div>
             
                     <div class="col-lg-3 col-md-3 col-sm-3">
