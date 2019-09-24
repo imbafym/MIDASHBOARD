@@ -202,9 +202,9 @@
                         <div class='row'>
                             <mat-table *ngIf="stockDiaries.length>0" class="table table-striped"
                                 [dataSource]="dataSource" matSort matSortActive="date" matSortDirection="desc"
-                                matSortDisableClear>
+                                >
 
-                                <ng-container matColumnDef="product" sticky>
+                                <ng-container matColumnDef="productId" sticky>
                                     <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header>
                                         Product
                                     </mat-header-cell>
@@ -215,11 +215,11 @@
 
                                 <!-- <ng-container matColumnDef="catName">
                                         <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Category</mat-header-cell>
-                                        <mat-cell *matCellDef="let element"> {{element.catName}}</mat-cell>
+                                        <mat-cell *matCellDef="let element"> {{eleme sortedData: Dessert[];nt.catName}}</mat-cell>
                                         <mat-footer-cell *matFooterCellDef>  </mat-footer-cell>
                                     </ng-container> -->
 
-                                <ng-container matColumnDef="qty">
+                                <ng-container matColumnDef="units">
                                     <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Qty
                                     </mat-header-cell>
                                     <mat-cell *matCellDef="let element"> {{element.units}}</mat-cell>
@@ -236,7 +236,7 @@
                                     </mat-footer-cell>
                                 </ng-container>
 
-                                <ng-container matColumnDef="price">
+                                <ng-container matColumnDef="Price">
                                     <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Sell
                                     </mat-header-cell>
                                     <mat-cell *matCellDef="let element"> {{element.Price | currency}}</mat-cell>

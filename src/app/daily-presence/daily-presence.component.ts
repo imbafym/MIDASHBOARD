@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatTableDataSource, DateAdapter, MatPaginator, MatSort } from '@angular/material';
 import { Router } from '@angular/router';
@@ -8,12 +8,21 @@ import { DatabaseInfoService, User } from 'app/services/database-info.service';
 import { getToday, getYesterday, getThisMonth, getLastMonth } from 'app/utils/date-format';
 import moment from 'moment';
 
+export interface UserShift {
+    id: string;
+    name: string;
+    startTime: string;
+    endTime: string;
+    startDate: string;
+    endDate: string;
+    hours: string;
+}
 @Component({
     selector: 'app-daily-presence',
     templateUrl: './daily-presence.component.html',
     styleUrls: ['./daily-presence.component.scss']
 })
-export class DailyPresenceComponent implements OnInit {
+export class DailyPresenceComponent implements OnInit, AfterViewInit {
     selected: string;
     form: FormGroup;
     userShifts: UserShift[] = [];
@@ -29,18 +38,14 @@ export class DailyPresenceComponent implements OnInit {
     selectedUser: User;
     time: OptionType[] = [];
 
-    displayedColumns: string[] = ['User', 'Start', 'End', 'Hours'];
-    dataSource = new MatTableDataSource<UserShift>(this.userShifts);
-    constructor(private router: Router, private dateAdapter: DateAdapter<Date>,
-        public productService: ProductService, private fb: FormBuilder, private spinner: NgxSpinnerService,
-        private dbInfoService: DatabaseInfoService) {
-        dateAdapter.setLocale('nl');
-    }
+    displayedColumns: string[] = ['name', 'startTime', 'endTime', 'hours'];
+ 
+  
 
 
     private paginator: MatPaginator;
-    private sort: MatSort;
-
+    @ViewChild(MatSort) sort: MatSort;
+    _dataSource = new MatTableDataSource<UserShift>(this.userShifts);
     @ViewChild(MatSort) set matSort(ms: MatSort) {
         this.sort = ms;
         this.setDataSourceAttributes();
@@ -56,14 +61,31 @@ export class DailyPresenceComponent implements OnInit {
         this.dataSource.sort = this.sort;
     }
 
-    ngOnInit() {
+    get dataSource() {
+        return this._dataSource;
+    }
+    set dataSource(input: any) {
+        this._dataSource = input;
+    }
+
+
+
+    constructor(private router: Router, private dateAdapter: DateAdapter<Date>,
+        public productService: ProductService, private fb: FormBuilder, private spinner: NgxSpinnerService,
+        private dbInfoService: DatabaseInfoService) {
+        dateAdapter.setLocale('nl');
+    }
+    ngAfterViewInit() {
+        this.dataSource.sort = this.sort;
+      }
+    async ngOnInit() {
         this.spinner.show();
         this.selected = 'All Categories';
         this.selectedUser = {
             userId: "-999",
             userName: "All Users",
         };
-
+        
         this.form = this.fb.group({
             dateFrom: [null],
             dateTo: [null],
@@ -74,9 +96,9 @@ export class DailyPresenceComponent implements OnInit {
         );
         this.time = this.getTimeOptions();
         this.getUsers();
-        setTimeout(() => {
-            this.initData(0)
-        }, 500);
+   
+         await this.initData(0)
+
     }
 
     ngOnDestroy() {
@@ -341,12 +363,3 @@ export enum OptionType {
 
 
 
-export interface UserShift {
-    id: string;
-    name: string;
-    startTime: string;
-    endTime: string;
-    startDate: string;
-    endDate: string;
-    hours: string;
-}

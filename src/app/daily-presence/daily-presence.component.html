@@ -85,9 +85,9 @@
                             </div>
                         </form>
 
-                        <mat-table *ngIf="hasData" class="table table-striped" [dataSource]="dataSource" matSort>
+                        <mat-table *ngIf="hasData" class="table table-striped" [dataSource]="dataSource" matSort matSortActive="User" >
 
-                            <ng-container matColumnDef="User" sticky>
+                            <ng-container matColumnDef="name" sticky>
                                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> User
                                 </mat-header-cell>
                                 <mat-cell *matCellDef="let element"> {{element.name}}</mat-cell>
@@ -95,7 +95,7 @@
                                 </mat-footer-cell>
                             </ng-container>
 
-                            <ng-container matColumnDef="Start" sticky>
+                            <ng-container matColumnDef="startTime" sticky>
                                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Start
                                 </mat-header-cell>
                                 <mat-cell *matCellDef="let element"> {{changeDateFormateForCleanDataInList(element.startTime)}}</mat-cell>
@@ -103,7 +103,7 @@
                                 </mat-footer-cell>
                             </ng-container>
 
-                            <ng-container matColumnDef="End" sticky>
+                            <ng-container matColumnDef="endTime" sticky>
                                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> End
                                 </mat-header-cell>
                                 <mat-cell *matCellDef="let element"> {{changeDateFormateForCleanDataInList(element.endTime)}}</mat-cell>
@@ -111,7 +111,7 @@
                                 </mat-footer-cell>
                             </ng-container>
 
-                            <ng-container matColumnDef="Hours">
+                            <ng-container matColumnDef="hours">
                                 <mat-header-cell *matHeaderCellDef class="price text-warning" mat-sort-header> Hours</mat-header-cell>
                                 <mat-cell *matCellDef="let element" [ngClass]="isOvertime(element)?'overtime': ''"> {{getDuration(element.startTime,element.endTime)}}</mat-cell>
                                 <mat-footer-cell *matFooterCellDef class="price"><div *ngIf="isUserSelected">{{getTotalDuration()}}</div>

@@ -1,21 +1,32 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Category, ProductService } from '../services/product.service';
 import { FormBuilder, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
 import { Stock, StockService } from '../services/stock.service';
-import { MatDialog, MatDialogRef, DateAdapter, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatDialog, DateAdapter, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { Observable } from 'rxjs';
-import { ProgressSpinnerDialogComponent } from 'app/shared/progress-spinner-dialog/progress-spinner-dialog.component';
-import { NgxSpinner } from 'ngx-spinner/lib/ngx-spinner.enum';
 import { NgxSpinnerService } from 'ngx-spinner';
 import moment from 'moment';
 import { startWith, map } from 'rxjs/operators';
+
+
+export interface StockDiary {
+    ID: string,
+    date: string,
+    reason: string,
+    name: string,
+    units: string,
+    buy: string,
+    Price: string,
+    productId: string
+}
+
+
 @Component({
     selector: 'app-category',
     templateUrl: './stock.component.html',
     styleUrls: ['./stock.component.scss']
 })
-export class StockComponent implements OnInit {
+export class StockComponent implements OnInit, AfterViewInit {
     selectedRowIndex: string = '';
     form: FormGroup;
     searchForm: FormGroup;
@@ -28,9 +39,8 @@ export class StockComponent implements OnInit {
     selected: string;
     showProgress: boolean;
     showError: boolean;
-    private paginator: MatPaginator;
-    private sort: MatSort;
-    displayedColumns: string[] = ['product', 'qty', 'buy','price', 'reason', 'date'];
+ 
+    displayedColumns: string[] = ['productId', 'units', 'buy','Price', 'reason', 'date'];
     stockDiaries: StockDiary[] = [];
     searchType:number;
 
@@ -57,8 +67,8 @@ export class StockComponent implements OnInit {
     }
 
 
-
-
+    @ViewChild(MatSort) sort: MatSort;
+    private paginator: MatPaginator;
     _dataSource = new MatTableDataSource<StockDiary>(this.stockDiaries);
     hasData: boolean = false;
     @ViewChild(MatSort) set matSort(ms: MatSort) {
@@ -88,7 +98,9 @@ export class StockComponent implements OnInit {
         dateAdapter.setLocale('nl');
     }
 
-
+    ngAfterViewInit() {
+        this.dataSource.sort = this.sort;
+      }
     async ngOnInit() {
         
         this.searchType= 0;
@@ -465,15 +477,5 @@ export class StockComponent implements OnInit {
 
 }
 
-export interface StockDiary {
-    ID: string,
-    date: string,
-    reason: string,
-    name: string,
-    units: string,
-    buy: string,
-    Price: string,
-    productId: string
-}
 
 
