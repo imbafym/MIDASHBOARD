@@ -138,13 +138,14 @@ export class StockService {
             JSON.stringify(data),options);
     }
 
-    insertRecordInStockDiary(reason,id,units,price,location){
+    insertRecordInStockDiary(reason,id,units,price,location,sell){
         var data = {
             reason: reason,
             location: location,
             product: id,
             units: units,
-            price: price
+            price: price,
+            sell: sell
         }
             // Add safe, URL encoded search parameter if there is a search term
             const options = {

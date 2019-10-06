@@ -154,9 +154,6 @@ export class StockComponent implements OnInit, AfterViewInit {
         this.options = await rawData;
     }
 
-    test(e) {
-        console.log(e);
-    }
     initAutoComplete() {
         this.filteredNameOptions = this.productNameFormControl.valueChanges
             .pipe(
@@ -383,19 +380,25 @@ export class StockComponent implements OnInit, AfterViewInit {
         let reason = this.selected
         let location = 0;
         let price = 0;
-        let currentStock = this.currentStock.STOCK
-        if (reason == "-1" || reason == "+2") {
-            price = this.currentStock.PRICESELL;
-        } else {
+        let currentStock = this.currentStock.STOCK;
+        // let sell = this.currentStock.PRICESELL;
+
+        if (this.currentStock.TAX_RATE == "0.1") {
+            this.currentStock.PRICESELL = this.currentStock.PRICESELL / 1.1;
+        } 
+
+        // if (reason == "-1" || reason == "+2") {
+        //     price = this.currentStock.PRICESELL;
+        // } else {
             price = this.currentStock.PRICEBUY;
-        }
+        // }
         if (parseInt(reason) > 0) {
             currentStock = currentStock + quantity;
         } else if (parseInt(reason) < 0) {
             currentStock = currentStock - quantity;
         }
 
-        let rawInsertResult = this.stockService.insertRecordInStockDiary(reason, id, quantity, price, location)
+        let rawInsertResult = this.stockService.insertRecordInStockDiary(reason, id, quantity, price, location, this.currentStock.PRICESELL)
         rawInsertResult.subscribe(res => {
 
             if (res['code'] == '0') {
@@ -422,7 +425,7 @@ export class StockComponent implements OnInit, AfterViewInit {
 
     async initData(): Promise<void> {
         this.spinner.show();
-        let dateFrom: string, dateTo: string = null;
+
         let rawData: StockDiary[] = null;
 
         rawData = await this.stockService.getStockDiary().toPromise();
