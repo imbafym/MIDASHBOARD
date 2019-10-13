@@ -369,6 +369,7 @@ export class StockComponent implements OnInit, AfterViewInit {
         this.spinner.show();
         let id = this.form.controls['ID'].value;
         let quantity = this.form.controls['quantity'].value;
+        let sellPrice = this.form.controls['sellPrice'].value;
         if (quantity === 0) {
             alert('Quantity cannot be 0.');
             return;
@@ -384,7 +385,7 @@ export class StockComponent implements OnInit, AfterViewInit {
         // let sell = this.currentStock.PRICESELL;
 
         if (this.currentStock.TAX_RATE == "0.1") {
-            this.currentStock.PRICESELL = this.currentStock.PRICESELL / 1.1;
+            sellPrice = sellPrice / 1.1;
         } 
 
         // if (reason == "-1" || reason == "+2") {
@@ -398,7 +399,7 @@ export class StockComponent implements OnInit, AfterViewInit {
             currentStock = currentStock - quantity;
         }
 
-        let rawInsertResult = this.stockService.insertRecordInStockDiary(reason, id, quantity, price, location, this.currentStock.PRICESELL)
+        let rawInsertResult = this.stockService.insertRecordInStockDiary(reason, id, quantity, price, location, sellPrice)
         rawInsertResult.subscribe(res => {
 
             if (res['code'] == '0') {
