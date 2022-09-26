@@ -30,7 +30,7 @@
     "@angular/platform-server": "^7.0.4",
     "@angular/router": "^7.0.4",
     "@capacitor/android": "^1.0.0-beta.11",
-    "@capacitor/cli": "^1.0.0-beta.11",
+    "@capacitor/cli": "^1.5.3",
     "@capacitor/core": "^1.0.0-beta.11",
     "@capacitor/ios": "^1.0.0-beta.11",
     "@swimlane/ngx-charts": "^12.0.1",
